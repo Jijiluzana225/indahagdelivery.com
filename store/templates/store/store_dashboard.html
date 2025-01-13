@@ -1,0 +1,231 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Store Orders{% endblock %}
+
+{% block content %}
+
+<style>
+    /* General Styling for Dashboard */
+    .orders-title {
+        font-size: 2.5rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .orders-table-container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .orders-table th, .orders-table td {
+        padding: 12px 15px;
+        text-align: center;
+        font-size: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .orders-table th {
+        background-color: #f8f9fa;
+        color: #333;
+    }
+
+    .orders-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+
+    .update-btn {
+        padding: 6px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .update-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .map-btn {
+        padding: 6px 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .map-btn:hover {
+        background-color: #1e7e34;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .orders-table-container {
+            padding: 10px;
+        }
+
+        .orders-table th, .orders-table td {
+            padding: 8px;
+            font-size: 0.8rem; /* Smaller font for mobile screens */
+        }
+
+        .orders-title {
+            font-size: 1.5rem; /* Smaller title for mobile */
+        }
+
+        .update-btn,
+        .map-btn {
+            padding: 5px 8px;
+            font-size: 0.75rem; /* Smaller buttons for mobile */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .orders-title {
+            font-size: 1.2rem; /* Further reduced font for very small screens */
+        }
+
+        .orders-table th, .orders-table td {
+            font-size: 0.7rem; /* Even smaller font for very small screens */
+        }
+
+        .update-btn,
+        .map-btn {
+            font-size: 0.7rem;
+            padding: 4px 6px;
+        }
+    }
+</style>
+
+
+<h2 class="orders-title">Store Orders</h2>
+<div class="orders-table-container">
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Location</th> <!-- New column for location -->
+                <th>Status</th>
+                <th>Orders</th>
+                <th>Created At</th>
+                <th>Actions</th> <!-- Column for the Update Button -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr class="order-row">
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.customer_name }}</td>
+                    <td>
+                        <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
+                    </td>
+                    
+                    <td>
+                        <select id="status-{{ order.id }}">
+                            <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Preparing" {% if order.status == 'Preparing' %}selected{% endif %}>Preparing</option>
+                            <option value="On the Way" {% if order.status == 'On the Way' %}selected{% endif %}>On the Way</option>
+                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a>
+                    </td>
+                    <td>{{ order.created_at }}</td>
+                    <td>
+                        <!-- Update Button -->
+                        <button class="update-btn" onclick="updateOrderStatus({{ order.id }})">Update</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function updateOrderStatus(orderId) {
+        var status = document.getElementById('status-' + orderId).value;
+        var button = document.querySelector(`button[onclick="updateOrderStatus(${orderId})"]`);
+        button.textContent = "Updating...";
+        button.disabled = true;
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'update_order_status' %}", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+    
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                alert("Order ID " + orderId + " status updated to " + status);
+            } else {
+                alert("Failed to update status. Please try again.");
+            }
+            button.textContent = "Update";
+            button.disabled = false;
+        };
+    
+        xhr.onerror = function() {
+            alert("An error occurred. Please check your connection and try again.");
+            button.textContent = "Update";
+            button.disabled = false;
+        };
+    
+        var data = JSON.stringify({
+            "order_id": orderId,
+            "status": status
+        });
+    
+        xhr.send(data);
+    }
+    
+
+    setInterval(() => {
+        location.reload();
+    }, 10000)
+
+
+    function openGoogleMaps(destination) {
+        // Check if geolocation is supported
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+    
+                    // Construct the Google Maps URL
+                    const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}`;
+                    
+                    // Open the Google Maps URL in a new tab
+                    window.open(mapsUrl, '_blank');
+                },
+                function(error) {
+                    alert("Unable to retrieve your location. Please enable location services and try again.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    }
+
+    
+</script>
+
+{% endblock %}

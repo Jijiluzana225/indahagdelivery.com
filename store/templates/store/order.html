@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <!-- Include Google Maps JS API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp38ahRHi7YSU7iDITGyvJSHT6uo8-RFE&callback=initMap" async defer></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        form {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        input[type="datetime-local"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #3498db;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        #map {
+            height: 300px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-input input {
+            flex: 1;
+        }
+
+        .file-input button {
+            width: auto;
+            margin-left: 10px;
+            background: #2ecc71;
+        }
+
+        .file-input button:hover {
+            background: #27ae60;
+        }
+
+        @media (max-width: 768px) {
+            form {
+                padding: 15px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Book Appointment</h2>
+    <form method="POST" enctype="multipart/form-data">
+       {% csrf_token %}
+       {{ form.as_p }}
+       
+       <!-- Google Map Display -->
+       <div id="map"></div>
+
+       <label for="location">Location:</label>
+       <input type="text" id="location" name="location" readonly>
+
+       <button type="submit">Submit Appointment</button>
+    </form>
+
+    <script>
+        var map, marker;
+
+        function initMap() {
+            // Default location set to a specific latitude and longitude
+            var initialLocation = { lat: 8.2280, lng: 124.2452 };
+
+            // Initialize Google Map
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 13,
+                center: initialLocation,
+            });
+
+            // Add a draggable marker
+            marker = new google.maps.Marker({
+                position: initialLocation,
+                map: map,
+                draggable: true,
+                title: "Drag me to adjust your location",
+            });
+
+            // Set the default location in the input field
+            document.getElementById('location').value = initialLocation.lat + ',' + initialLocation.lng;
+
+            // Use geolocation to update the marker position
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    map.setCenter(userLocation);
+                    marker.setPosition(userLocation);
+                    document.getElementById('location').value = userLocation.lat + ',' + userLocation.lng;
+                });
+            }
+
+            // Update input when marker is dragged
+            google.maps.event.addListener(marker, 'dragend', function() {
+                var position = marker.getPosition();
+                document.getElementById('location').value = position.lat() + ',' + position.lng();
+            });
+
+            // Update marker when map is clicked
+            map.addListener('click', function(event) {
+                var clickedLocation = event.latLng;
+                marker.setPosition(clickedLocation);
+                document.getElementById('location').value = clickedLocation.lat() + ',' + clickedLocation.lng();
+            });
+        }
+    </script>
+</body>
+</html>
