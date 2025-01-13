@@ -20,15 +20,13 @@
     }
 
     .container {
-        width: 90vw;  /* Set width to 90% of the viewport width */
-        margin: 0 auto;  /* Center the container horizontally */
-        padding: 20px;  /* Add some internal padding */
+        width: 90vw;
+        margin: 0 auto;
+        padding: 20px;
         background: white;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    
-     
 
     /* Map styles */
     #map {
@@ -56,17 +54,7 @@
         height: auto;
         border-radius: 10px;
         margin: 10px 0;
-        cursor: pointer;  /* Make image clickable */
-    }
-
-    .info-box a {
-        text-decoration: none;
-    }
-
-    .info-box p {
-        margin: 5px 0;
-        font-size: 1rem;
-        color: #666;
+        cursor: pointer;
     }
 
     .info-box a {
@@ -78,92 +66,12 @@
     .info-box a:hover {
         color: #0056b3;
     }
-
-    /* Order Now button styling */
-    .order-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 1rem;
-        font-family: 'Arial', sans-serif;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 10px;
-        transition: background-color 0.3s ease;
-    }
-
-    .order-button:hover {
-        background-color: #0056b3;
-    }
-
-    /* Full-Screen Image Modal */
-    .modal {
-        display: none; /* Hidden by default */
-        position: fixed;
-        z-index: 1050; /* Ensure the modal itself is above all content */
-        padding-top: 100px;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.9);
-    }
-
-    .modal-content {
-        margin: auto;
-        display: block;
-        width: 80%;
-        max-width: 700px;
-    }
-
-    /* Adjust close button position */
-    .close {
-        position: absolute;
-        top: 20px; /* Adjust this value to position below navbar */
-        right: 25px;
-        color: #fff;
-        font-size: 40px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 1060; /* Ensure the close button is above the modal content */
-    }
-
-    .close:hover,
-    .close:focus {
-        color: #bbb;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    /* Loader animation */
-    .loader {
-        border: 6px solid #f3f3f3;
-        border-top: 6px solid #007bff;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-        display: block;
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
 </style>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp38ahRHi7YSU7iDITGyvJSHT6uo8-RFE&callback=initMap&v=weekly" 
         async defer></script>
 <script>
-    let map, infoWindow, marker, directionsService, directionsRenderer, manualMarker;
-    let storeLatLng;
+    let map, marker;
 
     function initMap() {
         // Store data passed from the Django context
@@ -177,7 +85,7 @@
         };
 
         const [latitude, longitude] = store.location.split(',');
-        storeLatLng = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+        const storeLatLng = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
 
         map = new google.maps.Map(document.getElementById("map"), {
             center: storeLatLng,
@@ -190,10 +98,6 @@
             title: store.name,
         });
 
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer();
-        directionsRenderer.setMap(map);
-
         const infoWindowContent = `
             <div class="info-box">
                 <h3>${store.name}</h3>
@@ -202,13 +106,10 @@
                 </a>
                 <p><strong>Contact:</strong> ${store.contact_number}</p>
                 <p><a href="${store.facebook_page}" target="_blank">Visit Facebook Page</a></p>
-                <p id="distance"></p>
-                
-                <button class="order-button" onclick="placeOrder(${store.id})">Place Order Now</button>
             </div>
         `;
 
-        infoWindow = new google.maps.InfoWindow({
+        const infoWindow = new google.maps.InfoWindow({
             content: infoWindowContent,
         });
 
@@ -221,83 +122,6 @@
                 infoWindow.open(map, marker);
             }
         });
-
-        // Try to get the user's current location
-        if (navigator.geolocation) {
-            const loader = document.getElementById('loader');
-            loader.style.display = 'block';
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLatLng = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-
-                    loader.style.display = 'none';
-
-                    const userMarker = new google.maps.Marker({
-                        position: userLatLng,
-                        map: map,
-                        title: "Your Location",
-                    });
-
-                    // Calculate distance to store and display it
-                    calculateDistance(userLatLng);
-
-                    const request = {
-                        origin: userLatLng,
-                        destination: storeLatLng,
-                        travelMode: google.maps.TravelMode.DRIVING,
-                    };
-
-                    directionsService.route(request, (result, status) => {
-                        if (status === google.maps.DirectionsStatus.OK) {
-                            directionsRenderer.setDirections(result);
-                        } else {
-                            alert("Directions request failed due to " + status);
-                        }
-                    });
-                },
-                () => {
-                    loader.style.display = 'none';
-                    document.getElementById('alert').style.display = 'block';
-                    document.getElementById('manual-alert').style.display = 'block';
-                }
-            );
-        } else {
-            document.getElementById('alert').style.display = 'block';
-            document.getElementById('manual-alert').style.display = 'block';
-        }
-
-        // Handle manual location pinning on map click
-        {% comment %} map.addListener('click', (event) => {
-            if (manualMarker) {
-                manualMarker.setMap(null); // Remove previous manual marker
-            }
-
-            manualMarker = new google.maps.Marker({
-                position: event.latLng,
-                map: map,
-                title: "Pinned Location",
-            });
-
-            // Recalculate the distance from the new pinned location to the store
-            calculateDistance(event.latLng);
-
-            const request = {
-                origin: event.latLng,
-                destination: storeLatLng,
-                travelMode: google.maps.TravelMode.DRIVING,
-            };
-
-            directionsService.route(request, (result, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-                    directionsRenderer.setDirections(result);
-                } else {
-                    alert("Directions request failed due to " + status);
-                }
-            });
-        }); {% endcomment %}
     }
 
     // Function to open the modal and display the image in full screen
@@ -314,50 +138,15 @@
             modal.style.display = "none";
         }
     }
-
-    // Function to calculate the distance from the user's location to the store
-    function calculateDistance(userLatLng) {
-        const service = new google.maps.DistanceMatrixService();
-        service.getDistanceMatrix(
-            {
-                origins: [userLatLng],
-                destinations: [storeLatLng],
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-                if (status === google.maps.DistanceMatrixStatus.OK) {
-                    const distance = response.rows[0].elements[0].distance.text;
-                    document.getElementById('distance').innerHTML = `<strong>Distance from you:</strong> ${distance}`;
-                } else {
-                    console.error('Error fetching distance:', status);
-                }
-            }
-        );
-    }
-
-    // Function to handle the "Order Now" button click
-    function placeOrder(storeId) {
-    const orderUrl = `/store/${storeId}/order`; // URL for the store's order page
-    window.location.href = orderUrl;
-}
 </script>
 
+<h1>Store Location</h1>
+<div id="map"></div>
 
-    
-        <h1>Store Location</h1>
-        <div id="map"></div>
-        <div id="loader" class="loader"></div>
-
-        <!-- The Modal -->
-        <div id="myModal" class="modal">
-            <span class="close">&times;</span>
-            <img class="modal-content" id="img01">
-        </div>
-
-        {% comment %} <div id="manual-alert" class="manual-alert">
-            Unable to retrieve your location. Please click on the map to set your current location.
-        </div> {% endcomment %}
-  
+<!-- The Modal -->
+<div id="myModal" class="modal" style="display: none;">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="img01">
+</div>
 
 {% endblock content %}
-
