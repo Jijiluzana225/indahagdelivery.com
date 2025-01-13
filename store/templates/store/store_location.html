@@ -20,14 +20,14 @@
     }
 
     .container {
-        width: 90vw;
-        margin: 0 auto;
-        padding: 20px;
+        width: 90vw;  /* Set width to 90% of the viewport width */
+        margin: 0 auto;  /* Center the container horizontally */
+        padding: 20px;  /* Add some internal padding */
         background: white;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
+    
     /* Map styles */
     #map {
         height: 600px;
@@ -54,7 +54,17 @@
         height: auto;
         border-radius: 10px;
         margin: 10px 0;
-        cursor: pointer;
+        cursor: pointer;  /* Make image clickable */
+    }
+
+    .info-box a {
+        text-decoration: none;
+    }
+
+    .info-box p {
+        margin: 5px 0;
+        font-size: 1rem;
+        color: #666;
     }
 
     .info-box a {
@@ -66,12 +76,92 @@
     .info-box a:hover {
         color: #0056b3;
     }
+
+    /* Order Now button styling */
+    .order-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-family: 'Arial', sans-serif;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s ease;
+    }
+
+    .order-button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Full-Screen Image Modal */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1050; /* Ensure the modal itself is above all content */
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    /* Adjust close button position */
+    .close {
+        position: absolute;
+        top: 20px; /* Adjust this value to position below navbar */
+        right: 25px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1060; /* Ensure the close button is above the modal content */
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Loader animation */
+    .loader {
+        border: 6px solid #f3f3f3;
+        border-top: 6px solid #007bff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+        display: block;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 </style>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp38ahRHi7YSU7iDITGyvJSHT6uo8-RFE&callback=initMap&v=weekly" 
         async defer></script>
 <script>
-    let map, marker;
+    let map, infoWindow, marker;
+    let storeLatLng;
 
     function initMap() {
         // Store data passed from the Django context
@@ -85,7 +175,7 @@
         };
 
         const [latitude, longitude] = store.location.split(',');
-        const storeLatLng = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+        storeLatLng = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
 
         map = new google.maps.Map(document.getElementById("map"), {
             center: storeLatLng,
@@ -106,10 +196,11 @@
                 </a>
                 <p><strong>Contact:</strong> ${store.contact_number}</p>
                 <p><a href="${store.facebook_page}" target="_blank">Visit Facebook Page</a></p>
+                <button class="order-button" onclick="placeOrder(${store.id})">Place Order Now</button>
             </div>
         `;
 
-        const infoWindow = new google.maps.InfoWindow({
+        infoWindow = new google.maps.InfoWindow({
             content: infoWindowContent,
         });
 
@@ -138,13 +229,20 @@
             modal.style.display = "none";
         }
     }
+
+    // Function to handle the "Order Now" button click
+    function placeOrder(storeId) {
+    const orderUrl = `/store/${storeId}/order`; // URL for the store's order page
+    window.location.href = orderUrl;
+}
 </script>
 
 <h1>Store Location</h1>
 <div id="map"></div>
+<div id="loader" class="loader"></div>
 
 <!-- The Modal -->
-<div id="myModal" class="modal" style="display: none;">
+<div id="myModal" class="modal">
     <span class="close">&times;</span>
     <img class="modal-content" id="img01">
 </div>
