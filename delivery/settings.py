@@ -147,8 +147,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-MEDIA_URL = '/media/' 
-MEDIA_ROOT = BASE_DIR / 'media'
+
 
 cloudinary.config = {
     'CLOUD_NAME': ' dyiqfwpib',
@@ -156,4 +155,5 @@ cloudinary.config = {
     'API_SECRET': 'abNwZ-xrMC9_GSberAXBAIufCA4'
 }
 
+MEDIA_URL = '/media/' 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage '
