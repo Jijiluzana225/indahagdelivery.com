@@ -3,9 +3,15 @@
 {% block title %}Customer Dashboard{% endblock %}
 
 {% block content %}
-
 <style>
     /* General Styling for Dashboard */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+    }
+
     .dashboard-title {
         font-size: 2.5rem;
         color: #333;
@@ -14,19 +20,22 @@
     }
 
     .orders-table-container {
+        width: 95%;
         max-width: 1000px;
         margin: 0 auto;
-        padding: 0 15px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .orders-table {
         width: 100%;
         border-collapse: collapse;
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .orders-table th, .orders-table td {
+    .orders-table th, 
+    .orders-table td {
         padding: 15px;
         text-align: center;
         font-size: 1rem;
@@ -34,8 +43,9 @@
     }
 
     .orders-table th {
-        background-color: #f8f9fa;
+        background-color: #f1f1f1;
         color: #333;
+        font-weight: bold;
     }
 
     .order-row:hover {
@@ -69,15 +79,52 @@
         text-align: center;
     }
 
-    /* Responsive Design */
+    /* Responsive Design for Tablets */
     @media (max-width: 768px) {
         .orders-table th, .orders-table td {
-            padding: 10px;
+            padding: 12px;
             font-size: 0.9rem;
         }
 
         .dashboard-title {
             font-size: 2rem;
+        }
+    }
+
+    /* Responsive Design for Mobile */
+    @media (max-width: 480px) {
+        .dashboard-title {
+            font-size: 1.6rem;
+        }
+
+        .orders-table-container {
+            padding: 15px;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+
+        .order-row {
+            font-size: 0.9rem;
+        }
+
+        /* Make table scrollable on mobile */
+        .orders-table-container {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            display: block;
+            width: 100%;
+            overflow-x: scroll;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            white-space: nowrap;
         }
     }
 </style>
@@ -103,7 +150,7 @@
                         <td>{{ order.id }}</td>
                         <td>{{ order.store.name }}</td>
                         <td>{{ order.total_amount }}</td>
-                        <td class="status">{{ order.status }}</td>
+                        <td class="status {{ order.status|replace:" "  "_" }}">{{ order.status }}</td>
                         <td>{{ order.created_at }}</td>
                         <td><a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a></td>
                     </tr>
@@ -117,5 +164,4 @@
 {% endblock %}
 
 {% block extra_styles %}
-
 {% endblock %}
