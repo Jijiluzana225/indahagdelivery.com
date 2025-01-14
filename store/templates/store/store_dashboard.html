@@ -190,11 +190,7 @@
                 // Open Google Maps in a new tab
                 window.open(mapsUrl, '_blank');
 
-                // Reload the page after opening the map
-                setTimeout(() => {
-                    location.reload();
-                }, 500); // Optional: Add a slight delay before reloading
-            },
+              
             function (error) {
                 alert("Unable to retrieve your location. Please enable location services and try again.");
             }
