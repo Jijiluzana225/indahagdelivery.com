@@ -36,6 +36,8 @@ urlpatterns = [
     
     path('update-item/<int:item_id>/', views.update_item, name='update_item'),   
     path('delete-item/<int:item_id>/', views.delete_item, name='delete_item'),
+
+     path('update-profile/', views.update_profile, name='update_profile'),
  
     
 ]
