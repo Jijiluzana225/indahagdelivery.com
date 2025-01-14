@@ -91,9 +91,10 @@
                 <tr>
                     <th>Order ID</th>
                     <th>Store</th>
-                    <th>Total Price</th>
+                    <th>Total Amount</th>
                     <th>Status</th>
                     <th>Placed On</th>
+                    <th>Items</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,9 +102,10 @@
                     <tr class="order-row">
                         <td>{{ order.id }}</td>
                         <td>{{ order.store.name }}</td>
-                        <td>{{ order.total_price }}</td>
+                        <td>{{ order.total_amount }}</td>
                         <td class="status">{{ order.status }}</td>
                         <td>{{ order.created_at }}</td>
+                        <td><a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
