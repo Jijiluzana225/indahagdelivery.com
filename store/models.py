@@ -1,4 +1,6 @@
 from django.db import models
+from cloudinary_storage.storage import MediaCloudinaryStorage
+
 
 class ProductType(models.Model):
     name = models.CharField(max_length=255)
@@ -12,7 +14,7 @@ class Product(models.Model):
     type = models.ForeignKey(ProductType, related_name='products', on_delete=models.CASCADE)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    picture = models.ImageField(upload_to='products/')
+    picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='products/')
 
     def __str__(self):
         return self.name
@@ -30,7 +32,7 @@ class Store(models.Model):
     location = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=20)
     facebook_page = models.URLField(null=True, blank=True)
-    picture = models.ImageField(upload_to='stores/')
+    picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='store/')
     owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='stores', null=True, blank=True)  # link to User
 
     def __str__(self):
@@ -52,7 +54,7 @@ class CustomerProfile(models.Model):
     barangay = models.CharField(max_length=100, null=True, blank=True)
     address_line = models.CharField(max_length=255, null=True, blank=True)
     location = models.CharField(max_length=100)
-    profile_picture = models.ImageField(upload_to='customers/')
+    profile_picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='customer/')
     username = models.OneToOneField(User, on_delete=models.CASCADE, related_name='customer', null=True, blank=True)  # link to User
     
     def __str__(self):
