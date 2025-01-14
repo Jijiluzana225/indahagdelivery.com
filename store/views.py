@@ -370,3 +370,46 @@ def delete_item(request, item_id):
         return JsonResponse({'message': 'Item deleted successfully!'})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+
+
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import CustomerProfileForm
+from .models import CustomerProfile
+
+@login_required
+def update_profile(request):
+    try:
+        # Try to get the customer profile for the logged-in user
+        profile = CustomerProfile.objects.get(username=request.user)
+    except CustomerProfile.DoesNotExist:
+        # If no profile exists, create a new one
+        profile = None
+
+    if request.method == 'POST':
+        if profile:
+            form = CustomerProfileForm(request.POST, request.FILES, instance=profile)
+        else:
+            form = CustomerProfileForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            customer_profile = form.save(commit=False)
+            customer_profile.username = request.user  # Assign the logged-in user to the profile
+            customer_profile.save()
+            return redirect('store_list')  # Replace with your success URL
+
+    else:
+        if profile:
+            form = CustomerProfileForm(instance=profile)
+            # Extract latitude and longitude from the location (comma-separated)
+            location_parts = profile.location.split(',')
+            lat = float(location_parts[0]) if len(location_parts) > 0 else 0
+            lng = float(location_parts[1]) if len(location_parts) > 1 else 0
+        else:
+            form = CustomerProfileForm()
+            lat = 0  # Default latitude
+            lng = 0  # Default longitude
+
+    return render(request, 'store/update_profile.html', {'form': form, 'lat': lat, 'lng': lng})
+
