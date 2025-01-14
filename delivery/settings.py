@@ -42,10 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',         
-    'store',
+    'django.contrib.staticfiles',     
     'cloudinary_storage',      
     'cloudinary',
+    'store',
+   
 ]
 
 MIDDLEWARE = [
@@ -146,10 +147,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-
-cloudinary.config = {
+CLOUDINARY_STORAGE = {
     'CLOUD_NAME': ' dyiqfwpib',
     'API_KEY': '637252742851763',
     'API_SECRET': 'abNwZ-xrMC9_GSberAXBAIufCA4'
