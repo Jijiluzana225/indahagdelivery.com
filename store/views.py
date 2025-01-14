@@ -246,9 +246,7 @@ def store_dashboard(request):
     customer_profiles = CustomerProfile.objects.all()
 
     # Get orders for the store owned by the logged-in user
-    orders = Order.objects.filter(store__owner=request.user).annotate(
-        total_amount=Sum(F('items__product_price') * F('items__quantity'))
-    ).order_by('-created_at')
+    orders = Order.objects.filter(store__owner=request.user).order_by('-created_at')
 
     # Add customer location directly to each order
     orders_with_location = []
@@ -261,6 +259,7 @@ def store_dashboard(request):
     return render(request, 'store/store_dashboard.html', {
         'orders': orders_with_location,
     })
+
 
 
 
