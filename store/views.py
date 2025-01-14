@@ -224,12 +224,19 @@ def proceed_to_checkout(request):
 
 
 
+
+
 from django.shortcuts import render
+from django.db.models import Sum, F
 from .models import Order
 
 @login_required
 def customer_dashboard(request):
-    orders = Order.objects.filter(customer=request.user).order_by('-created_at')  # Orders sorted by latest created_at
+    # Fetch orders for the logged-in customer and annotate them with the total_amount (sum of product_price * quantity)
+    orders = Order.objects.filter(customer=request.user).annotate(
+        total_amount=Sum(F('items__product_price') * F('items__quantity'))
+    ).order_by('-created_at')  # Orders sorted by latest created_at
+
     return render(request, 'store/customer_dashboard.html', {'orders': orders})
 
 from django.shortcuts import render, redirect
