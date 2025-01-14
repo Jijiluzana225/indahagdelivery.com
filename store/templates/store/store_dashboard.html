@@ -1,28 +1,11 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Store Orders{% endblock %}
+
+{% block content %}
+
 <style>
-    .status {
-        font-weight: bold;
-        padding: 8px 12px;
-        border-radius: 4px;
-        color: white; /* Ensure text is visible on all background colors */
-    }
-
-    .status.Pending {
-        background-color: #ffc107; /* Yellow for Pending */
-    }
-
-    .status.Preparing {
-        background-color: #17a2b8; /* Teal for Preparing */
-    }
-
-    .status.On_the_Way {
-        background-color: #28a745; /* Green for On the Way */
-    }
-
-    .status.Delivered {
-        background-color: #007bff; /* Blue for Delivered */
-    }
-
-    /* Retain existing styles */
+    /* General Styling for Dashboard */
     body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -75,6 +58,11 @@
         background-color: #f1f1f1;
     }
 
+    .status {
+        font-weight: bold;
+        color: #007bff;
+    }
+
     .update-btn, 
     .map-btn {
         padding: 8px 15px;
@@ -100,6 +88,68 @@
     .map-btn:hover {
         background-color: #1e7e34;
     }
+
+    /* Responsive Design for Tablets */
+    @media (max-width: 768px) {
+        .orders-title {
+            font-size: 1.8rem;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .update-btn, 
+        .map-btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Responsive Design for Mobile */
+    @media (max-width: 480px) {
+        .orders-title {
+            font-size: 1.5rem;
+        }
+
+        .orders-table-container {
+            padding: 10px;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            padding: 6px;
+            font-size: 0.75rem;
+        }
+
+        .update-btn, 
+        .map-btn {
+            padding: 5px 10px;
+            font-size: 0.7rem;
+        }
+
+        .orders-table {
+            font-size: 0.9rem;
+        }
+
+        /* Make table scrollable for small screens */
+        .orders-table-container {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            display: block;
+            width: 100%;
+            overflow-x: scroll;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            white-space: nowrap;
+        }
+    }
 </style>
 
 <h2 class="orders-title">Store Orders</h2>
@@ -110,7 +160,7 @@
                 <th>Order ID</th>
                 <th>Customer</th>
                 <th>Location</th>
-                <th>Total Amount</th>
+                <th>Total Amount</th> <!-- New Total Amount Column -->
                 <th>Status</th>
                 <th>Orders</th>
                 <th>Created At</th>
@@ -125,9 +175,14 @@
                     <td>
                         <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
                     </td>
-                    <td>{{ order.total_amount|floatformat:2 }}</td>
+                    <td>{{ order.total_amount|floatformat:2 }}</td> <!-- Display Total Amount -->
                     <td>
-                       {{ order.status }}
+                        <select id="status-{{ order.id }}">
+                            <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Preparing" {% if order.status == 'Preparing' %}selected{% endif %}>Preparing</option>
+                            <option value="On the Way" {% if order.status == 'On the Way' %}selected{% endif %}>On the Way</option>
+                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                        </select>
                     </td>
                     <td>
                         <a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a>
@@ -139,6 +194,7 @@
                 </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 </div>
 
@@ -178,25 +234,29 @@
         xhr.send(data);
     }
 
+    setInterval(() => {
+        location.reload();
+    }, 10000)
+
     function openGoogleMaps(destination) {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-                const userLat = position.coords.latitude;
-                const userLng = position.coords.longitude;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
 
-                const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}`;
-
-                // Open Google Maps in a new tab
-                window.open(mapsUrl, '_blank');
-
-              
-            function (error) {
-                alert("Unable to retrieve your location. Please enable location services and try again.");
-            }
-        );
-    } else {
-        alert("Geolocation is not supported by your browser.");
+                    const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}`;
+                    
+                    window.open(mapsUrl, '_blank');
+                },
+                function(error) {
+                    alert("Unable to retrieve your location. Please enable location services and try again.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
     }
-}
 </script>
+
+{% endblock %}
