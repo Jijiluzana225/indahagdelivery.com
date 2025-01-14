@@ -150,7 +150,7 @@
                         <td>{{ order.id }}</td>
                         <td>{{ order.store.name }}</td>
                         <td>{{ order.total_amount }}</td>
-                        <td class="status {{ order.status|replace:" "  "_" }}">{{ order.status }}</td>
+                        <td>{{ order.status }}</td>
                         <td>{{ order.created_at }}</td>
                         <td><a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a></td>
                     </tr>
