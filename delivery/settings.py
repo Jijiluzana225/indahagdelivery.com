@@ -11,10 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from environ import Env
-env = Env()
-Env.red_env()
-Environment = env('ENVIRONMENT', default="production")
+from environ 
 
 import os
 import cloudinary_storage
