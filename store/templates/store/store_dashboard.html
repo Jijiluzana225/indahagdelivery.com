@@ -152,8 +152,6 @@
     }
 </style>
 
-
-
 <h2 class="orders-title">Store Orders</h2>
 <div class="orders-table-container">
     <table class="orders-table">
@@ -161,11 +159,12 @@
             <tr>
                 <th>Order ID</th>
                 <th>Customer</th>
-                <th>Location</th> <!-- New column for location -->
+                <th>Location</th>
+                <th>Total Amount</th> <!-- New Total Amount Column -->
                 <th>Status</th>
                 <th>Orders</th>
                 <th>Created At</th>
-                <th>Actions</th> <!-- Column for the Update Button -->
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -176,7 +175,7 @@
                     <td>
                         <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
                     </td>
-                    
+                    <td>{{ order.total_amount|floatformat:2 }}</td> <!-- Display Total Amount -->
                     <td>
                         <select id="status-{{ order.id }}">
                             <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
@@ -190,12 +189,12 @@
                     </td>
                     <td>{{ order.created_at }}</td>
                     <td>
-                        <!-- Update Button -->
                         <button class="update-btn" onclick="updateOrderStatus({{ order.id }})">Update</button>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
+        
     </table>
 </div>
 
@@ -205,12 +204,12 @@
         var button = document.querySelector(`button[onclick="updateOrderStatus(${orderId})"]`);
         button.textContent = "Updating...";
         button.disabled = true;
-    
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "{% url 'update_order_status' %}", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-    
+
         xhr.onload = function() {
             if (xhr.status == 200) {
                 alert("Order ID " + orderId + " status updated to " + status);
@@ -220,39 +219,34 @@
             button.textContent = "Update";
             button.disabled = false;
         };
-    
+
         xhr.onerror = function() {
             alert("An error occurred. Please check your connection and try again.");
             button.textContent = "Update";
             button.disabled = false;
         };
-    
+
         var data = JSON.stringify({
             "order_id": orderId,
             "status": status
         });
-    
+
         xhr.send(data);
     }
-    
 
     setInterval(() => {
         location.reload();
     }, 10000)
 
-
     function openGoogleMaps(destination) {
-        // Check if geolocation is supported
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
                     const userLat = position.coords.latitude;
                     const userLng = position.coords.longitude;
-    
-                    // Construct the Google Maps URL
+
                     const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}`;
                     
-                    // Open the Google Maps URL in a new tab
                     window.open(mapsUrl, '_blank');
                 },
                 function(error) {
@@ -263,8 +257,6 @@
             alert("Geolocation is not supported by your browser.");
         }
     }
-
-    
 </script>
 
 {% endblock %}
