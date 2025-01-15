@@ -144,6 +144,18 @@
             transform: translateY(-2px);
         }
 
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
     </style>
 </head>
 <body>
@@ -163,8 +175,13 @@
             </select>
         </form>
 
+        <!-- Search Input for Filtering Stores -->
+        <div class="search-box">
+            <input type="text" id="storeSearch" placeholder="Search for a store..." onkeyup="filterStores()">
+        </div>
+
         <!-- Store List -->
-        <ul class="store-list">
+        <ul class="store-list" id="storeList">
             {% if stores %}
                 {% for store in stores %}
                     <li>
@@ -181,6 +198,23 @@
     <footer>
         <p>Register your Store: <h3>0944 6415467</h3></p>
     </footer>
+
+    <script>
+        function filterStores() {
+            const searchInput = document.getElementById('storeSearch').value.toLowerCase();
+            const storeList = document.getElementById('storeList');
+            const stores = storeList.getElementsByTagName('li');
+
+            for (let i = 0; i < stores.length; i++) {
+                const storeName = stores[i].innerText.toLowerCase();
+                if (storeName.includes(searchInput)) {
+                    stores[i].style.display = '';
+                } else {
+                    stores[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
 </body>
 </html>
 {% endblock %}
