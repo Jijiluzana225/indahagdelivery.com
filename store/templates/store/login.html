@@ -1,5 +1,4 @@
-<!-- accounts/templates/accounts/login.html -->
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,12 +20,12 @@
             background-color: #ffffff;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         .login-form h2 {
             font-size: 32px; /* Increase heading font size */
             font-weight: 600;
             margin-bottom: 30px;
-            text-align: center;
         }
         .form-control {
             border-radius: 8px;
@@ -68,7 +67,10 @@
             margin-bottom: 20px;
             font-size: 18px; /* Increase alert message font size */
         }
-
+        .logo {
+            max-width: 250px;
+            margin-bottom: 20px;
+        }
         /* Adjustments for mobile */
         @media (max-width: 576px) {
             .login-form {
@@ -94,7 +96,9 @@
 
 <div class="container">
     <div class="login-form">
-        <h2>Login</h2>
+        <!-- Logo -->
+        <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo" class="logo">
+      
         
         <!-- Display success or error messages if any -->
         {% if messages %}
