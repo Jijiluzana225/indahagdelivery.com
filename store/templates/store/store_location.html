@@ -135,6 +135,7 @@
         cursor: pointer;
     }
 
+
 </style>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAp38ahRHi7YSU7iDITGyvJSHT6uo8-RFE&callback=initMap&v=weekly" 
@@ -195,16 +196,6 @@
         });
     }
 
-    // Function to reload the page
-    window.onload = function() {
-        if (!sessionStorage.getItem('reloaded')) {
-            sessionStorage.setItem('reloaded', 'true');
-            window.location.reload();
-        } else {
-            sessionStorage.removeItem('reloaded');
-        }
-    };
-
     // Function to open the modal and display the image in full screen
     function openModal(imageUrl) {
         const modal = document.getElementById('myModal');
@@ -222,9 +213,9 @@
 
     // Function to handle the "Order Now" button click
     function placeOrder(storeId) {
-        const orderUrl = `/store/${storeId}/order`; // URL for the store's order page
-        window.location.href = orderUrl;
-    }
+    const orderUrl = `/store/${storeId}/order`; // URL for the store's order page
+    window.location.href = orderUrl;
+}
 </script>
 
 <h1>Store Location</h1>
