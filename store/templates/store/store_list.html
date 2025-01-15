@@ -67,7 +67,23 @@
             margin: 20px auto;
             padding: 15px 30px;
             font-size: 1.1rem;
-            background: linear-gradient(145deg, #4e73df, #2e59d9);
+            background: linear-gradient(145deg, #4e73df,rgb(255, 17, 0));
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),
+                        -5px -5px 15px rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            text-decoration: none;
+        }
+        .store-btn {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            background: linear-gradient(145deg,rgb(11, 252, 31),rgb(252, 235, 5));
             color: #fff;
             text-align: center;
             border: none;
@@ -102,13 +118,39 @@
             bottom: 0;
             width: 100%;
         }
+
+        .store-list li {
+            list-style: none;
+            margin: 10px 0;
+        }
+    
+        .store-list a {
+            display: inline-block;
+            width:200px;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        .store-list a:hover {
+            background: linear-gradient(90deg, #2575fc, #6a11cb);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <a href="{% url 'customer_dashboard' %}" class="order-btn">My Orders</a>
-        <a href="{% url 'store_dashboard' %}" class="order-btn">My Store</a>
-        <h1>Filter Stores by Product Type</h1>
+        <a href="{% url 'store_dashboard' %}" class="store-btn">My Store</a>
+        <h1>Product Type</h1>
         <!-- Dropdown Filter -->
         <form method="get" action="">
             <select name="product_type" onchange="this.form.submit()">
@@ -122,7 +164,7 @@
         </form>
 
         <!-- Store List -->
-        <ul>
+        <ul class="store-list">
             {% if stores %}
                 {% for store in stores %}
                     <li>
@@ -137,7 +179,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>For Inquiries: 09177043781</p>
+        <p>Register your Store: <h3>0944 6415467</h3></p>
     </footer>
 </body>
 </html>
