@@ -196,7 +196,7 @@ def proceed_to_checkout(request):
         cart_items = request.POST.get('cart_items', '').split('|')  # Split by pipe
         
         # Retrieve the money and instructions from the POST data
-        money = Decimal(request.POST.get('money', 0))  # Convert to Decimal
+        money = request.POST.get('money')
         instructions = request.POST.get('instructions', '')  # Default to empty string if not provided
         
         # Create the order
