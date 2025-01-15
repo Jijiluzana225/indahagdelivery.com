@@ -11,93 +11,130 @@
         margin: 0;
         padding: 0;
         background-color: #f4f4f9;
+    }
+
+    h1, h2, h3 {
         color: #333;
-        display: flex;
-        justify-content: center;
-    }
-
-    .container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center; /* Center horizontally */
-        gap: 20px;
-        padding: 20px;
-        max-width: 1200px; /* Ensure container doesn't stretch too wide */
-        width: 100%;
-    }
-
-    .left-column {
-        flex: 1 1 70%;
-        padding: 20px;
-    }
-
-    .right-column {
-        flex: 1 1 30%;
-        background-color: #f0f8ff;
-        border-left: 1px solid #ddd;
-        padding: 20px;
-        position: sticky;
-        top: 20px;
-        height: calc(100vh - 40px);
-        z-index: 10;
-        box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-    }
-
-    h1 {
-        color: #333;
-        font-size: 2rem;
-        text-align: center;
+        font-weight: 600;
     }
 
     p {
         font-size: 1rem;
         color: #666;
-        text-align: center;
+        margin-bottom: 0.5rem;
     }
 
-    /* Product card styles */
+    /* Container for left and right columns */
+    .container {
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        flex-wrap: wrap;
+    }
+
+    /* Left column - product listing */
+    .left-column {
+        width: 65%;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .left-column h1 {
+        font-size: 2rem;
+        color: #2e3b4e;
+    }
+
+    .left-column p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .search-box {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .search-box input {
+        width: 80%;
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        margin-right: 10px;
+    }
+
+    .search-box button {
+        background-color: #3498db;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .search-box button:hover {
+        background-color: #2980b9;
+    }
+
+    .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    /* Individual Product Cards */
     .product-card {
         background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
         padding: 15px;
-        width: 100%;
-        max-width: 300px;
-        margin: 10px;
-        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .product-card:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
 
     .product-card img {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 10px;
+        max-width: 100%;
+        height: auto;
         border-radius: 8px;
     }
 
-    .product-card input[type="number"] {
-        width: 60px;
-        padding: 5px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        text-align: center;
+    .product-card h3 {
+        font-size: 1.2rem;
+        color: #2e3b4e;
+        margin: 10px 0;
+    }
+
+    .product-card p {
+        font-size: 0.9rem;
+        color: #777;
+    }
+
+    .product-card .formatted-price {
+        font-size: 1.1rem;
+        color: #e74c3c;
+        font-weight: bold;
     }
 
     .product-card button {
         background-color: #28a745;
         color: #fff;
-        padding: 10px;
-        font-size: 0.9rem;
-        border-radius: 5px;
-        cursor: pointer;
+        padding: 10px 20px;
         border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
         transition: background-color 0.3s ease;
     }
 
@@ -105,159 +142,192 @@
         background-color: #218838;
     }
 
+    /* Spacing Between Qty and Add to Cart button */
+    .product-card label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .product-card input[type="number"] {
+        width: 60px;
+        padding: 5px;
+        margin-bottom: 15px; /* Space between input and button */
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    /* Right Column - Cart */
+    .right-column {
+        width: 30%;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .right-column h2 {
+        font-size: 1.8rem;
+        color: #2e3b4e;
+        margin-bottom: 20px;
+    }
+
+    .cart-items {
+        margin-bottom: 20px;
+    }
+
     .cart-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #fff;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 10px 0;
+        border-bottom: 1px solid #ddd;
     }
 
     .cart-item p {
-        margin: 0;
-        font-size: 0.9rem;
+        font-size: 0.85rem; /* Smaller font size */
+        color: #333;
     }
 
-    .cart-item input[type="number"] {
+    .cart-item input {
         width: 50px;
         padding: 5px;
-        margin: 0 10px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        text-align: center;
     }
 
     .cart-item button {
-        background-color: #dc3545;
+        background-color: #e74c3c;
         color: #fff;
-        padding: 5px;
-        border-radius: 5px;
-        cursor: pointer;
         border: none;
-        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
     }
 
     .cart-item button:hover {
-        background-color: #c82333;
+        background-color: #c0392b;
     }
 
     .cart-total {
+        font-size: 0.9rem; /* Smaller font size */
         font-weight: bold;
-        font-size: 2rem;
         color: #333;
         margin-top: 20px;
     }
 
-    .order-button {
-        background-color: #007bff;
-        color: white;
-        padding: 12px;
-        font-size: 1.2rem;
-        border-radius: 8px;
-        border: none;
+    .money-input {
         margin-top: 20px;
+    }
+
+    .money-input input {
         width: 100%;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
     }
 
-    .order-button:hover {
-        background-color: #0056b3;
+    .money-input small {
+        font-size: 0.8rem;
+        color: #777;
+        display: block;
+        margin-top: 5px;
     }
 
-    .order-button:disabled {
-        background-color: #ddd;
-        cursor: not-allowed;
-    }
-
-    /* Additional Instructions Styles */
     .additional-instructions {
         margin-top: 20px;
-        font-size: 1rem;
-    }
-
-    .additional-instructions label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 10px;
     }
 
     .additional-instructions textarea {
         width: 100%;
         height: 100px;
         padding: 10px;
+        border-radius: 4px;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
-        resize: vertical;
-    }
-
-    /* Money Input Box Styles */
-    .money-input {
-        margin-top: 20px;
         font-size: 1rem;
     }
 
-    .money-input label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 10px;
+    .order-button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        border-radius: 4px;
+        width: 100%;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
 
-    .money-input input {
-        width: 40%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
+    .order-button:disabled {
+        background-color: #bdc3c7;
+        cursor: not-allowed;
     }
 
-    .money-input small {
-        font-size: 0.9rem;
-        color: #666;
+    .order-button:hover:not(:disabled) {
+        background-color: #2980b9;
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
         .container {
             flex-direction: column;
-            padding: 10px;
+            align-items: center;
         }
 
         .left-column, .right-column {
-            flex: 1 1 100%;
-            padding: 10px;
+            width: 100%;
+            margin-bottom: 20px;
         }
 
-        .product-card {
-            max-width: 100%;
-            margin: 10px auto;
+        .products {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         }
+        .store-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    
+        .store-header h1 {
+            font-size: 2rem;
+            color: #2e3b4e;
+            margin-bottom: 10px;
+        }
+    
+        .store-header p {
+            font-size: 1rem;
+            color: #666;
+        }
+
     }
 
-    @media (max-width: 480px) {
-        h1 {
-            font-size: 1.5rem;
-        }
 
-        .product-card {
-            padding: 10px;
-        }
-
-        .cart-item {
-            font-size: 0.8rem;
-        }
-    }
 </style>
 
 <div class="container">
     <div class="left-column">
-        <h1>{{ store.name }}</h1>    
+        <div class="store-header">
+        <h1>{{ store.name }}</h1>
         <p>Contact: {{ store.contact_number }}</p>
+        </div>
+        <!-- Search Box -->
+        <div class="search-box">
+            <input type="text" id="searchBox" placeholder="Search for a product..." onkeyup="filterProducts()">
+            <button>Search</button>
+        </div>
 
-        <div class="products">
+        <div class="products" id="products-list">
             {% for item in items %}
-            <div class="product-card">
+            <div class="product-card" data-name="{{ item.product.name|lower }}">
                 <img src="{{ item.product.picture.url }}" alt="{{ item.product.name }}">
                 <h3>{{ item.product.name }}</h3>
                 <p>{{ item.product.description }}</p>
@@ -274,7 +344,7 @@
     <div class="right-column">
         <h2>Your Cart</h2>
         <div class="cart-items" id="cart-items"></div>
-        <div class="cart-total" id="cart-total">Total: 0.00</div>
+        <div class="cart-total" id="cart-total" style="font-size:40px; color:blue";>Total: 0.00</div>
 
         <div class="money-input">
             <label for="money">Money</label>
@@ -337,9 +407,10 @@
             const itemTotal = item.price * item.quantity;
             total += itemTotal;
 
-            cartItemsContainer.innerHTML += `
+            cartItemsContainer.innerHTML += ` 
                 <div class="cart-item">
                     <p>${item.name}</p>
+                    <p>Price: ${formatPrice(item.price)}</p>
                     <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
                     <p>${formatPrice(itemTotal)}</p>
                     <button onclick="deleteCartItem(${item.id})">×</button>
@@ -362,6 +433,9 @@
         const totalPrice = calculateTotalPrice();  // Total price from cart
         const cartItems = cart.map(item => `${item.name},${item.price},${item.quantity}`).join("|");
     
+        const money = document.getElementById('money').value;
+        const instructions = document.getElementById('additional-instructions').value;
+    
         // Make the POST request
         fetch('/checkout/', {
             method: 'POST',
@@ -369,13 +443,13 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': '{{ csrf_token }}'  // CSRF token
             },
-            body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}`
+            body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}&money=${money}&instructions=${instructions}`
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert('Order placed successfully!');
-                window.location.href = '/dashboard' ;
+                window.location.href = '/dashboard';
             } else {
                 alert('There was an error placing your order.');
             }
@@ -383,6 +457,21 @@
         .catch(error => console.error('Error:', error));
     }
     
+
+
+    function filterProducts() {
+        const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+        const productCards = document.querySelectorAll(".product-card");
+
+        productCards.forEach(card => {
+            const productName = card.getAttribute("data-name");
+            if (productName.includes(searchTerm)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
 
     function updateOrderStatus(orderId, status) {
         fetch(`/update_order_status/${orderId}/`, {
@@ -402,9 +491,6 @@
             }
         });
     }
-
-
-    
 </script>
 
 {% endblock %}
