@@ -180,8 +180,6 @@ def edit_profile(request):
         form = CustomerProfileForm(instance=profile)
     return render(request, 'store/edit_profile.html', {'form': form})
 
-
-
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Order, OrderItem, Store
@@ -228,7 +226,6 @@ def proceed_to_checkout(request):
         
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
 
 
 
@@ -418,4 +415,32 @@ def update_profile(request):
             lng = 0  # Default longitude
 
     return render(request, 'store/update_profile.html', {'form': form, 'lat': lat, 'lng': lng})
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Item, Product
+
+@login_required
+def edit_prices(request):
+    # Get the logged-in user's store
+    store = request.user.stores  # This assumes `related_name='stores'` for the Store model's owner field
+
+    # Retrieve all items associated with the user's store
+    items = Item.objects.filter(store=store)
+
+    if request.method == "POST":
+        for item in items:
+            field_name = f"price_{item.product.id}"
+            if field_name in request.POST:
+                try:
+                    new_price = float(request.POST[field_name])
+                    item.product.price = new_price
+                    item.product.save()
+                except ValueError:
+                    pass  # Ignore invalid inputs
+        return redirect('edit_prices')  # Refresh the page
+
+    # Pass the items to the template
+    return render(request, 'store/store_edit_price.html', {'items': items})
+
 
