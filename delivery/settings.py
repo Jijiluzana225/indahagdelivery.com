@@ -33,9 +33,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = ['https://*.railway.app',
-                       "https://www.indahagdelivery.com",
-                        "https://indahagdelivery.com"]
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
 # Application definition
 
 INSTALLED_APPS = [    
@@ -48,6 +46,7 @@ INSTALLED_APPS = [
     'store',
     'cloudinary_storage',      
     'cloudinary',
+    'django.contrib.humanize',
    
 ]
 
