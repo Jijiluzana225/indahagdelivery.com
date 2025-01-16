@@ -444,3 +444,22 @@ def edit_prices(request):
     return render(request, 'store/store_edit_price.html', {'items': items})
 
 
+
+from django.http import JsonResponse
+from django.utils import timezone
+from .models import Order
+
+def check_for_updates(request):
+    # Get the latest order update timestamp
+    last_order_update = Order.objects.latest('created_at').created_at
+    
+    # Get the last checked time from the session (initialize if not available)
+    last_checked_time = request.session.get('last_checked_time', timezone.now())
+    
+    # Compare and determine if there is a new update
+    if last_order_update > last_checked_time:
+        request.session['last_checked_time'] = last_order_update  # Update the session time
+        return JsonResponse({'update_needed': True})
+    else:
+        return JsonResponse({'update_needed': False})
+
