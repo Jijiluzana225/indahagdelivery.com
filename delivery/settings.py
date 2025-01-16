@@ -29,15 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-h+fyj)z-4rqjgi+ml2l21xh@9s_^=!u12us$u-e$gthp7_8qyn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = ["https://*.railway.app",
-                      "https://www.indahagdelivery.com",                      
-                      "https://indahagdelivery.com"]
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app',
+                      'https://www.indahagdelivery.com',                      
+                      'https://indahagdelivery.com']
 
-CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+
 # Application definition
 
 INSTALLED_APPS = [    
