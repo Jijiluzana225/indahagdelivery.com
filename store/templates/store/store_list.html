@@ -63,27 +63,12 @@
 
         /* 3D Button Style */
         .order-btn {
+            width: 200px;
             display: inline-block;
             margin: 20px auto;
             padding: 15px 30px;
             font-size: 1.1rem;
             background: linear-gradient(145deg, #4e73df,rgb(255, 17, 0));
-            color: #fff;
-            text-align: center;
-            border: none;
-            border-radius: 50px;
-            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),
-                        -5px -5px 15px rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            text-decoration: none;
-        }
-        .store-btn {
-            display: inline-block;
-            margin: 20px auto;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            background: linear-gradient(145deg,rgb(11, 252, 31),rgb(252, 235, 5));
             color: #fff;
             text-align: center;
             border: none;
@@ -107,6 +92,70 @@
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
                         -5px -5px 10px rgba(255, 255, 255, 0.3);
         }
+
+        .store-btn {
+            width: 200px;
+            display: inline-block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            background: linear-gradient(145deg,rgb(11, 252, 31),rgb(252, 5, 5));
+            color: #fff;
+            text-align: center;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),
+                        -5px -5px 15px rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            text-decoration: none;
+        }
+        
+        
+        
+        .store-btn:hover {
+            background: linear-gradient(145deg, #2e59d9, #4e73df);
+            box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.3),
+                        -5px -5px 25px rgba(255, 255, 255, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .store-btn:active {
+            transform: translateY(2px);
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
+                        -5px -5px 10px rgba(255, 255, 255, 0.3);
+        
+        }
+
+        .prices-btn {
+            width: 200px;
+                       display: inline-block;
+                            margin: 20px auto;
+                            padding: 15px 30px;
+                            font-size: 1.1rem;
+                            background: linear-gradient(145deg,brown,orange);
+                            color: #fff;
+                            text-align: center;
+                            border: none;
+                            border-radius: 50px;
+                            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),
+                                        -5px -5px 15px rgba(255, 255, 255, 0.3);
+                            cursor: pointer;
+                            transition: all 0.3s ease-in-out;
+                            text-decoration: none;
+                        }
+                        
+        .prices-btn:hover {
+                            background: linear-gradient(145deg, #2e59d9, #4e73df);
+                            box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.3),
+                                        -5px -5px 25px rgba(255, 255, 255, 0.4);
+                            transform: translateY(-5px);
+                        }
+                
+        .prices-btn:active {
+                            transform: translateY(2px);
+                            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
+                                        -5px -5px 10px rgba(255, 255, 255, 0.3);
 
         /* Footer Style */
         footer {
@@ -162,6 +211,9 @@
     <div class="container">
         <a href="{% url 'customer_dashboard' %}" class="order-btn">My Orders</a>
         <a href="{% url 'store_dashboard' %}" class="store-btn">My Store</a>
+        {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
+        <a href="{% url 'edit_prices' %}" class="prices-btn">Update Prices</a>
+    {% endif %}
         <h1>Product Type</h1>
         <!-- Dropdown Filter -->
         <form method="get" action="">
