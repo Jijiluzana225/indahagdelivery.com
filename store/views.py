@@ -456,16 +456,21 @@ def check_for_updates(request):
         last_update_time = latest_order.updated_at
         current_time = timezone.now()
 
-        # Retrieve the last check time from the session
-        last_check_time = request.session.get('last_check_time', current_time)
+        # Retrieve the last check time from the session, default to None if not found
+        last_check_time = request.session.get('last_check_time', None)
 
         # Log for debugging
         print(f"Last update time: {last_update_time}")
         print(f"Current time: {current_time}")
         print(f"Last check time: {last_check_time}")
 
+        # If last check time is not set, initialize it
+        if last_check_time is None:
+            last_check_time = current_time
+
+        # Compare last update time with last check time
         if last_update_time > last_check_time:
-            # Update the session with the current time as the last check time
+            # If an update has occurred, set the session's last check time to the current time
             request.session['last_check_time'] = current_time
             return JsonResponse({'update_needed': True})
         else:
@@ -474,5 +479,6 @@ def check_for_updates(request):
     except Order.DoesNotExist:
         # Handle case where there are no orders in the database
         return JsonResponse({'update_needed': False})
+
 
 
