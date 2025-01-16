@@ -206,7 +206,6 @@
         
     </table>
 </div>
-
 <script>
     // Function to update the background color based on order status
     function updateRowColor() {
@@ -234,14 +233,9 @@
         });
     }
 
-    // Call the function to initially set the row colors when the page loads
+    // Initial row color update when the page loads
     window.onload = function() {
         updateRowColor();
-        
-        // Refresh the page every 10 seconds
-        setInterval(function() {
-            location.reload();
-        }, 10000);  // 10000 milliseconds = 10 seconds
     };
 
     // Call the function again when the status is updated
@@ -301,9 +295,11 @@
             alert("Geolocation is not supported by your browser.");
         }
     }
+
+    // Refresh the page every 10 seconds (10000 milliseconds)
+    setInterval(function() {
+        location.reload();
+    }, 10000); 
 </script>
-
-
-
 
 {% endblock %}
