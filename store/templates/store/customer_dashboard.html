@@ -1,4 +1,5 @@
 {% extends 'store/base.html' %}
+{% load humanize %}
 
 {% block title %}Customer Dashboard{% endblock %}
 
@@ -57,29 +58,13 @@
         font-weight: bold;
     }
 
-    .status.Pending {
-        color: #ffc107;
-    }
-
-    .status.Preparing {
-        color: #17a2b8;
-    }
-
-    .status.On_the_Way {
-        color: #28a745;
-    }
-
-    .status.Delivered {
-        color: #007bff;
-    }
-
     .no-orders-message {
         font-size: 1.2rem;
         color: #555;
         text-align: center;
     }
 
-    /* Responsive Design for Tablets */
+    /* Responsive Design */
     @media (max-width: 768px) {
         .orders-table th, .orders-table td {
             padding: 12px;
@@ -91,7 +76,6 @@
         }
     }
 
-    /* Responsive Design for Mobile */
     @media (max-width: 480px) {
         .dashboard-title {
             font-size: 1.6rem;
@@ -107,11 +91,6 @@
             font-size: 0.8rem;
         }
 
-        .order-row {
-            font-size: 0.9rem;
-        }
-
-        /* Make table scrollable on mobile */
         .orders-table-container {
             overflow-x: auto;
         }
@@ -146,11 +125,18 @@
             </thead>
             <tbody>
                 {% for order in orders %}
-                    <tr class="order-row">
+                    <tr class="order-row" 
+                        style="background-color: 
+                            {% if order.status == 'Pending' %}White
+                            {% elif order.status == 'Preparing' %}lightYellow
+                            {% elif order.status == 'On the Way' %}Aqua
+                            {% elif order.status == 'Delivered' %}lightgreen
+                            {% else %}#ffffff
+                            {% endif %};">
                         <td>{{ order.id }}</td>
                         <td>{{ order.store.name }}</td>
-                        <td>{{ order.total_amount }}</td>
-                        <td>{{ order.status }}</td>
+                        <td>{{ order.total_amount|floatformat:2|intcomma }}</td>
+                        <td class="status">{{ order.status }}</td>
                         <td>{{ order.created_at }}</td>
                         <td><a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a></td>
                     </tr>
@@ -161,7 +147,4 @@
 {% else %}
     <p class="no-orders-message">You have no orders yet.</p>
 {% endif %}
-{% endblock %}
-
-{% block extra_styles %}
 {% endblock %}
