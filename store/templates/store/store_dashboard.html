@@ -3,29 +3,7 @@
 {% block title %}Store Orders{% endblock %}
 
 {% block content %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
-    // Function to check for updates every 5 seconds
-    setInterval(function() {
-        console.log("Checking for updates...");
-
-        $.ajax({
-            url: "{% url 'check_for_updates' %}",  // URL for the check_for_updates view
-            method: "GET",
-            success: function(response) {
-                console.log("Response received:", response);
-
-                if (response.update_needed) {
-                    console.log("Update needed! Reloading the page...");
-                    location.reload();  // Refresh the page if there is an update
-                } else {
-                    console.log("No update needed.");
-                }
-            }
-        });
-    }, 5000);  // Check every 5 seconds
-</script>
 
 
 <style>
