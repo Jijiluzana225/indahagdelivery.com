@@ -180,6 +180,14 @@ def edit_profile(request):
         form = CustomerProfileForm(instance=profile)
     return render(request, 'store/edit_profile.html', {'form': form})
 
+
+
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Order, OrderItem, Store
+from django.db import transaction
+from decimal import Decimal
+
 @login_required
 def proceed_to_checkout(request):
     if request.method == 'POST':
