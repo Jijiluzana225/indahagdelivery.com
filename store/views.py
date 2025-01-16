@@ -450,16 +450,29 @@ from django.utils import timezone
 from .models import Order
 
 def check_for_updates(request):
-    # Get the latest order update timestamp
-    last_order_update = Order.objects.latest('created_at').created_at
-    
-    # Get the last checked time from the session (initialize if not available)
-    last_checked_time = request.session.get('last_checked_time', timezone.now())
-    
-    # Compare and determine if there is a new update
-    if last_order_update > last_checked_time:
-        request.session['last_checked_time'] = last_order_update  # Update the session time
-        return JsonResponse({'update_needed': True})
-    else:
+    try:
+        # Get the most recent updated_at value from the Order table
+        latest_order = Order.objects.latest('updated_at')
+        last_update_time = latest_order.updated_at
+        current_time = timezone.now()
+
+        # Retrieve the last check time from the session
+        last_check_time = request.session.get('last_check_time', current_time)
+
+        # Log for debugging
+        print(f"Last update time: {last_update_time}")
+        print(f"Current time: {current_time}")
+        print(f"Last check time: {last_check_time}")
+
+        if last_update_time > last_check_time:
+            # Update the session with the current time as the last check time
+            request.session['last_check_time'] = current_time
+            return JsonResponse({'update_needed': True})
+        else:
+            return JsonResponse({'update_needed': False})
+
+    except Order.DoesNotExist:
+        # Handle case where there are no orders in the database
         return JsonResponse({'update_needed': False})
+
 
