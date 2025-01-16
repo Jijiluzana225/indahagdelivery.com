@@ -467,6 +467,8 @@ def check_for_updates(request):
         # If last check time is not set, initialize it
         if last_check_time is None:
             last_check_time = current_time
+            request.session['last_check_time'] = last_check_time  # Store last check time in session
+            print("Initializing last check time:", last_check_time)
 
         # Compare last update time with last check time
         if last_update_time > last_check_time:
@@ -479,6 +481,7 @@ def check_for_updates(request):
     except Order.DoesNotExist:
         # Handle case where there are no orders in the database
         return JsonResponse({'update_needed': False})
+
 
 
 
