@@ -180,12 +180,6 @@ def edit_profile(request):
         form = CustomerProfileForm(instance=profile)
     return render(request, 'store/edit_profile.html', {'form': form})
 
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from .models import Order, OrderItem, Store
-from django.db import transaction
-from decimal import Decimal
-
 @login_required
 def proceed_to_checkout(request):
     if request.method == 'POST':
@@ -196,16 +190,16 @@ def proceed_to_checkout(request):
         cart_items = request.POST.get('cart_items', '').split('|')  # Split by pipe
         
         # Retrieve the money and instructions from the POST data
-        money = request.POST.get('money')
+        money = request.POST.get('money')  # Allow None or blank values
         instructions = request.POST.get('instructions', '')  # Default to empty string if not provided
-        
+
         # Create the order
         with transaction.atomic():
             order = Order.objects.create(
                 store=store,
                 customer=customer,
                 total_price=total_price,
-                money=money,  # Save the money value
+                money=money if money else None,  # Store None if money is blank
                 instructions=instructions,  # Save the instructions value
                 status='Pending'
             )
@@ -226,6 +220,7 @@ def proceed_to_checkout(request):
         
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
 
 
 
