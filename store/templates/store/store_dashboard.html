@@ -237,6 +237,11 @@
     // Call the function to initially set the row colors when the page loads
     window.onload = function() {
         updateRowColor();
+        
+        // Refresh the page every 10 seconds
+        setInterval(function() {
+            location.reload();
+        }, 10000);  // 10000 milliseconds = 10 seconds
     };
 
     // Call the function again when the status is updated
@@ -297,6 +302,7 @@
         }
     }
 </script>
+
 
 
 
