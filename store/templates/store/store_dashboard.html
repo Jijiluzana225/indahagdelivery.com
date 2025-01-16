@@ -1,5 +1,5 @@
 {% extends 'store/base.html' %}
-
+{% load humanize %}
 {% block title %}Store Orders{% endblock %}
 
 {% block content %}
@@ -150,6 +150,11 @@
             white-space: nowrap;
         }
     }
+
+    /* Transition for background color */
+    .order-row {
+        transition: background-color 0.3s ease;
+    }
 </style>
 
 <h2 class="orders-title">Store Orders</h2>
@@ -175,9 +180,10 @@
                     <td>
                         <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
                     </td>
-                    <td>{{ order.total_amount|floatformat:2 }}</td> <!-- Display Total Amount -->
+                    <td>{{ order.total_amount|floatformat:2|intcomma }}</td> <!-- Display Total Amount -->
+                    
                     <td>
-                        <select id="status-{{ order.id }}">
+                        <select id="status-{{ order.id }}" onchange="updateRowColor()">
                             <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
                             <option value="Preparing" {% if order.status == 'Preparing' %}selected{% endif %}>Preparing</option>
                             <option value="On the Way" {% if order.status == 'On the Way' %}selected{% endif %}>On the Way</option>
@@ -199,6 +205,38 @@
 </div>
 
 <script>
+    // Function to update the background color based on order status
+    function updateRowColor() {
+        const rows = document.querySelectorAll('.order-row');
+        
+        rows.forEach(row => {
+            const status = row.querySelector('select').value;
+            
+            switch (status) {
+                case 'Pending':
+                    row.style.backgroundColor = 'White'; // Red (Pending)
+                    break;
+                case 'Preparing':
+                    row.style.backgroundColor = 'lightYellow'; // Yellow (Preparing)
+                    break;
+                case 'On the Way':
+                    row.style.backgroundColor = 'Aqua'; // Blue (On the Way)
+                    break;
+                case 'Delivered':
+                    row.style.backgroundColor = 'lightgreen'; // Green (Delivered)
+                    break;
+                default:
+                    row.style.backgroundColor = ''; // Default background (if status is empty or unknown)
+            }
+        });
+    }
+
+    // Call the function to initially set the row colors when the page loads
+    window.onload = function() {
+        updateRowColor();
+    };
+
+    // Call the function again when the status is updated
     function updateOrderStatus(orderId) {
         var status = document.getElementById('status-' + orderId).value;
         var button = document.querySelector(`button[onclick="updateOrderStatus(${orderId})"]`);
@@ -213,6 +251,7 @@
         xhr.onload = function() {
             if (xhr.status == 200) {
                 alert("Order ID " + orderId + " status updated to " + status);
+                updateRowColor();  // Update the row color after the status update
             } else {
                 alert("Failed to update status. Please try again.");
             }
@@ -234,10 +273,7 @@
         xhr.send(data);
     }
 
-    setInterval(() => {
-        location.reload();
-    }, 10000)
-
+    // Function to open Google Maps with directions
     function openGoogleMaps(destination) {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
