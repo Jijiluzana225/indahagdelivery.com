@@ -480,7 +480,12 @@ def check_for_updates(request):
 
     except Order.DoesNotExist:
         # Handle case where there are no orders in the database
+        print("No orders found in the database.")
         return JsonResponse({'update_needed': False})
+    except Exception as e:
+        # Catch any other unexpected errors and log them
+        print(f"An unexpected error occurred: {e}")
+        return JsonResponse({'update_needed': False, 'error': str(e)})
 
 
 
