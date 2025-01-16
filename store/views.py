@@ -445,48 +445,6 @@ def edit_prices(request):
 
 
 
-from django.http import JsonResponse
-from django.utils import timezone
-from .models import Order
-
-def check_for_updates(request):
-    try:
-        # Get the most recent updated_at value from the Order table
-        latest_order = Order.objects.latest('updated_at')
-        last_update_time = latest_order.updated_at
-        current_time = timezone.now()
-
-        # Retrieve the last check time from the session, default to None if not found
-        last_check_time = request.session.get('last_check_time', None)
-
-        # Log for debugging
-        print(f"Last update time: {last_update_time}")
-        print(f"Current time: {current_time}")
-        print(f"Last check time: {last_check_time}")
-
-        # If last check time is not set, initialize it
-        if last_check_time is None:
-            last_check_time = current_time
-            request.session['last_check_time'] = last_check_time  # Store last check time in session
-            print("Initializing last check time:", last_check_time)
-
-        # Compare last update time with last check time
-        if last_update_time > last_check_time:
-            # If an update has occurred, set the session's last check time to the current time
-            request.session['last_check_time'] = current_time
-            return JsonResponse({'update_needed': True})
-        else:
-            return JsonResponse({'update_needed': False})
-
-    except Order.DoesNotExist:
-        # Handle case where there are no orders in the database
-        print("No orders found in the database.")
-        return JsonResponse({'update_needed': False})
-    except Exception as e:
-        # Catch any other unexpected errors and log them
-        print(f"An unexpected error occurred: {e}")
-        return JsonResponse({'update_needed': False, 'error': str(e)})
-
 
 
 
