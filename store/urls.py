@@ -41,6 +41,6 @@ urlpatterns = [
     
     path('edit-prices/', views.edit_prices, name='edit_prices'),
 
-    path('check-for-updates/', views.check_for_updates, name='check_for_updates'),
+
     
 ]
