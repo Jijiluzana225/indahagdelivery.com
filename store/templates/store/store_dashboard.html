@@ -8,21 +8,20 @@
 <script>
     // Function to check for updates every 5 seconds
     setInterval(function() {
-        console.log("Checking for updates...");  // Print to check if the interval is triggered
+        console.log("Checking for updates...");
+
         $.ajax({
             url: "{% url 'check_for_updates' %}",  // URL for the check_for_updates view
             method: "GET",
             success: function(response) {
-                console.log("Response received:", response);  // Log the response from the server
+                console.log("Response received:", response);
+
                 if (response.update_needed) {
-                    console.log("Update needed! Refreshing page.");  // Print if an update is needed
+                    console.log("Update needed! Reloading the page...");
                     location.reload();  // Refresh the page if there is an update
                 } else {
-                    console.log("No update needed.");  // Print if no update is needed
+                    console.log("No update needed.");
                 }
-            },
-            error: function(xhr, status, error) {
-                console.log("Error in AJAX request:", error);  // Print if there's an error in the request
             }
         });
     }, 5000);  // Check every 5 seconds
