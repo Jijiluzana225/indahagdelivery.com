@@ -486,3 +486,50 @@ def update_store_open(request):
 
 
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import Product
+
+@login_required
+def product_list(request):
+    # Filter products by the logged-in user
+    products = Product.objects.filter(username=request.user)
+    return render(request, 'store/product_list.html', {'products': products})
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import ProductForm
+
+@login_required
+def product_create(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)  # Don't save to the database yet
+            product.username = request.user  # Assign the logged-in user
+            product.save()  # Now save the product
+            return redirect('product_list')
+    else:
+        form = ProductForm()
+    return render(request, 'store/product_form.html', {'form': form, 'title': 'Add Product'})
+
+
+
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_list')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'store/product_form.html', {'form': form, 'title': 'Edit Product'})
+
+def product_delete(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('product_list')
+    return render(request, 'store/product_confirm_delete.html', {'product': product})

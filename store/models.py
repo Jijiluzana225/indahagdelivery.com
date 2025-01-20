@@ -1,6 +1,6 @@
 from django.db import models
 from cloudinary_storage.storage import MediaCloudinaryStorage
-
+from django.contrib.auth.models import User
 
 class ProductType(models.Model):
     name = models.CharField(max_length=255)
@@ -9,13 +9,15 @@ class ProductType(models.Model):
     def __str__(self):
         return self.name
 
-class Product(models.Model):
+class Product(models.Model):    
+    username = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=255)
     type = models.ForeignKey(ProductType, related_name='products', on_delete=models.CASCADE)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='products/')
-    active = models.BooleanField(default=False)
+    active = models.BooleanField(default=False)    
+
 
     def __str__(self):
         return self.name

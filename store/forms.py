@@ -62,3 +62,18 @@ class StoreOpenForm(forms.ModelForm):
         widgets = {
             'open': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
         }
+
+
+from django import forms
+from .models import Product
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'type', 'description', 'price', 'picture', 'active']
+        exclude = ['username']  # Exclude username since it's auto-assigned
+        
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
