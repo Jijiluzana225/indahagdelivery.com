@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 def store_list(request):
     product_type_id = request.GET.get('product_type', None)  # Get selected ProductType from the request
     product_types = ProductType.objects.all()  # Retrieve all ProductTypes
-    stores = Store.objects.all()  # Default to all stores
+    stores = Store.objects.all().order_by('name')
 
     if product_type_id:
         # Filter stores that have items with products of the selected ProductType
@@ -151,12 +151,21 @@ class CustomLogoutView(LogoutView):
 
 
 
+# from django.shortcuts import render, get_object_or_404
+# from .models import Store, Item
+
+# def store_products(request, store_id):
+#     store = get_object_or_404(Store, id=store_id)
+#     items = Item.objects.filter(store=store).select_related('product')  # Fetch items for this store
+#     return render(request, 'store/store_products.html', {'store': store, 'items': items})
+
 from django.shortcuts import render, get_object_or_404
 from .models import Store, Item
 
 def store_products(request, store_id):
     store = get_object_or_404(Store, id=store_id)
-    items = Item.objects.filter(store=store).select_related('product')  # Fetch items for this store
+    # Filter items for the store and ensure product.active is False
+    items = Item.objects.filter(store=store, product__active=False).select_related('product')
     return render(request, 'store/store_products.html', {'store': store, 'items': items})
 
 
@@ -253,9 +262,7 @@ from django.shortcuts import render, redirect
 
 @login_required
 def store_dashboard(request):
-    if not request.user.is_staff:  # Ensure only the store owner can access
-        return redirect('store_list')
-
+ 
     # Fetch customer profiles with their locations
     customer_profiles = CustomerProfile.objects.all()
 
@@ -270,6 +277,7 @@ def store_dashboard(request):
         customer_profile = customer_profiles.get(username=order.customer)
         order.customer_location = customer_profile.location if customer_profile else "Location not available"
         order.customer_name = customer_profile.name
+        order.phone_number = customer_profile.phone_number
         orders_with_location.append(order)
 
     return render(request, 'store/store_dashboard.html', {
@@ -430,14 +438,23 @@ def edit_prices(request):
 
     if request.method == "POST":
         for item in items:
-            field_name = f"price_{item.product.id}"
-            if field_name in request.POST:
+            # Update price
+            price_field_name = f"price_{item.product.id}"
+            if price_field_name in request.POST:
                 try:
-                    new_price = float(request.POST[field_name])
+                    new_price = float(request.POST[price_field_name])
                     item.product.price = new_price
-                    item.product.save()
                 except ValueError:
                     pass  # Ignore invalid inputs
+
+            # Update active status
+            active_field_name = f"active_{item.product.id}"
+            # Checkbox logic: assign True if the checkbox is present, False otherwise
+            item.product.active = active_field_name in request.POST
+
+            # Save the updated product
+            item.product.save()
+
         return redirect('edit_prices')  # Refresh the page
 
     # Pass the items to the template
@@ -445,6 +462,27 @@ def edit_prices(request):
 
 
 
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Store
+from .forms import StoreOpenForm
+
+@login_required
+def update_store_open(request):
+    # Get the store related to the logged-in user
+    store = get_object_or_404(Store, owner=request.user)
+
+    if request.method == 'POST':
+        form = StoreOpenForm(request.POST, instance=store)
+        if form.is_valid():
+            form.save()
+            return redirect('store_dashboard')  # Replace with the name of your dashboard view
+    else:
+        form = StoreOpenForm(instance=store)
+
+    return render(request, 'store/update_open.html', {'form': form, 'store': store})
 
 
 
