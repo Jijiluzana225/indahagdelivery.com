@@ -52,3 +52,13 @@ class CustomerProfileForm(forms.ModelForm):
         ]
 
 
+from django import forms
+from .models import Store
+
+class StoreOpenForm(forms.ModelForm):
+    class Meta:
+        model = Store
+        fields = ['open']
+        widgets = {
+            'open': forms.RadioSelect(choices=[(True, 'Yes'), (False, 'No')]),
+        }
