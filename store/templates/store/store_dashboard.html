@@ -166,6 +166,7 @@
             <tr>
                 <th>Order ID</th>
                 <th>Customer</th>
+                <th>Customer Number</th>
                 <th>Location</th>
                 <th>Total Amount</th> <!-- New Total Amount Column -->
                 <th>Status</th>
@@ -180,6 +181,7 @@
                 <tr class="order-row">
                     <td>{{ order.id }}</td>
                     <td>{{ order.customer_name }}</td>
+                    <td>{{ order.phone_number }}</td>
                     <td>
                         <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
                     </td>
