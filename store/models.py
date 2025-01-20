@@ -15,6 +15,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='products/')
+    active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -34,7 +35,7 @@ class Store(models.Model):
     facebook_page = models.URLField(null=True, blank=True)
     picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='store/')
     owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='stores', null=True, blank=True)  # link to User
-
+    open = models.BooleanField(default=False)
     def __str__(self):
         return self.name
 
@@ -98,6 +99,5 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product_name}"
 
-class Om(models.Model):
-        product_name = models.CharField(max_length=255)
+
     
