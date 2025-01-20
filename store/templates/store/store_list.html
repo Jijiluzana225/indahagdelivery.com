@@ -209,11 +209,16 @@
 </head>
 <body>
     <div class="container">
+        {% if request.user.is_authenticated and 'Store' not in request.user.groups.all|join:" " %}
         <a href="{% url 'customer_dashboard' %}" class="order-btn">My Orders</a>
-        <a href="{% url 'store_dashboard' %}" class="store-btn">My Store</a>
+        {% endif %}
+        
         {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
+        <a href="{% url 'store_dashboard' %}" class="store-btn">My Store</a>       
+        
         <a href="{% url 'edit_prices' %}" class="prices-btn">Update Prices</a>
-    {% endif %}
+        {% endif %}
+        
         <h1>Product Type</h1>
         <!-- Dropdown Filter -->
         <form method="get" action="">
@@ -237,7 +242,13 @@
             {% if stores %}
                 {% for store in stores %}
                     <li>
-                        <a href="{% url 'store_location' id=store.id %}">{{ store.name }}</a>
+                        {% if store.open %}
+                            <a href="{% url 'store_location' id=store.id %}">{{ store.name }}</a>
+                        {% else %}
+                            <a href="#" class="disabled" style="cursor: not-allowed; background-color: #ddd; color: #aaa;">
+                                {{ store.name }} (Opens Soon!)
+                            </a>
+                        {% endif %}
                     </li>
                 {% endfor %}
             {% else %}
