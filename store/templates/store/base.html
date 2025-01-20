@@ -49,7 +49,21 @@
        
         .logo {
             max-width: 150px;
-            
+        }
+
+        .open-close-btn {
+            margin-left: 20px; /* Space between the logo and the button */
+            padding: 8px 20px;
+            font-size: 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+        }
+
+        .open-close-btn:hover {
+            background-color: #0056b3;
         }
 
         footer {
@@ -75,8 +89,15 @@
         <div class="container-fluid">
             <a href="{% url 'store_list' %}">
                 <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo"  class="logo">
-            </a>            
+            </a>
             
+            <!-- Open/Close Button -->
+
+            {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
+            <a href="{% url 'update_store_open' %}" class="open-close-btn">Open/Close</a>
+            {% endif %}
+            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -106,6 +127,7 @@
         {% block content %}
         {% endblock %}
     </div>
+
     <footer>
         <div class="footer-text">
             <p>&copy; 2025 www.indahagdelivery.com | All rights reserved.</p>
