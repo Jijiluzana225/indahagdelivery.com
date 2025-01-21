@@ -28,10 +28,10 @@
         }
 
         /* Remove icon in the price field */
-        .input-group-text {
+        {% comment %} .input-group-text {
             background-color: #f8f9fa;
             border-right: none;
-        }
+        } {% endcomment %}
 
         .form-control {
             border-left: none;
@@ -84,9 +84,9 @@
 
                         <!-- Price Field -->
                         <div class="mb-3">
-                            <label for="id_price" class="form-label">Pricex</label>
+                            <label for="id_price" class="form-label">Price</label>
                             <div class="input-group">
-                                <span class="input-group-text"></span>  <!-- Pesos icon -->
+                                <span class="input-group-text"></span> <!-- Pesos symbol -->
                                 {{ form.price }}
                             </div>
                         </div>
