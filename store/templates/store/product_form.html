@@ -75,7 +75,7 @@
                         <div class="mb-3">
                             <label for="id_price" class="form-label">Price</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                <span class="input-group-text">₱</span> 
                                 {{ form.price }}
                             </div>
                         </div>
@@ -93,7 +93,9 @@
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="btn btn-primary w-100">Add Product</button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            {% if product %} Update Product {% else %} Add Product {% endif %}
+                        </button>
                     </form>
                     <div class="text-center mt-3">
                         <a href="{% url 'product_list' %}" class="btn btn-secondary">Back to List</a>
