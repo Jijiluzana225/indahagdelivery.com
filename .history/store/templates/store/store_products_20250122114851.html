@@ -28,7 +28,7 @@
     .container {
         display: flex;
         justify-content: space-between;
-        padding: 5px;
+        padding: 20px;
         max-width: 1200px;
         margin: 0 auto;
         flex-wrap: wrap;
@@ -310,23 +310,6 @@
         font-size: 1rem;
         color: #666;
     }
-
-    .product-card img {
-        max-width: 80%;  /* Adjust this percentage to control the size */
-        height: auto;
-        border-radius: 8px;
-    }
-
-    .cart-items {
-        font-size: 0.75rem; /* Smaller font size */
-    }
-    
-    .cart-item p {
-        font-size: 0.75rem; /* Smaller font size for cart item text */
-    }
-
-    
-
 }
 
 
@@ -382,8 +365,6 @@
         <button class="order-button" id="orderButton" onclick="proceedToCheckout()" disabled>Order Now</button>
     </div>
 </div>
-
-
 
 <script>
     let cart = [];
@@ -513,10 +494,6 @@
             }
         });
     }
-
-    
-
-    
 </script>
 
 {% endblock %}

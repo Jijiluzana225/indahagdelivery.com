@@ -493,8 +493,7 @@ from .models import Product
 @login_required
 def product_list(request):
     # Filter products by the logged-in user
-    products = Product.objects.filter(username=request.user).order_by('name')
-   
+    products = Product.objects.filter(username=request.user)
     return render(request, 'store/product_list.html', {'products': products})
 
 
@@ -543,4 +542,3 @@ def product_delete(request, pk):
         product.delete()
         return redirect('product_list')
     return render(request, 'store/product_confirm_delete.html', {'product': product})
-

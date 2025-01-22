@@ -28,21 +28,22 @@
     .container {
         display: flex;
         justify-content: space-between;
-        padding: 5px;
+        padding: 20px;
         max-width: 1200px;
         margin: 0 auto;
         flex-wrap: wrap;
     }
-
-    /* Left column - product listing */
-    .left-column {
-        width: 65%;
+    
+    .left-column, .right-column {
         padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        overflow: hidden;
+        margin: 0; /* Remove any default margin */
     }
+    
+    body {
+        margin: 0; /* Remove body margins */
+        padding: 0;
+    }
+    
 
     .left-column h1 {
         font-size: 2rem;
@@ -310,23 +311,6 @@
         font-size: 1rem;
         color: #666;
     }
-
-    .product-card img {
-        max-width: 80%;  /* Adjust this percentage to control the size */
-        height: auto;
-        border-radius: 8px;
-    }
-
-    .cart-items {
-        font-size: 0.75rem; /* Smaller font size */
-    }
-    
-    .cart-item p {
-        font-size: 0.75rem; /* Smaller font size for cart item text */
-    }
-
-    
-
 }
 
 
@@ -382,8 +366,6 @@
         <button class="order-button" id="orderButton" onclick="proceedToCheckout()" disabled>Order Now</button>
     </div>
 </div>
-
-
 
 <script>
     let cart = [];
@@ -513,10 +495,6 @@
             }
         });
     }
-
-    
-
-    
 </script>
 
 {% endblock %}

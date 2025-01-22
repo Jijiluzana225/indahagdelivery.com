@@ -493,8 +493,7 @@ from .models import Product
 @login_required
 def product_list(request):
     # Filter products by the logged-in user
-    products = Product.objects.filter(username=request.user).order_by('name')
-   
+    products = Product.objects.filter(username=request.user)
     return render(request, 'store/product_list.html', {'products': products})
 
 
@@ -503,7 +502,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from .forms import ProductForm
-from django.contrib import messages
 
 @login_required
 def product_create(request):
@@ -512,14 +510,15 @@ def product_create(request):
         if form.is_valid():
             product = form.save(commit=False)  # Don't save to the database yet
             product.username = request.user  # Assign the logged-in user
-            product.save()  # Save the product
-
-            # Add a success message
-            messages.success(request, 'Added New Product!')
-            return redirect('product_create')
+            product.save()  # Now save the product
+            
+            # Return a JSON response with a success message
+            return JsonResponse({'message': 'Added New Product!'}, status=200)
+        else:
+            # Return errors if the form is invalid
+            return JsonResponse({'message': 'Failed to add product', 'errors': form.errors}, status=400)
     else:
         form = ProductForm()
-
     return render(request, 'store/product_form.html', {'form': form, 'title': 'Add Product'})
 
 
@@ -543,4 +542,3 @@ def product_delete(request, pk):
         product.delete()
         return redirect('product_list')
     return render(request, 'store/product_confirm_delete.html', {'product': product})
-

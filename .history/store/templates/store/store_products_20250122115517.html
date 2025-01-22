@@ -325,7 +325,17 @@
         font-size: 0.75rem; /* Smaller font size for cart item text */
     }
 
+    .right-column {
+        padding: 5px; /* Reduced padding in the right column (cart) */
+    }
     
+    .cart-items {
+        padding: 0; /* No padding for the cart items container */
+    }
+    
+    .cart-item {
+        padding: 5px 0; /* Reduced padding for each cart item */
+    }
 
 }
 
@@ -382,8 +392,6 @@
         <button class="order-button" id="orderButton" onclick="proceedToCheckout()" disabled>Order Now</button>
     </div>
 </div>
-
-
 
 <script>
     let cart = [];
@@ -513,10 +521,6 @@
             }
         });
     }
-
-    
-
-    
 </script>
 
 {% endblock %}

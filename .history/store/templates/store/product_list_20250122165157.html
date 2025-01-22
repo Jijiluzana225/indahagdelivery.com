@@ -25,18 +25,23 @@
 </head>
 <body>
     <div class="container py-4">
-        <h1 class="text-center mb-4">Product List</h1>      
-              
+        <h1 class="text-center mb-4">Product List</h1>
+
+        <!-- Search Input Box -->
+        <div class="mb-4">
+            <input type="text" id="searchBox" class="form-control" placeholder="Search products by name..." onkeyup="filterProducts()">
+        </div>
+
+        <!-- Sorting Button -->
+        <div class="mb-4">
+            <button id="sortButton" class="btn btn-warning" onclick="sortProducts()">Sort by Name (Ascending)</button>
+        </div>
 
         <div class="text-end mb-4">
             <a href="{% url 'product_create' %}" class="btn btn-primary">Add Product</a>
             <a href="{% url 'store_list' %}" class="btn btn-secondary">Home</a>
         </div>
 
-        <div class="mb-4">
-            <input type="text" id="searchBox" class="form-control" placeholder="Search products by name..." onkeyup="filterProducts()">
-        </div>
-        
         <div class="row g-4" id="productList">
             {% for product in products %}
             <div class="col-6 col-sm-6 col-md-4 col-lg-3 product-card" data-name="{{ product.name|lower }}">
@@ -64,32 +69,37 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function filterProducts() {
-            const searchInput = document.getElementById('searchBox').value.toLowerCase();
-            const products = document.querySelectorAll('.product-card');
+        let products = {% raw %}{{ products|safe }}{% endraw %}; // Assuming products are passed from the backend
 
-            products.forEach(product => {
-                const productName = product.getAttribute('data-name');
-                if (productName.includes(searchInput)) {
-                    product.style.display = 'block';  // Show the product if it matches the search
+        // Filter products based on the search input
+        function filterProducts() {
+            const searchTerm = document.getElementById("searchBox").value.toLowerCase();
+            const productCards = document.querySelectorAll(".product-card");
+
+            productCards.forEach(card => {
+                const productName = card.getAttribute("data-name");
+                if (productName.includes(searchTerm)) {
+                    card.style.display = "block";
                 } else {
-                    product.style.display = 'none';   // Hide the product if it doesn't match
+                    card.style.display = "none";
                 }
             });
         }
 
+        // Sort products alphabetically by name in ascending order
         function sortProducts() {
-            const productList = document.getElementById('productList');
-            const products = Array.from(productList.children);
+            const productList = document.getElementById("productList");
+            const productCards = Array.from(productList.getElementsByClassName("product-card"));
+            
+            productCards.sort((a, b) => {
+                const nameA = a.querySelector(".card-title").textContent.toLowerCase();
+                const nameB = b.querySelector(".card-title").textContent.toLowerCase();
 
-            products.sort((a, b) => {
-                const nameA = a.querySelector('.card-title').textContent.toLowerCase();
-                const nameB = b.querySelector('.card-title').textContent.toLowerCase();
-                return nameA.localeCompare(nameB); // Compare product names alphabetically
+                return nameA.localeCompare(nameB);
             });
 
-            // Append the sorted products back to the product list
-            products.forEach(product => productList.appendChild(product));
+            // Reattach sorted product cards to the product list
+            productCards.forEach(card => productList.appendChild(card));
         }
     </script>
 </body>
