@@ -18,9 +18,9 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 90%;
-            
-            margin: 80px auto;
+            max-width: 80%;
+            padding:top:60px;
+            margin: 20px auto;
             padding: 20px;
             background: white;
             border-radius: 8px;
@@ -66,7 +66,7 @@
         .order-btn {
             width: 200px;
             display: inline-block;
-            margin: 10px auto;
+            margin: 20px auto;
             padding: 15px 30px;
             font-size: 1.1rem;
             background: linear-gradient(145deg, #4e73df,rgb(255, 17, 0));
@@ -97,7 +97,7 @@
         .store-btn {
             width: 200px;
             display: inline-block;
-            margin: 10px auto;
+            margin: 20px auto;
             padding: 15px 30px;
             font-size: 1.1rem;
             background: linear-gradient(145deg,rgb(11, 252, 31),rgb(252, 5, 5));
@@ -131,7 +131,7 @@
         .prices-btn {
             width: 200px;
                        display: inline-block;
-                            margin: 10px auto;
+                            margin: 20px auto;
                             padding: 15px 30px;
                             font-size: 1.1rem;
                             background: linear-gradient(145deg,brown,orange);
@@ -153,41 +153,10 @@
                             transform: translateY(-5px);
                         }
                 
-        .product-btn:active {
-            transform: translateY(2px);
-            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
-                        -5px -5px 10px rgba(255, 255, 255, 0.3);
-
-                                    
-            .product-btn {
-                        width: 200px;
-                        display: inline-block;
-                        margin: 10px auto;
-                        padding: 15px 30px;
-                        font-size: 1.1rem;
-                        background: linear-gradient(145deg,pink,orange);
-                        color: #fff;
-                        text-align: center;
-                        border: none;
-                        border-radius: 50px;
-                        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2),
-                        -5px -5px 15px rgba(255, 255, 255, 0.3);
-                        cursor: pointer;
-                        transition: all 0.3s ease-in-out;
-                        text-decoration: none;
-                                                        }
-                                                        
-            .product-btn:hover {
-                background: linear-gradient(145deg, #2e59d9, #4e73df);
-                box-shadow: 5px 5px 25px rgba(0, 0, 0, 0.3),
-                        -5px -5px 25px rgba(255, 255, 255, 0.4);
-                                                   transform: translateY(-5px);
-                                                        }
-                                                
-                                        .product-btn:active {
-                                                            transform: translateY(2px);
-                                                            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
-                                                                        -5px -5px 10px rgba(255, 255, 255, 0.3);
+        .prices-btn:active {
+                            transform: translateY(2px);
+                            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2),
+                                        -5px -5px 10px rgba(255, 255, 255, 0.3);
 
         /* Footer Style */
         footer {
@@ -249,7 +218,6 @@
         <a href="{% url 'store_dashboard' %}" class="store-btn">My Store</a>       
         
         <a href="{% url 'edit_prices' %}" class="prices-btn">Update Prices</a>
-        <a href="{% url 'product_create' %}" class="product-btn">Add Product</a>
         {% endif %}
         
         <h1>Product Type</h1>

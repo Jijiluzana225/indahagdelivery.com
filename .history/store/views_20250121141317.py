@@ -493,7 +493,7 @@ from .models import Product
 @login_required
 def product_list(request):
     # Filter products by the logged-in user
-    products = Product.objects.filter(username=request.user).order_by('name')
+    products = Product.objects.filter(username=request.user)
     return render(request, 'store/product_list.html', {'products': products})
 
 
@@ -512,9 +512,7 @@ def product_create(request):
             return redirect('product_list')
     else:
         form = ProductForm()
-        
-    button_text = "Add Product"
-    return render(request, 'store/product_form.html', {'form': form, 'title': 'Add Product', 'button_text': button_text})
+    return render(request, 'store/product_form.html', {'form': form, 'title': 'Add Product'})
 
 
 
@@ -527,11 +525,7 @@ def product_update(request, pk):
             return redirect('product_list')
     else:
         form = ProductForm(instance=product)
-    
-    # Pass a custom button text based on whether it's update or create
-    button_text = "Update Product"  # Update button text for editing a product
-
-    return render(request, 'store/product_form.html', {'form': form, 'title': 'Edit Product', 'button_text': button_text})
+    return render(request, 'store/product_form.html', {'form': form, 'title': 'Edit Product'})
 
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)

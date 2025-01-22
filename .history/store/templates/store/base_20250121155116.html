@@ -13,14 +13,14 @@
             left: 0; /* Ensures it's aligned with the left edge */
             right: 0; /* Ensures it's aligned with the right edge */
             width: 100%; /* Full width of the screen */
-            background-color: lightgreen; /* Light background color */
+            background-color:lightgreen; /* Light background color */
             padding: 10px 20px; /* Padding for the navbar */
             z-index: 1000; /* Keeps the navbar above other content */
         }
-
         body {
             margin-top: 60px; /* Adds space to avoid the content being hidden under the fixed navbar */
         }
+        
 
         .profile-picture {
             width: 40px; /* Adjust size as needed */
@@ -40,12 +40,8 @@
             align-items: center;
         }
 
-        {% comment %} .responsive-container {
-            width: 96vw;  /* Set width to 90% of the viewport width */
-            margin: 0 2%;  /* Center the container horizontally */
-            padding-top: 80px;  /* Adds padding from the top to create space between navbar and content */
-        } {% endcomment %}
-
+        
+       
         .logo {
             max-width: 150px;
         }
@@ -81,17 +77,13 @@
             font-size: 14px;
         }
 
-        .navbar .navbar-nav .nav-item h3 {
-            margin: 0;
-        }
-
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
             <a href="{% url 'store_list' %}">
-                <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo" class="logo">
+                <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo"  class="logo">
             </a>
             
             <!-- Open/Close Button -->
@@ -99,6 +91,7 @@
             {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
             <a href="{% url 'update_store_open' %}" class="open-close-btn">Open/Close</a>
             {% endif %}
+            
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -125,10 +118,10 @@
         </div>
     </nav>
 
-    
+    <div class="responsive-container">
         {% block content %}
         {% endblock %}
-    
+    </div>
 
     <footer>
         <div class="footer-text">

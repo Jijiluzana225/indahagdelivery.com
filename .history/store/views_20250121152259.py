@@ -493,7 +493,7 @@ from .models import Product
 @login_required
 def product_list(request):
     # Filter products by the logged-in user
-    products = Product.objects.filter(username=request.user).order_by('name')
+    products = Product.objects.filter(username=request.user)
     return render(request, 'store/product_list.html', {'products': products})
 
 
@@ -512,9 +512,7 @@ def product_create(request):
             return redirect('product_list')
     else:
         form = ProductForm()
-        
-    button_text = "Add Product"
-    return render(request, 'store/product_form.html', {'form': form, 'title': 'Add Product', 'button_text': button_text})
+    return render(request, 'store/product_form.html', {'form': form, 'title': 'Add Product'})
 
 
 
