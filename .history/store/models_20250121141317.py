@@ -44,7 +44,7 @@ class Store(models.Model):
 class Item(models.Model):
     product = models.ForeignKey(Product, related_name='items', on_delete=models.CASCADE)
     store = models.ForeignKey(Store, related_name='items', on_delete=models.CASCADE)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField()
 
     def __str__(self):
         return f"{self.product.name} at {self.store.name}"
