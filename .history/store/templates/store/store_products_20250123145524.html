@@ -255,7 +255,7 @@
 
     .order-button {
         background-color: yellow;
-        color: black;
+        color: #fff;
         border: none;
         padding: 15px 20px;
         font-size: 1.1rem;
@@ -522,7 +522,18 @@
 
     
 
-     
+    // Function to update the cart total on the button
+    function updateGoToCartButton() {
+        const total = calculateTotalPrice();
+        const formattedTotal = new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(total);
+
+        document.getElementById('go-to-cart-total').innerText = formattedTotal;
+    }
 
     // Function to scroll to the right-column (cart)
     function scrollToCart() {
@@ -537,10 +548,49 @@
 
 
     // Add this line inside your `addToCart()` function or any function that modifies the cart
-  
+   function renderCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const orderButton = document.getElementById('orderButton');
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
 
- 
+    // Loop through cart items and sum the total
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
 
+        cartItemsContainer.innerHTML += `
+            <div class="cart-item">
+                <p>${item.name}</p>
+                <p>Price: ${formatPrice(item.price)}</p>
+                <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
+                <p>${formatPrice(itemTotal)}</p>
+                <button onclick="deleteCartItem(${item.id})">×</button>
+            </div>
+        `;
+    });
+
+    // Add delivery fee to the total
+    total += deliveryFee;
+
+    // Update the total price display
+    cartTotal.innerText = `Total: ${formatPrice(total)} (Including Delivery Fee: ${formatPrice(deliveryFee)})`;
+
+    // Update "Go to Cart" button with new total
+    updateGoToCartButton();
+
+    // Enable the "Order Now" button only if the cart is not empty
+    orderButton.disabled = cart.length === 0;
+}
+
+
+    function calculateTotalPrice() {
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
+</script>
+
+<script>
     let cart = [];
     let deliveryFee = 50.00;  // Fixed delivery fee
 
@@ -575,7 +625,45 @@
         renderCart();
     }
 
-   
+    function renderCart() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    const orderButton = document.getElementById('orderButton');
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+
+    // Loop through cart items and sum the total
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        cartItemsContainer.innerHTML += `
+            <div class="cart-item">
+                <p>${item.name}</p>
+                <p>Price: ${formatPrice(item.price)}</p>
+                <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
+                <p>${formatPrice(itemTotal)}</p>
+                <button onclick="deleteCartItem(${item.id})">×</button>
+            </div>
+        `;
+    });
+
+    // Add delivery fee to the total
+    total += deliveryFee;
+
+    // Update the total price display
+    cartTotal.innerText = `Total: ${formatPrice(total)} (Including Delivery Fee: ${formatPrice(deliveryFee)})`;
+
+    // Update "Go to Cart" button with new total
+    updateGoToCartButton();
+
+    // Enable the "Order Now" button only if the cart is not empty
+    orderButton.disabled = cart.length === 0;
+}
+
+    function calculateTotalPrice() {
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
 
     function proceedToCheckout() {
         const storeId = '{{ store.id }}';  // Assuming store.id is available
