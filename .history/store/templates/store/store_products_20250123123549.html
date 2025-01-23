@@ -364,29 +364,9 @@
     cursor: pointer;
 }
 
-
-.go-to-top {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background-color: #3498db;
-    padding: 15px 25px;
-    border-radius: 50px;
-    color: white;
-    font-size: 1rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 1000;
+.go-to-cart button:hover {
+    background-color: #2980b9;
 }
-
-.go-to-top button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
 
     
 
@@ -446,8 +426,8 @@
     </div>
 </div>
 
-<div class="go-to-top">
-    <button onclick="scrollToTop()">Go top</button>
+<div>
+    <button onclick="scrollToCart()">Go top</button>
 </div>
 
 <div class="go-to-cart">
@@ -477,12 +457,6 @@
         const cartSection = document.querySelector('.right-column');
         cartSection.scrollIntoView({ behavior: 'smooth' });
     }
-
-    function scrollToTop() {
-        const leftColumn = document.querySelector('.left-column'); // Targeting the left column
-        leftColumn.scrollIntoView({ behavior: 'smooth' });
-    }
-
 
     // Add this line inside your `addToCart()` function or any function that modifies the cart
    function renderCart() {
@@ -705,8 +679,12 @@
         document.getElementById('go-to-cart-total').innerText = formattedTotal; // Update the button's total display
     }
     
-  
-  
+    // Function to scroll to the right-column (cart) when the button is clicked
+    function scrollToCart() {
+        const cartSection = document.querySelector('.right-column');
+        cartSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
     // Function to calculate the total price of the cart
     function calculateTotalPrice() {
         return cart.reduce((total, item) => total + item.price * item.quantity, 0); // Sum of item prices * quantities
@@ -749,7 +727,35 @@
     }
 
 
-  
+    function proceedToCheckout() {
+    const storeId = '{{ store.id }}';  // Assuming store.id is available
+    const totalPrice = calculateTotalPrice();  // Total price from cart, including delivery fee
+    const cartItems = cart.map(item => `${item.name},${item.price},${item.quantity}`).join("|");
+    
+    const money = document.getElementById('money').value;
+    const instructions = document.getElementById('additional-instructions').value;
+    
+    // Make the POST request
+    fetch('/checkout/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'  // CSRF token
+        },
+        body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}&money=${money}&instructions=${instructions}&delivery_fee=${deliveryFee}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Order placed successfully!');
+            window.location.href = '/dashboard';
+        } else {
+            alert('There was an error placing your order.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
     
 </script>
 

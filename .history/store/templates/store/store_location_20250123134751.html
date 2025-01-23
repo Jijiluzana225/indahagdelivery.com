@@ -20,9 +20,9 @@
     }
 
     .container {
-        width: 90vw;  /* Set width to 90% of the viewport width */
+        width: 95vw;  /* Set width to 90% of the viewport width */
         margin: 0 auto;  /* Center the container horizontally */
-        padding: 5px;  /* Add some internal padding */
+        padding: 20px;  /* Add some internal padding */
         background: white;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -41,6 +41,7 @@
     /* InfoBox styling */
     .info-box {
         text-align: center;
+        width:250px;
     }
 
     .info-box h3 {
@@ -49,9 +50,10 @@
         color: #555;
     }
 
+    
     .info-box img {
-        max-width: 150px;
-        height: auto;
+        width: 150px;
+        height: 150px;
         border-radius: 10px;
         margin: 10px 0;
         cursor: pointer;  /* Make image clickable */
@@ -110,11 +112,12 @@
     }
 
     .modal-content {
-        margin: auto;
+        margin: 5px;
         display: block;
-        width: 80%;
-        max-width: 700px;
+        width: 100%;
+        max-width: 800px;
     }
+    
 
     /* Adjust close button position */
     .close {
@@ -133,6 +136,18 @@
         color: #bbb;
         text-decoration: none;
         cursor: pointer;
+    }
+
+    .store-img {
+        width: 100%; /* Make the image responsive, adjusting to the container size */
+        height: auto; /* Maintain the aspect ratio */
+        border-radius: 10px; /* Apply rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow effect */
+        transition: transform 0.3s ease; /* Smooth transition for hover effect */
+    }
+    
+    .store-img:hover {
+        transform: scale(1.05); /* Slight zoom effect on hover */
     }
 
 

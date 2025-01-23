@@ -479,9 +479,11 @@
     }
 
     function scrollToTop() {
-        const leftColumn = document.querySelector('.left-column'); // Targeting the left column
-        leftColumn.scrollIntoView({ behavior: 'smooth' });
+        const searchBox = document.querySelector('#searchbox'); // Targeting the searchbox input
+        searchBox.focus(); // Focus on the input box
+        searchBox.scrollIntoView({ behavior: 'smooth' }); // Smoothly scroll to the input box
     }
+    
 
 
     // Add this line inside your `addToCart()` function or any function that modifies the cart

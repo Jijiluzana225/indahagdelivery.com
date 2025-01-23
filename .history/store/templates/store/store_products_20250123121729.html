@@ -364,29 +364,9 @@
     cursor: pointer;
 }
 
-
-.go-to-top {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background-color: #3498db;
-    padding: 15px 25px;
-    border-radius: 50px;
-    color: white;
-    font-size: 1rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 1000;
+.go-to-cart button:hover {
+    background-color: #2980b9;
 }
-
-.go-to-top button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
 
     
 
@@ -446,18 +426,13 @@
     </div>
 </div>
 
-<div class="go-to-top">
-    <button onclick="scrollToTop()">Go top</button>
-</div>
-
 <div class="go-to-cart">
-    
     <button onclick="scrollToCart()">Go to Cart: <span id="go-to-cart-total">₱0.00</span></button>
 </div>
 
 <script>
 
-    
+    let deliveryFee = 50.00;  // Fixed delivery fee
 
     // Function to update the cart total on the button
     function updateGoToCartButton() {
@@ -477,12 +452,6 @@
         const cartSection = document.querySelector('.right-column');
         cartSection.scrollIntoView({ behavior: 'smooth' });
     }
-
-    function scrollToTop() {
-        const leftColumn = document.querySelector('.left-column'); // Targeting the left column
-        leftColumn.scrollIntoView({ behavior: 'smooth' });
-    }
-
 
     // Add this line inside your `addToCart()` function or any function that modifies the cart
    function renderCart() {
@@ -529,8 +498,6 @@
 
 <script>
     let cart = [];
-    let deliveryFee = 50.00;  // Fixed delivery fee
-
 
     function formatPrice(price) {
         return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
@@ -563,40 +530,32 @@
     }
 
     function renderCart() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-    const orderButton = document.getElementById('orderButton');
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const orderButton = document.getElementById('orderButton');
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
 
-    // Loop through cart items and sum the total
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
 
-        cartItemsContainer.innerHTML += `
-            <div class="cart-item">
-                <p>${item.name}</p>
-                <p>Price: ${formatPrice(item.price)}</p>
-                <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
-                <p>${formatPrice(itemTotal)}</p>
-                <button onclick="deleteCartItem(${item.id})">×</button>
-            </div>
-        `;
-    });
+            cartItemsContainer.innerHTML += ` 
+                <div class="cart-item">
+                    <p>${item.name}</p>
+                    <p>Price: ${formatPrice(item.price)}</p>
+                    <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
+                    <p>${formatPrice(itemTotal)}</p>
+                    <button onclick="deleteCartItem(${item.id})">×</button>
+                </div>
+            `;
+        });
 
-    // Add delivery fee to the total
-    total += deliveryFee;
+        cartTotal.innerText = `Total: ${formatPrice(total)}`;
 
-    // Update the total price display
-    cartTotal.innerText = `Total: ${formatPrice(total)} (Including Delivery Fee: ${formatPrice(deliveryFee)})`;
-
-    // Update "Go to Cart" button with new total
-    updateGoToCartButton();
-
-    // Enable the "Order Now" button only if the cart is not empty
-    orderButton.disabled = cart.length === 0;
-}
+        // Enable the "Order Now" button only if the cart is not empty
+        orderButton.disabled = cart.length === 0;
+    }
 
     function calculateTotalPrice() {
         return cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -705,8 +664,12 @@
         document.getElementById('go-to-cart-total').innerText = formattedTotal; // Update the button's total display
     }
     
-  
-  
+    // Function to scroll to the right-column (cart) when the button is clicked
+    function scrollToCart() {
+        const cartSection = document.querySelector('.right-column');
+        cartSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
     // Function to calculate the total price of the cart
     function calculateTotalPrice() {
         return cart.reduce((total, item) => total + item.price * item.quantity, 0); // Sum of item prices * quantities
@@ -748,8 +711,6 @@
         return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
     }
 
-
-  
     
 </script>
 

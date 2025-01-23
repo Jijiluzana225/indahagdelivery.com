@@ -364,29 +364,9 @@
     cursor: pointer;
 }
 
-
-.go-to-top {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    background-color: #3498db;
-    padding: 15px 25px;
-    border-radius: 50px;
-    color: white;
-    font-size: 1rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    z-index: 1000;
+.go-to-cart button:hover {
+    background-color: #2980b9;
 }
-
-.go-to-top button {
-    background-color: transparent;
-    border: none;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
 
     
 
@@ -446,170 +426,82 @@
     </div>
 </div>
 
-<div class="go-to-top">
-    <button onclick="scrollToTop()">Go top</button>
-</div>
-
 <div class="go-to-cart">
-    
     <button onclick="scrollToCart()">Go to Cart: <span id="go-to-cart-total">₱0.00</span></button>
 </div>
 
 <script>
-
+    // Sample cart data (replace with dynamic cart data)
+    let cart = [
+        { id: 1, name: "Item 1", price: 100, quantity: 2 },
+        { id: 2, name: "Item 2", price: 200, quantity: 1 }
+    ];
     
-
-    // Function to update the cart total on the button
-    function updateGoToCartButton() {
-        const total = calculateTotalPrice();
-        const formattedTotal = new Intl.NumberFormat('en-PH', {
-            style: 'currency',
-            currency: 'PHP',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(total);
-
-        document.getElementById('go-to-cart-total').innerText = formattedTotal;
-    }
-
-    // Function to scroll to the right-column (cart)
-    function scrollToCart() {
-        const cartSection = document.querySelector('.right-column');
-        cartSection.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function scrollToTop() {
-        const leftColumn = document.querySelector('.left-column'); // Targeting the left column
-        leftColumn.scrollIntoView({ behavior: 'smooth' });
-    }
-
-
-    // Add this line inside your `addToCart()` function or any function that modifies the cart
-   function renderCart() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-    const orderButton = document.getElementById('orderButton');
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
-
-    // Loop through cart items and sum the total
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
-        cartItemsContainer.innerHTML += `
-            <div class="cart-item">
-                <p>${item.name}</p>
-                <p>Price: ${formatPrice(item.price)}</p>
-                <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
-                <p>${formatPrice(itemTotal)}</p>
-                <button onclick="deleteCartItem(${item.id})">×</button>
-            </div>
-        `;
-    });
-
-    // Add delivery fee to the total
-    total += deliveryFee;
-
-    // Update the total price display
-    cartTotal.innerText = `Total: ${formatPrice(total)} (Including Delivery Fee: ${formatPrice(deliveryFee)})`;
-
-    // Update "Go to Cart" button with new total
-    updateGoToCartButton();
-
-    // Enable the "Order Now" button only if the cart is not empty
-    orderButton.disabled = cart.length === 0;
-}
-
-
-    function calculateTotalPrice() {
-        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    }
-</script>
-
-<script>
-    let cart = [];
     let deliveryFee = 50.00;  // Fixed delivery fee
-
-
+    
+    // Format price in PHP currency format
     function formatPrice(price) {
-        return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
+        return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
     }
-
-    function addToCart(itemId, itemName, itemPrice) {
-        const quantity = parseInt(document.getElementById(`quantity-${itemId}`).value);
-        const existingItem = cart.find(item => item.id === itemId);
-
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            cart.push({ id: itemId, name: itemName, price: itemPrice, quantity: quantity });
-        }
-
-        renderCart();
+    
+    // Render the cart with items and total (including delivery fee)
+    function renderCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const orderButton = document.getElementById('orderButton');
+        cartItemsContainer.innerHTML = ''; // Clear previous cart items
+        let total = 0;
+    
+        // Loop through cart items and sum the total
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+    
+            cartItemsContainer.innerHTML += `
+                <div class="cart-item">
+                    <p>${item.name}</p>
+                    <p>Price: ${formatPrice(item.price)}</p>
+                    <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
+                    <p>${formatPrice(itemTotal)}</p>
+                    <button onclick="deleteCartItem(${item.id})">×</button>
+                </div>
+            `;
+        });
+    
+        // Add delivery fee to the total
+        total += deliveryFee;
+    
+        // Update the total price display
+        cartTotal.innerText = `Total: ${formatPrice(total)} (Including Delivery Fee: ${formatPrice(deliveryFee)})`;
+    
+        // Enable the "Order Now" button only if the cart is not empty
+        orderButton.disabled = cart.length === 0;
     }
-
-    function updateCartItem(itemId, newQuantity) {
+    
+    // Update quantity of a specific cart item
+    function updateCartItem(itemId, quantity) {
         const item = cart.find(item => item.id === itemId);
         if (item) {
-            item.quantity = newQuantity;
-            renderCart();
+            item.quantity = parseInt(quantity, 10);
+            renderCart();  // Re-render the cart after updating
         }
     }
-
+    
+    // Delete an item from the cart
     function deleteCartItem(itemId) {
         cart = cart.filter(item => item.id !== itemId);
-        renderCart();
+        renderCart();  // Re-render the cart after deletion
     }
-
-    function renderCart() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-    const orderButton = document.getElementById('orderButton');
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
-
-    // Loop through cart items and sum the total
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
-        cartItemsContainer.innerHTML += `
-            <div class="cart-item">
-                <p>${item.name}</p>
-                <p>Price: ${formatPrice(item.price)}</p>
-                <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
-                <p>${formatPrice(itemTotal)}</p>
-                <button onclick="deleteCartItem(${item.id})">×</button>
-            </div>
-        `;
-    });
-
-    // Add delivery fee to the total
-    total += deliveryFee;
-
-    // Update the total price display
-    cartTotal.innerText = `Total: ${formatPrice(total)} (Including Delivery Fee: ${formatPrice(deliveryFee)})`;
-
-    // Update "Go to Cart" button with new total
-    updateGoToCartButton();
-
-    // Enable the "Order Now" button only if the cart is not empty
-    orderButton.disabled = cart.length === 0;
-}
-
-    function calculateTotalPrice() {
-        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    }
-
+    
+    // Proceed to checkout
     function proceedToCheckout() {
         const storeId = '{{ store.id }}';  // Assuming store.id is available
-        const totalPrice = calculateTotalPrice();  // Total price from cart
+        const totalPrice = calculateTotalPrice();  // Total price from cart, including delivery fee
         const cartItems = cart.map(item => `${item.name},${item.price},${item.quantity}`).join("|");
-    
+        
         const money = document.getElementById('money').value;
         const instructions = document.getElementById('additional-instructions').value;
-    
+        
         // Make the POST request
         fetch('/checkout/', {
             method: 'POST',
@@ -617,7 +509,7 @@
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': '{{ csrf_token }}'  // CSRF token
             },
-            body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}&money=${money}&instructions=${instructions}`
+            body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}&money=${money}&instructions=${instructions}&delivery_fee=${deliveryFee}`
         })
         .then(response => response.json())
         .then(data => {
@@ -631,125 +523,17 @@
         .catch(error => console.error('Error:', error));
     }
     
-
-
-    function filterProducts() {
-        const searchTerm = document.getElementById("searchBox").value.toLowerCase();
-        const productCards = document.querySelectorAll(".product-card");
-
-        productCards.forEach(card => {
-            const productName = card.getAttribute("data-name");
-            if (productName.includes(searchTerm)) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
-    }
-
-    function addToCart(itemId, itemName, itemPrice) {
-        const quantity = parseInt(document.getElementById(`quantity-${itemId}`).value);
-        const existingItem = cart.find(item => item.id === itemId);
-    
-        if (existingItem) {
-            existingItem.quantity += quantity;
-        } else {
-            cart.push({ id: itemId, name: itemName, price: itemPrice, quantity: quantity });
-        }
-    
-        renderCart();
-    
-        // Format itemPrice and total price to Philippine Pesos
-        const formattedPrice = new Intl.NumberFormat('en-PH', {
-            style: 'currency',
-            currency: 'PHP',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(itemPrice);
-    
-        const cartTotal = document.getElementById('cart-total').innerText;
-    
-        // Pop-up message with quantity, product name, formatted price, and cart total
-        alert(`${quantity} ${itemName}(s) at ${formattedPrice}\n\nAdded to Cart\n\n${cartTotal}\n\n\nPlease review your CART at the bottom.`);
-    }
-    
-    
-    function updateOrderStatus(orderId, status) {
-        fetch(`/update_order_status/${orderId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ status: status })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Order status updated');
-            } else {
-                alert('Failed to update status');
-            }
-        });
-    }
-
-    function updateGoToCartButton() {
-        const total = calculateTotalPrice(); // Get the updated total of the cart
-        const formattedTotal = new Intl.NumberFormat('en-PH', {
-            style: 'currency',
-            currency: 'PHP',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(total); // Format the total as PHP currency
-        
-        document.getElementById('go-to-cart-total').innerText = formattedTotal; // Update the button's total display
-    }
-    
-  
-  
-    // Function to calculate the total price of the cart
+    // Calculate the total price (including delivery fee)
     function calculateTotalPrice() {
-        return cart.reduce((total, item) => total + item.price * item.quantity, 0); // Sum of item prices * quantities
+        let total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        total += deliveryFee;  // Include delivery fee in the total
+        return total;
     }
     
-    // Function to render the updated cart (including updating the "Go to Cart" button)
-    function renderCart() {
-        const cartItemsContainer = document.getElementById('cart-items');
-        const cartTotal = document.getElementById('cart-total');
-        const orderButton = document.getElementById('orderButton');
-        cartItemsContainer.innerHTML = '';
-        let total = 0;
+    // Initial render of the cart
+    renderCart();
+    </script>
     
-        // Loop through the cart and display each item
-        cart.forEach(item => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
-    
-            cartItemsContainer.innerHTML += ` 
-                <div class="cart-item">
-                    <p>${item.name}</p>
-                    <p>Price: ${formatPrice(item.price)}</p>
-                    <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
-                    <p>${formatPrice(itemTotal)}</p>
-                    <button onclick="deleteCartItem(${item.id})">×</button>
-                </div>
-            `;
-        });
-    
-        cartTotal.innerText = `Total: ${formatPrice(total)}`; // Update cart total display
-        updateGoToCartButton(); // Update the "Go to Cart" button with the new total
-    
-        // Enable the "Order Now" button only if the cart is not empty
-        orderButton.disabled = cart.length === 0;
-    }
-    
-    // Function to format price as Philippine Pesos
-    function formatPrice(price) {
-        return new Intl.NumberFormat('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(price);
-    }
-
-
-  
     
 </script>
 

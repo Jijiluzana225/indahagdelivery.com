@@ -22,7 +22,7 @@
     .container {
         width: 90vw;  /* Set width to 90% of the viewport width */
         margin: 0 auto;  /* Center the container horizontally */
-        padding: 5px;  /* Add some internal padding */
+        padding: 20px;  /* Add some internal padding */
         background: white;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -50,7 +50,7 @@
     }
 
     .info-box img {
-        max-width: 150px;
+        max-width: 130px;
         height: auto;
         border-radius: 10px;
         margin: 10px 0;
@@ -175,10 +175,9 @@
                 <a href="#" onclick="openModal('${store.picture}')">
                     <img src="${store.picture}" alt="${store.name}" class="store-img">
                 </a>
-                <p><strong> ${store.contact_number}</strong></p>
-                <button class="order-button" onclick="placeOrder(${store.id})">Order Now</button>
+                <p><strong>Contact:</strong> ${store.contact_number}</p>
                 <p><a href="${store.facebook_page}" target="_blank">Visit Facebook Page</a></p>
-                
+                <button class="order-button" onclick="placeOrder(${store.id})">Place Order Now</button>
             </div>
         `;
 

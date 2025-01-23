@@ -479,8 +479,8 @@
     }
 
     function scrollToTop() {
-        const leftColumn = document.querySelector('.left-column'); // Targeting the left column
-        leftColumn.scrollIntoView({ behavior: 'smooth' });
+        const cartSection = document.querySelector('.left-column');
+        cartSection.scrollIntoView({ behavior: 'smooth' });
     }
 
 
@@ -705,8 +705,12 @@
         document.getElementById('go-to-cart-total').innerText = formattedTotal; // Update the button's total display
     }
     
-  
-  
+    // Function to scroll to the right-column (cart) when the button is clicked
+    function scrollToCart() {
+        const cartSection = document.querySelector('.right-column');
+        cartSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
     // Function to calculate the total price of the cart
     function calculateTotalPrice() {
         return cart.reduce((total, item) => total + item.price * item.quantity, 0); // Sum of item prices * quantities
