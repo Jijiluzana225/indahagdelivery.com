@@ -165,7 +165,7 @@ from .models import Store, Item
 def store_products(request, store_id):
     store = get_object_or_404(Store, id=store_id)
     # Filter items for the store and ensure product.active is False
-    items = Item.objects.filter(store=store, product__active=False).select_related('product').order_by('product__name')
+    items = Item.objects.filter(store=store, product__active=False).select_related('product').order_by('product')
     return render(request, 'store/store_products.html', {'store': store, 'items': items})
 
 
