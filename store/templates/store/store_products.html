@@ -577,34 +577,49 @@
 
    
 
-    function proceedToCheckout() {
-        const storeId = '{{ store.id }}';  // Assuming store.id is available
-        const totalPrice = calculateTotalPrice();  // Total price from cart
-        const cartItems = cart.map(item => `${item.name},${item.price},${item.quantity}`).join("|");
+function proceedToCheckout() {
+    const orderButton = document.getElementById('orderButton');
     
-        const money = document.getElementById('money').value;
-        const instructions = document.getElementById('additional-instructions').value;
+    // Disable the button to prevent multiple submissions
+    orderButton.disabled = true;
+    orderButton.textContent = "Processing..."; // Change text to indicate processing
+
+    const storeId = '{{ store.id }}';  // Assuming store.id is available
+    const totalPrice = calculateTotalPrice();  // Total price from cart
+    const cartItems = cart.map(item => `${item.name},${item.price},${item.quantity}`).join("|");
     
-        // Make the POST request
-        fetch('/checkout/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': '{{ csrf_token }}'  // CSRF token
-            },
-            body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}&money=${money}&instructions=${instructions}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Order placed successfully!');
-                window.location.href = '/dashboard';
-            } else {
-                alert('There was an error placing your order.');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
+    const money = document.getElementById('money').value;
+    const instructions = document.getElementById('additional-instructions').value;
+    
+    // Make the POST request
+    fetch('/checkout/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': '{{ csrf_token }}'  // CSRF token
+        },
+        body: `store_id=${storeId}&total_price=${totalPrice}&cart_items=${cartItems}&money=${money}&instructions=${instructions}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Order placed successfully!');
+            window.location.href = '/dashboard';
+        } else {
+            alert('There was an error placing your order.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error placing your order. Please try again.');
+    })
+    .finally(() => {
+        // Re-enable the button after request is finished
+        orderButton.disabled = false;
+        orderButton.textContent = "Order Now"; // Reset the button text to default
+    });
+}
+
     
 
 
