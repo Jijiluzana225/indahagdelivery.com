@@ -166,7 +166,7 @@
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total Price</th>
-                {% comment %} <th>Actions</th> {% endcomment %}
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -175,12 +175,12 @@
                 <td>{{ item.product_name }}</td>
                 <td>{{ item.product_price }}</td>
                 <td>
-                    {{ item.quantity }}
+                    <input type="number" id="quantity-{{ item.id }}" value="{{ item.quantity }}" min="1">
                 </td>
                 <td>{{ item.total_price|floatformat:2 }}</td>
-                {% comment %} <td>
+                <td>
                     <button class="action-btn update-btn" onclick="updateItem({{ item.id }})">Update</button>
-                </td> {% endcomment %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

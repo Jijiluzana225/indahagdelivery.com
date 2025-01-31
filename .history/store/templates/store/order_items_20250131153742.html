@@ -175,7 +175,7 @@
                 <td>{{ item.product_name }}</td>
                 <td>{{ item.product_price }}</td>
                 <td>
-                    {{ item.quantity }}
+                    <input type="number" id="quantity-{{ item.id }}" value="{{ item.quantity }}" min="1">
                 </td>
                 <td>{{ item.total_price|floatformat:2 }}</td>
                 {% comment %} <td>

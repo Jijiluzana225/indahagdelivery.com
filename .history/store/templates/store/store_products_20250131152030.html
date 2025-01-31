@@ -529,19 +529,17 @@
 
     function updateCartTotal() {
         let total = 0;
-        // Calculate the total price of the items in the cart
-        document.querySelectorAll('.cart-item').forEach(item => {
-            const itemPrice = parseFloat(item.querySelector('.cart-item-price').textContent.replace('₱', '').trim());
-            total += itemPrice;
+        document.querySelectorAll('.cart-item-price').forEach(item => {
+            total += parseFloat(item.textContent.replace('₱', ''));
         });
     
-        let deliveryFee = parseFloat(document.getElementById('delivery-fee').textContent.replace('₱', '').trim());
+        let deliveryFee = 0.00; // Set fixed or dynamic delivery fee
         let finalTotal = total + deliveryFee;
     
-        // Update the total price
         document.getElementById('cart-total').textContent = `₱${finalTotal.toFixed(2)}`;
         document.getElementById('go-to-cart-total').textContent = `₱${finalTotal.toFixed(2)}`;
     }
+    
     
 
      
@@ -749,64 +747,6 @@
         `;
     });
     
-
-
- // Function to calculate the total price of the cart (including delivery fee)
-function calculateTotalPrice() {
-    const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    const deliveryFee = parseFloat(document.getElementById('delivery-fee').textContent); // Get the delivery fee dynamically
-    return cartTotal + deliveryFee; // Add the delivery fee to the cart total
-}
-
-// Function to update the cart total display (including delivery fee)
-function updateCartTotal() {
-    const total = calculateTotalPrice(); // Get the updated total of the cart (including delivery fee)
-    document.getElementById('cart-total').textContent = `${total.toFixed(2)}`;
-    document.getElementById('go-to-cart-total').textContent = `${total.toFixed(2)}`;
-}
-
-// Function to render the updated cart (including updated cart total with delivery fee)
-function renderCart() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-    const orderButton = document.getElementById('orderButton');
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
-
-    // Loop through the cart and display each item
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-
-        cartItemsContainer.innerHTML += ` 
-            <div class="cart-item">
-                <p style="width:120px">${item.name}</p>
-                <p>${item.price.toFixed(2)}</p>
-                <input type="number" min="1" value="${item.quantity}" onchange="updateCartItem(${item.id}, this.value)">
-                <p style="padding-left:10px">${itemTotal.toFixed(2)}</p>
-                <button onclick="deleteCartItem(${item.id})">×</button>
-            </div>
-        `;
-    });
-
-    // Add delivery fee to the total calculation
-    total += parseFloat(document.getElementById('delivery-fee').textContent);
-
-    cartTotal.innerText = `Total: ${total.toFixed(2)}`; // Update cart total display
-    updateGoToCartButton(); // Update the "Go to Cart" button with the new total
-
-    // Enable the "Order Now" button only if the cart is not empty
-    orderButton.disabled = cart.length === 0;
-}
-
-// Function to format the price without currency symbol (no formatting needed)
-function formatPrice(price) {
-    return price.toFixed(2);
-}
-
-
-
-
 </script>
 
 {% endblock %}

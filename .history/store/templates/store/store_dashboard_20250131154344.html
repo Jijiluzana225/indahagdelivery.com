@@ -190,7 +190,7 @@
                     <td>
                         <select id="status-{{ order.id }}" onchange="updateRowColor()">
                             <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
-                            <option value="Declined" {% if order.status == 'Declined' %}selected{% endif %}>Declined</option>
+                            <option value="Declined" {% if order.status == 'Declined' %}selected{% endif %}>Delivered</option>
                             <option value="Preparing" {% if order.status == 'Preparing' %}selected{% endif %}>Preparing</option>
                             <option value="On the Way" {% if order.status == 'On the Way' %}selected{% endif %}>On the Way</option>
                             <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
@@ -222,7 +222,7 @@
                     row.style.backgroundColor = 'White'; // Red (Pending)
                     break;
                 case 'Declined':
-                    row.style.backgroundColor = 'Orange'; // Yellow (Preparing)
+                    row.style.backgroundColor = 'lightRed'; // Yellow (Preparing)
                     break;
                 case 'Preparing':
                     row.style.backgroundColor = 'lightYellow'; // Yellow (Preparing)
