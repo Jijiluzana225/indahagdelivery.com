@@ -151,7 +151,7 @@
             white-space: nowrap;
         }
         .order-detail {
-            padding-top:50px;
+            padding-top:30px;
         }
     }
 </style>
@@ -188,18 +188,18 @@
 
 
 <!-- New Containers for Money and Instructions -->
-    <div style="padding-top:25px;padding-bottom:25px; margin-right:100px;text-align:right">
-    Total Amount + Delivery Fee:
-    <span style="color:blue; font-size:30px"><strong>{{ order.total_price|floatformat:2 }}</strong></span>
+    <div class="order-detail">
+    <strong>Store Delivery Fee: </strong>
+    <span style="color:Blue">{{ order.total_price|floatformat:2 }}</span>
     </div>
 
     <div class="order-detail">
         <strong>Money: </strong>
-        <span style="color:Orange">{{ order.money|floatformat:2 }}</span>
+        <span style="color:Blue">{{ order.money|floatformat:2 }}</span>
     </div>
     
         <strong>Instructions: </strong>
-        <p style="color:Orange">{{ order.instructions }}</p>
+        <p style="color:Blue">{{ order.instructions }}</p>
     </div>
     </div>
 </div>
