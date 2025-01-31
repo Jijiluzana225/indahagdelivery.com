@@ -43,7 +43,6 @@ urlpatterns = [
     
     path('update-open/', views.update_store_open, name='update_store_open'),
 
-    path('order/<int:order_id>/update-status/', views.update_order_status, name='update_order_status'),
 
 # product CRUD
     path('list/', views.product_list, name='product_list'),

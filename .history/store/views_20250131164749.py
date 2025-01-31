@@ -555,5 +555,5 @@ def update_order_status(request, order_id):
         order.status = 'Delivered'
         order.save()
 
-    return redirect('store_dashboard')
+    return redirect('order_items', order_id=order.id)
 

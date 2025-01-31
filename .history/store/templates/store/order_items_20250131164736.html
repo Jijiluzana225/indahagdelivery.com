@@ -194,10 +194,6 @@
     <strong>Instructions: </strong>
     <p style="color:Orange">{{ order.instructions }}</p>
 
-    {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
-    
-    
-
     <!-- Add DELIVERED button -->
     {% if order.status != 'Delivered' %}
     <form action="{% url 'update_order_status' order.id %}" method="POST">
@@ -205,9 +201,6 @@
         <button type="submit" class="action-btn update-btn">Mark as DELIVERED</button>
     </form>
     {% endif %}
-    
-    {% endif %}
-
 </div>
 
 <script>
