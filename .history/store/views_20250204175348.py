@@ -237,30 +237,26 @@ def proceed_to_checkout(request):
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
+
 from django.shortcuts import render
 from django.db.models import Sum, F
-from django.contrib.auth.decorators import login_required
 from .models import Order
 
 @login_required
-def customer_dashboard(request):
-    # Fetch orders for the logged-in customer and annotate them with the total_amount (sum of product_price * quantity)
-    orders = Order.objects.filter(customer=request.user).annotate(
-        total_amount=Sum(F('items__product_price') * F('items__quantity'))
-    ).order_by('-created_at')  # Orders sorted by latest created_at
-    
-    # Track status changes
-    status_changes = []
-    for order in orders:
-        # Assuming there's an 'original_status' field that tracks the status when the order was created
-        if order.status != order.original_status:
-            status_changes.append(order.id)  # Add order id to the status changes list
-    
-    # Pass the orders and the status changes to the template
-    return render(request, 'store/customer_dashboard.html', {
-        'orders': orders,
-        'status_changes': status_changes  # Pass status_changes to template for notifications
-    })
+# In your view logic (Django)
+orders = Order.objects.all()
+status_changes = []  # To store order ids with changed statuses
+
+for order in orders:
+    # Example: Check if the order status is different from the initial one (you could store this in a session or database)
+    if order.status != order.original_status:
+        status_changes.append(order.id)
+
+context = {
+    'orders': orders,
+    'status_changes': status_changes,  # Include the changed statuses
+}
+
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required

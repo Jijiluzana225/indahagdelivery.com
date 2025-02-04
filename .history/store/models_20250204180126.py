@@ -85,7 +85,7 @@ class Order(models.Model):
         default='Pending'
     )
     
-    original_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Preparing', 'Preparing'), ('On the Way', 'On the Way'), ('Delivered', 'Delivered')], default='Pending', null=True,blank=True)
+    original_status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Preparing', 'Preparing'), ('On the Way', 'On the Way'), ('Delivered', 'Delivered')], default='Pending', nul=True,blank=True)
     money = models.DecimalField(max_digits=10, decimal_places=2,blank=True, null=True, default=0)
     instructions=models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

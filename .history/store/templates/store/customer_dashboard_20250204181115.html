@@ -50,15 +50,10 @@
 {% endif %}
 
 <!-- JavaScript for Notification and Sound -->
-
-<audio id="newOrderSound">
-    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
-</audio>
-
 <script>
     {% if status_changes %}
         // Play a sound alert when an order status changes
-        var audio = document.getElementById('newOrderSound');
+        var audio = new Audio('/static/sounds/notification.mp3');
         try {
             var playPromise = audio.play();
 
