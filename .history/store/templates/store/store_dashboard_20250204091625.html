@@ -323,7 +323,8 @@
                 var newOrderCount = parseInt(xhr.responseText);
 
                 if (newOrderCount > currentOrderCount) {
-                    document.getElementById('newOrderSound').play();                    
+                    document.getElementById('newOrderSound').play();
+                    alert("New order received!");
                     location.reload(); // Reload to show new order
                 }
             }
