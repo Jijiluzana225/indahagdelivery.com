@@ -46,7 +46,7 @@ urlpatterns = [
     path('order/<int:order_id>/update-status/', views.update_order_status_delivered, name='update_order_status_delivered'),
     
     path('check-new-orders/', views.check_new_orders, name='check_new_orders'),
-    path('update-order-status/', views.update_order_status_original_Status, name='update_order_status_original_Status'),
+    path('update-order-status/', views.update_order_status_original_status, name='update_order_status_original_status'),
     
 
 # product CRUD

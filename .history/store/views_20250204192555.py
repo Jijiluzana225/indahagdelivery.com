@@ -613,7 +613,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Order
 
 @csrf_exempt  # This is required if you're using fetch with CSRF
-def update_order_status_original_Status(request):
+def update_order_status_original_status(request):
     if request.method == 'POST':
         try:
             # Parse the JSON body
