@@ -309,100 +309,36 @@
 </script>
 
 
-{% comment %} 
-<audio id="newOrderSound">
-    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
-</audio>
-
-                  
-
 <script>
-                     function checkNewOrders() {
-                            fetch("/check-new-orders/")
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.error) {
-                                        console.log(data.error);
-                                        return;
-                                    }
-                    
-                                    // If there are new orders, reload the page and play the notification sound
-                                    if (data.active) {
-                                        // Play the notification sound (replace with the actual file path)
-                                        var audio = document.getElementById('newOrderSound');
-
-                    // Play sound and wait for it to finish before reloading
-                    audio.play();
-                    audio.onended = function () {
-                        alert("New order received!");
-                        location.reload(); // Reload after the sound finishes playing
-                    };
-                    
-                                        // Show an alert (you can replace this with a custom notification)
-                                        alert('You have new orders!');
-                    
-                                        // Refresh the page to update the initial order count
-                                        window.location.reload();
-                                    }
-                                })
-                                .catch(error => console.error('Error:', error));
-                        }
-                    
-                        // Call the function to check for new orders when appropriate (e.g., on page load)
-                        checkNewOrders();
-                   
-                    
-    // Check for new orders only if there are existing orders
-    
-        setInterval(checkNewOrders, 10000);
-    
-</script> {% endcomment %}
-
-<audio id="newOrderSound">
-    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
-
-    function checkForNewOrders() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "{% url 'check_new_orders' %}", true);
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-
-                // Stop checking if no active orders exist
-                if (!response.active) {
-                    console.log("No orders found. Stopping order check.");
+    function checkNewOrders() {
+        fetch("/your-endpoint/check_new_orders/")
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.log(data.error);
                     return;
                 }
 
-                var newOrderCount = response.new_orders;
-
-                if (newOrderCount > initialOrderCount) {
-                    var audio = document.getElementById('newOrderSound');
-
-                    // Play sound and wait for it to finish before reloading
+                // If there are new orders, reload the page and play the notification sound
+                if (data.active) {
+                    // Play the notification sound (replace with the actual file path)
+                    var audio = new Audio('/static/sounds/notification.mp3');
                     audio.play();
-                    audio.onended = function () {
-                        alert("New order received!");
-                        location.reload(); // Reload only after sound finishes playing
-                    };
 
-                    // Update initial order count to prevent repeated alerts
-                    initialOrderCount = newOrderCount;
+                    // Show an alert (you can replace this with a custom notification)
+                    alert('You have new orders!');
+
+                    // Refresh the page to update the initial order count
+                    window.location.reload();
                 }
-            }
-        };
-        xhr.send();
+            })
+            .catch(error => console.error('Error:', error));
     }
 
-    // Check for new orders only if there are existing orders
-    
-        setInterval(checkForNewOrders, 10000);
-    
+    // Call the function to check for new orders when appropriate (e.g., on page load)
+    checkNewOrders();
 </script>
+
 
 
 

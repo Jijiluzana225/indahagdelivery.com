@@ -558,7 +558,7 @@ def update_order_status_delivered(request, order_id):
     return redirect('store_dashboard')
 
 from django.http import JsonResponse
-from .models import Order
+from .models import Order, Store
 
 def check_new_orders(request):
     if not request.user.is_authenticated:
@@ -569,29 +569,6 @@ def check_new_orders(request):
     except Store.DoesNotExist:
         return JsonResponse({"error": "No store found for this user"}, status=404)
 
-    # On first load, store the initial order count in the session
-    if 'initial_order_count' not in request.session:
-        initial_order_count = Order.objects.filter(store=store).count()
-        request.session['initial_order_count'] = initial_order_count
-    else:
-        initial_order_count = request.session['initial_order_count']
+    order_count = Order.objects.filter(store=store).count()
 
-    # Get the current total order count
-    current_order_count = Order.objects.filter(store=store).count()
-    
-    # Check if the order count has increased
-    new_orders = current_order_count - initial_order_count
-    active = new_orders > 0
-    
-    # Update the session if new orders are detected
-    if active:
-        request.session['initial_order_count'] = current_order_count
-
-    print(initial_order_count, current_order_count, active)
-    return JsonResponse({
-        "initial_order_count": initial_order_count,
-        "current_order_count": current_order_count,
-        "new_orders": new_orders,
-        "active": active
-    })
-
+    return JsonResponse({"new_orders": order_count, "active": order_count > 0})

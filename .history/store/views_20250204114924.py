@@ -587,7 +587,7 @@ def check_new_orders(request):
     if active:
         request.session['initial_order_count'] = current_order_count
 
-    print(initial_order_count, current_order_count, active)
+    print(initial_order_count current_order_count active)
     return JsonResponse({
         "initial_order_count": initial_order_count,
         "current_order_count": current_order_count,

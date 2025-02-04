@@ -309,16 +309,16 @@
 </script>
 
 
-{% comment %} 
+
 <audio id="newOrderSound">
     <source src="/static/sounds/notification.mp3" type="audio/mpeg">
 </audio>
 
                   
 
-<script>
-                     function checkNewOrders() {
-                            fetch("/check-new-orders/")
+                    <script>
+                        function checkNewOrders() {
+                            fetch("/check_new_orders/")
                                 .then(response => response.json())
                                 .then(data => {
                                     if (data.error) {
@@ -353,55 +353,11 @@
                    
                     
     // Check for new orders only if there are existing orders
-    
-        setInterval(checkNewOrders, 10000);
-    
-</script> {% endcomment %}
-
-<audio id="newOrderSound">
-    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
-
-    function checkForNewOrders() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "{% url 'check_new_orders' %}", true);
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-
-                // Stop checking if no active orders exist
-                if (!response.active) {
-                    console.log("No orders found. Stopping order check.");
-                    return;
-                }
-
-                var newOrderCount = response.new_orders;
-
-                if (newOrderCount > initialOrderCount) {
-                    var audio = document.getElementById('newOrderSound');
-
-                    // Play sound and wait for it to finish before reloading
-                    audio.play();
-                    audio.onended = function () {
-                        alert("New order received!");
-                        location.reload(); // Reload only after sound finishes playing
-                    };
-
-                    // Update initial order count to prevent repeated alerts
-                    initialOrderCount = newOrderCount;
-                }
-            }
-        };
-        xhr.send();
-    }
-
-    // Check for new orders only if there are existing orders
-    
+    if (initialOrderCount > 0) {
         setInterval(checkForNewOrders, 10000);
-    
+    } else {
+        console.log("No orders in table. Order checking is disabled.");
+    }
 </script>
 
 

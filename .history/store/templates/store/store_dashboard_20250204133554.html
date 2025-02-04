@@ -399,9 +399,11 @@
     }
 
     // Check for new orders only if there are existing orders
-    
+    if (initialOrderCount > 0) {
         setInterval(checkForNewOrders, 10000);
-    
+    } else {
+        console.log("No orders in table. Order checking is disabled.");
+    }
 </script>
 
 

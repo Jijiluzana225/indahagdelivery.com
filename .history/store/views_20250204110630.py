@@ -578,16 +578,11 @@ def check_new_orders(request):
 
     # Get the current total order count
     current_order_count = Order.objects.filter(store=store).count()
-    
+
     # Check if the order count has increased
     new_orders = current_order_count - initial_order_count
     active = new_orders > 0
-    
-    # Update the session if new orders are detected
-    if active:
-        request.session['initial_order_count'] = current_order_count
 
-    print(initial_order_count, current_order_count, active)
     return JsonResponse({
         "initial_order_count": initial_order_count,
         "current_order_count": current_order_count,
