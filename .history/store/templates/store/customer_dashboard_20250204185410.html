@@ -198,9 +198,7 @@
             Notification.requestPermission();
         }
     {% endif %}
-    setInterval(function() {
-        location.reload();
-    }, 10000);
+
     // Function to send an AJAX request to update the original_status
     function updateOriginalStatus(orderId) {
         fetch('/update-order-status/', {
