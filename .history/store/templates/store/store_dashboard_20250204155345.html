@@ -1,5 +1,4 @@
 {% extends 'store/base.html' %}
-{% load static %}
 {% load humanize %}
 {% block title %}Store Orders{% endblock %}
 
@@ -310,60 +309,58 @@
 </script>
 
 
+
 <audio id="newOrderSound">
     <source src="/static/sounds/notification.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
+   var initialOrderCount = document.querySelectorAll('.order-row').length; // Default from HTML
 
-    function checkForNewOrders() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "{% url 'check_new_orders' %}", true);
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-
-                // Stop checking if no active orders exist
-                if (!response.active) {
-                    console.log("No new orders. Stopping order check.");
-                    return;
-                }
-
-                var currentOrderCount = response.current_order_count;
-                console.log(initialOrderCount,currentOrderCount)
-                // Play sound if the initial order count is less than the current order count
-                if (initialOrderCount < currentOrderCount) {
-
-                   
-
-                    var audio = document.getElementById('newOrderSound');
-                    // Play sound and wait for it to finish before reloading
-                    audio.play();
-                    audio.onended = function () {
-                       
-                        // Reload after the sound finishes playing
-                    };
-
-                    alert("New order received!");
-                    location.reload(); 
-                    
-                    // Update initial order count to match the current order count to prevent repeated alerts
-                    initialOrderCount = currentOrderCount;
-                }
+function checkForNewOrders() {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "{% url 'check_new_orders' %}?notification_pressed=true", true);
+    
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            var response = JSON.parse(xhr.responseText);
+            
+            if (response.initial_order_count !== undefined) {
+                initialOrderCount = response.initial_order_count;
             }
-        };
-        xhr.send();
-    }
 
-    // Check for new orders only if there are existing orders
-    if (initialOrderCount > 0) {
-        setInterval(checkForNewOrders, 10000);
-    } else {
-        console.log("No orders in table. Order checking is disabled.");
-    }
+            if (!response.active) {
+                console.log("No new orders. Stopping check.");
+                return;
+            }
+
+            var newOrderCount = response.new_orders;
+
+            if (newOrderCount > initialOrderCount) {
+                var audio = document.getElementById('newOrderSound');
+                audio.play();
+                audio.onended = function () {
+                    alert("New order received!");
+                    location.reload();
+                };
+                initialOrderCount = newOrderCount;
+            }
+        } else {
+            console.error("Failed to fetch new orders.");
+        }
+    };
+
+    xhr.onerror = function () {
+        console.error("Error checking for new orders.");
+    };
+
+    xhr.send();
+}
+
+setInterval(checkForNewOrders, 10000);
+
+    
 </script>
-
 
 
 

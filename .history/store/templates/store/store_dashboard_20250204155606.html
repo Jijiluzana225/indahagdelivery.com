@@ -1,5 +1,4 @@
 {% extends 'store/base.html' %}
-{% load static %}
 {% load humanize %}
 {% block title %}Store Orders{% endblock %}
 
@@ -310,60 +309,63 @@
 </script>
 
 
+
 <audio id="newOrderSound">
     <source src="/static/sounds/notification.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
-
-    function checkForNewOrders() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "{% url 'check_new_orders' %}", true);
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-
-                // Stop checking if no active orders exist
-                if (!response.active) {
-                    console.log("No new orders. Stopping order check.");
-                    return;
+    document.addEventListener("DOMContentLoaded", function () {
+        var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
+    
+        function checkForNewOrders() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "your_api_endpoint_here", true); // Replace with the actual API URL
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+    
+                    if (response.active) {
+                        console.log("Active orders detected.");
+                    } else {
+                        console.log("No active orders. Stopping order check.");
+                        return;
+                    }
+    
+                    var newOrderCount = response.new_orders;
+    
+                    if (newOrderCount > initialOrderCount) {
+                        var audio = document.getElementById('newOrderSound');
+                        if (audio) {
+                            audio.play();
+                            audio.onended = function () {
+                                alert("New order received!");
+                                location.reload();
+                            };
+                        } else {
+                            alert("New order received!");
+                            location.reload();
+                        }
+    
+                        // Update initial order count to prevent repeated alerts
+                        initialOrderCount = newOrderCount;
+                    }
+                } else {
+                    console.error("Error checking for new orders: ", xhr.statusText);
                 }
+            };
+            xhr.onerror = function () {
+                console.error("Network error while checking for new orders.");
+            };
+            xhr.send();
+        }
+    
+        setInterval(checkForNewOrders, 10000); // Check every 10 seconds
+    });
+    
 
-                var currentOrderCount = response.current_order_count;
-                console.log(initialOrderCount,currentOrderCount)
-                // Play sound if the initial order count is less than the current order count
-                if (initialOrderCount < currentOrderCount) {
-
-                   
-
-                    var audio = document.getElementById('newOrderSound');
-                    // Play sound and wait for it to finish before reloading
-                    audio.play();
-                    audio.onended = function () {
-                       
-                        // Reload after the sound finishes playing
-                    };
-
-                    alert("New order received!");
-                    location.reload(); 
-                    
-                    // Update initial order count to match the current order count to prevent repeated alerts
-                    initialOrderCount = currentOrderCount;
-                }
-            }
-        };
-        xhr.send();
-    }
-
-    // Check for new orders only if there are existing orders
-    if (initialOrderCount > 0) {
-        setInterval(checkForNewOrders, 10000);
-    } else {
-        console.log("No orders in table. Order checking is disabled.");
-    }
+    
 </script>
-
 
 
 

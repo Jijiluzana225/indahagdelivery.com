@@ -1,5 +1,4 @@
 {% extends 'store/base.html' %}
-{% load static %}
 {% load humanize %}
 {% block title %}Store Orders{% endblock %}
 
@@ -310,52 +309,49 @@
 </script>
 
 
+
 <audio id="newOrderSound">
     <source src="/static/sounds/notification.mp3" type="audio/mpeg">
 </audio>
 
-<script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
+                  
 
-    function checkForNewOrders() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "{% url 'check_new_orders' %}", true);
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
+                    <script>
+                        function checkNewOrders() {
+                            fetch("/check_new_orders/")
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.error) {
+                                        console.log(data.error);
+                                        return;
+                                    }
+                    
+                                    // If there are new orders, reload the page and play the notification sound
+                                    if (data.active) {
+                                        // Play the notification sound (replace with the actual file path)
+                                        var audio = document.getElementById('newOrderSound');
 
-                // Stop checking if no active orders exist
-                if (!response.active) {
-                    console.log("No new orders. Stopping order check.");
-                    return;
-                }
-
-                var currentOrderCount = response.current_order_count;
-                console.log(initialOrderCount,currentOrderCount)
-                // Play sound if the initial order count is less than the current order count
-                if (initialOrderCount < currentOrderCount) {
-
-                   
-
-                    var audio = document.getElementById('newOrderSound');
                     // Play sound and wait for it to finish before reloading
                     audio.play();
                     audio.onended = function () {
-                       
-                        // Reload after the sound finishes playing
+                        alert("New order received!");
+                        location.reload(); // Reload after the sound finishes playing
                     };
-
-                    alert("New order received!");
-                    location.reload(); 
                     
-                    // Update initial order count to match the current order count to prevent repeated alerts
-                    initialOrderCount = currentOrderCount;
-                }
-            }
-        };
-        xhr.send();
-    }
-
+                                        // Show an alert (you can replace this with a custom notification)
+                                        alert('You have new orders!');
+                    
+                                        // Refresh the page to update the initial order count
+                                        window.location.reload();
+                                    }
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
+                    
+                        // Call the function to check for new orders when appropriate (e.g., on page load)
+                        checkNewOrders();
+                    </script>
+                    
     // Check for new orders only if there are existing orders
     if (initialOrderCount > 0) {
         setInterval(checkForNewOrders, 10000);
@@ -363,7 +359,6 @@
         console.log("No orders in table. Order checking is disabled.");
     }
 </script>
-
 
 
 

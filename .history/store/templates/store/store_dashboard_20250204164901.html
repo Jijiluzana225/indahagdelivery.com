@@ -331,23 +331,18 @@
                 }
 
                 var currentOrderCount = response.current_order_count;
-                console.log(initialOrderCount,currentOrderCount)
+
                 // Play sound if the initial order count is less than the current order count
                 if (initialOrderCount < currentOrderCount) {
-
-                   
-
                     var audio = document.getElementById('newOrderSound');
+
                     // Play sound and wait for it to finish before reloading
                     audio.play();
                     audio.onended = function () {
-                       
-                        // Reload after the sound finishes playing
+                        alert("New order received!");
+                        location.reload(); // Reload after the sound finishes playing
                     };
 
-                    alert("New order received!");
-                    location.reload(); 
-                    
                     // Update initial order count to match the current order count to prevent repeated alerts
                     initialOrderCount = currentOrderCount;
                 }

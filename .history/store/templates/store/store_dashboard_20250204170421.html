@@ -335,7 +335,8 @@
                 // Play sound if the initial order count is less than the current order count
                 if (initialOrderCount < currentOrderCount) {
 
-                   
+                    alert("New order received!");
+                    location.reload(); 
 
                     var audio = document.getElementById('newOrderSound');
                     // Play sound and wait for it to finish before reloading
@@ -345,9 +346,6 @@
                         // Reload after the sound finishes playing
                     };
 
-                    alert("New order received!");
-                    location.reload(); 
-                    
                     // Update initial order count to match the current order count to prevent repeated alerts
                     initialOrderCount = currentOrderCount;
                 }
