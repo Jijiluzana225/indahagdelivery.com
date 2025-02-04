@@ -593,6 +593,6 @@ def check_new_orders(request):
         "current_order_count": current_order_count,
         "new_orders": new_orders,
         "active": active
-   
+    xxx
     })
 
