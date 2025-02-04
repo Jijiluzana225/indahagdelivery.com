@@ -548,14 +548,14 @@ def product_delete(request, pk):
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Order
 
-def update_order_status_delivered(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
+# def update_order_status(request, order_id):
+#     order = get_object_or_404(Order, id=order_id)
     
-    if order.status != 'Delivered':  # Only allow status change if it's not already "Delivered"
-        order.status = 'Delivered'
-        order.save()
+#     if order.status != 'Delivered':  # Only allow status change if it's not already "Delivered"
+#         order.status = 'Delivered'
+#         order.save()
 
-    return redirect('store_dashboard')
+#     return redirect('store_dashboard')
 
 
 from django.http import JsonResponse
