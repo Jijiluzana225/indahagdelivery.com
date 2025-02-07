@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Order #{{ order.id }} - {{ order.customer.username }}</h2>
+
+<!-- Ordered Items -->
+<table border="1">
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Action</th>
+    </tr>
+    {% for item in items %}
+    <tr>
+        <td>{{ item.product_name }}</td>
+        <td>{{ item.product_price }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>
+            <a href="{% url 'delete_order_item' item.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<!-- Add New Item -->
+<h3>Add New Item</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Item</button>
+</form>
+
+{% endblock %}

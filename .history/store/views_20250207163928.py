@@ -645,7 +645,6 @@ from .forms import OrderItemForm
 @login_required
 def order_items_view(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-
     items = order.items.all()
     products = Product.objects.filter(username=request.user)  # Only store owner's products
 
@@ -655,7 +654,7 @@ def order_items_view(request, order_id):
             order_item = form.save(commit=False)
             order_item.order = order
             order_item.save()
-            return redirect('order_items_update', order_id=order.id)
+            return redirect('store/order_items_update.html', order_id=order.id)
     else:
         form = OrderItemForm()
 

@@ -55,14 +55,10 @@ urlpatterns = [
     path('<int:pk>/edit/', views.product_update, name='product_update'),
     path('<int:pk>/delete/', views.product_delete, name='product_delete'),
     
-    
-    # update order_items_update
-    path('orders/<int:order_id>/items/', views.order_items_view, name='order_items_update'),
-    path('orders/items/delete/<int:item_id>/', views.delete_order_item, name='delete_order_item'),
-
-    
 ]
 
 
-
+# update order_items_update
+path('orders/<int:order_id>/items/', views.order_items_view, name='order_items_update'),
+path('orders/items/delete/<int:item_id>/', views.delete_order_item, name='delete_order_item'),
     

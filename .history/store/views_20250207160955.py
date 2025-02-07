@@ -635,39 +635,3 @@ def update_order_status_original_Status(request):
 
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from .models import Order, OrderItem, Product, Store
-from .forms import OrderItemForm
-
-@login_required
-def order_items_view(request, order_id):
-    order = get_object_or_404(Order, id=order_id)
-
-    items = order.items.all()
-    products = Product.objects.filter(username=request.user)  # Only store owner's products
-
-    if request.method == "POST":
-        form = OrderItemForm(request.POST)
-        if form.is_valid():
-            order_item = form.save(commit=False)
-            order_item.order = order
-            order_item.save()
-            return redirect('order_items_update', order_id=order.id)
-    else:
-        form = OrderItemForm()
-
-    return render(request, 'store/order_items_update.html', {
-        'order': order,
-        'items': items,
-        'products': products,
-        'form': form
-    })
-
-@login_required
-def delete_order_item(request, item_id):
-    item = get_object_or_404(OrderItem, id=item_id, order__store__owner=request.user)
-    item.delete()
-    return redirect('order_items', order_id=item.order.id)

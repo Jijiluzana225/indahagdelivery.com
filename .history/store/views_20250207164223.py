@@ -659,7 +659,7 @@ def order_items_view(request, order_id):
     else:
         form = OrderItemForm()
 
-    return render(request, 'store/order_items_update.html', {
+    return render(request, 'store/order_items.html', {
         'order': order,
         'items': items,
         'products': products,

@@ -90,7 +90,7 @@
         text-align: center;
     }
 
-    /* Responsive Design for Tablets */
+    /* Responsive Design */
     @media (max-width: 768px) {
         h2 {
             font-size: 2rem;
@@ -108,7 +108,6 @@
         }
     }
 
-    /* Responsive Design for Mobile */
     @media (max-width: 480px) {
         h2 {
             font-size: 1.8rem;
@@ -133,24 +132,8 @@
             width: 50px;
         }
 
-        /* Make table scrollable for very small screens */
         .items-table-container {
             overflow-x: auto;
-        }
-
-        .items-table {
-            display: block;
-            width: 100%;
-            overflow-x: scroll;
-            padding-bottom: 10px;
-        }
-
-        .items-table th, 
-        .items-table td {
-            white-space: nowrap;
-        }
-        .order-detail {
-            padding-top:50px;
         }
     }
 </style>
@@ -165,7 +148,9 @@
                 <th>Price</th>
                 <th>Quantity</th>
                 <th>Total Price</th>
-                {% comment %} <th>Actions</th> {% endcomment %}
+                {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
+                    <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -173,22 +158,32 @@
             <tr>
                 <td>{{ item.product_name }}</td>
                 <td>{{ item.product_price }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.total_price|floatformat:2 }}</td>
+                <td>
+                    {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
+                        <input type="number" id="quantity-{{ item.id }}" value="{{ item.quantity }}" min="1" onchange="updateItem({{ item.id }})">
+                    {% else %}
+                        {{ item.quantity }}
+                    {% endif %}
+                </td>
+                <td id="total-price-{{ item.id }}">{{ item.total_price|floatformat:2 }}</td>
+                {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
+                <td>
+                    <button class="action-btn delete-btn" onclick="deleteItem({{ item.id }})">Delete</button>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    {% comment %} <div style="margin-top: 20px; text-align: right;">
-        <a href="{% url 'order_items_update' order.id %}" class="action-btn update-btn">Manage Order Items</a>
-    </div> {% endcomment %}
-
-
-    <!-- New Containers for Money and Instructions -->
     <div style="padding-top:25px;padding-bottom:10px;">
-        Total Amount + Delivery Fee:
-        <span style="color:blue; font-size:30px"><strong>{{ order.total_price|floatformat:2 }}</strong></span>
+        Total Amount:
+        <span style="color:blue; font-size:30px"><strong id="grand-total">{{ order.total_price|floatformat:2 }}</strong></span>
+    </div>
+
+    <div class="delivery-fee">
+        <strong>Delivery Fee: </strong>
+        <span style="color:green;" id="delivery-fee">{{ store.delivery_fee }}</span>
     </div>
 
     <div class="order-detail">
@@ -200,24 +195,13 @@
     <p style="color:Orange">{{ order.instructions }}</p>
 
     {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
-    
-    
+        <form action="{% url 'update_order_status_delivered' order.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="action-btn update-btn">Mark as DELIVERED</button>
+        </form>
 
-    <!-- Add DELIVERED button -->
-    {% if order.status != 'Delivered' %}
-    <form action="{% url 'update_order_status_delivered' order.id %}" method="POST">
-        {% csrf_token %}
-        <button type="submit" class="action-btn update-btn">Mark as DELIVERED</button>
-    </form>
+        <button class="action-btn update-btn" onclick="printReceipt()">Print Receipt</button>
     {% endif %}
-    <div style="font-align:right">
-        <button class="action-btn update-btn" onclick="printReceipt()">
-            Print Receipt
-        </button>
-    </div>
-    
-    {% endif %}
-
 </div>
 
 <script>
@@ -232,13 +216,10 @@
             },
             body: JSON.stringify({ quantity: quantity })
         })
-        .then(response => {
-            if (response.ok) {
-                alert('Item updated successfully!');
-                location.reload();
-            } else {
-                alert('Failed to update item.');
-            }
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById(`total-price-${itemId}`).textContent = data.total_price.toFixed(2);
+            document.getElementById("grand-total").textContent = data.grand_total.toFixed(2);
         });
     }
 
@@ -246,74 +227,14 @@
         if (confirm('Are you sure you want to delete this item?')) {
             fetch(`/delete-item/${itemId}/`, {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
             })
-            .then(response => {
-                if (response.ok) {
-                    alert('Item deleted successfully!');
-                    location.reload();
-                } else {
-                    alert('Failed to delete item.');
-                }
+            .then(response => response.json())
+            .then(data => {
+                location.reload();
             });
         }
     }
 </script>
-<script>
-    function printReceipt() {
-    let receiptContent = `
-        <style>
-            @page {
-                margin: 0; /* Removes header and footer */
-            }
-            body, html {
-                font-family: Calibre;
-                font-size: 10px;
-                margin-left: 10px;
-                padding: 0;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-            }
-            .receipt {
-                text-align: left;
-                max-width: 280px;
-                margin-left: 10px;
-                padding: 0;
-                border: none;
-                
-            }
-        </style>
-        <div class="receipt">
-Order Receipt
----------------------------------------------
-Order ID: {{ order.id }}
-Customer: {{ order.customer.username }}
----------------------------------------------
-Items:
-{% for item in items %}
-{{ item.product_name }}
-x{{ item.quantity }} @ {{ item.product_price }}
 
-Total: {{ item.total_price|floatformat:2 }}
----------------------------------------------
-{% endfor %}
-Total + Delivery Fee: {{ order.total_price|floatformat:2 }}
----------------------------------------------
-Thank you for your purchase!
-        </div>
-    `;
-
-    let printWindow = window.open('', '', 'width=300,height=400');
-    printWindow.document.write(receiptContent);
-    printWindow.document.close();
-    printWindow.print();
-    printWindow.onafterprint = function () {
-    printWindow.close(); // Close the blank page after printing
-    };
-
-}
-
-    </script>
 {% endblock %}

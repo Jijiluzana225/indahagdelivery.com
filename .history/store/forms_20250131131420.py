@@ -77,11 +77,3 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
-
-from django import forms
-from .models import OrderItem
-
-class OrderItemForm(forms.ModelForm):
-    class Meta:
-        model = OrderItem
-        fields = ['product_name', 'product_price', 'quantity']
