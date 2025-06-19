@@ -104,33 +104,5 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product_name}"
 
-    
-class DeliveryDriver(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='delivery_driver')
-    name = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
-    license_number = models.CharField(max_length=50, unique=True)
-    vehicle_type = models.CharField(
-        max_length=20,
-        choices=[
-            ('Motorcycle', 'Motorcycle'),
-            ('Bicycle', 'Bicycle'),
-            ('Car', 'Car'),
-            ('Tricycle', 'Tricycle'),
-            ('Other', 'Other')
-        ],
-        default='Motorcycle'
-    )
-    vehicle_plate_number = models.CharField(max_length=20, null=True, blank=True)
-    profile_picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='drivers/', null=True, blank=True)
-    is_available = models.BooleanField(default=True)
-    is_verified = models.BooleanField(default=False)
-    current_location = models.CharField(max_length=255, null=True, blank=True)
-    rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
-    total_deliveries = models.PositiveIntegerField(default=0)
-    date_joined = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
-    
-    def __str__(self):
-        return f"{self.name} - {self.vehicle_type}"
-    
+
+   
