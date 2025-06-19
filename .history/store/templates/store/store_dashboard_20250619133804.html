@@ -5,8 +5,6 @@
 
 {% block content %}
 
-
-
 <style>
     /* General Styling for Dashboard */
     body {
@@ -82,6 +80,24 @@
 
     .update-btn:hover {
         background-color: #0056b3;
+    }
+
+    /* Disabled button styling */
+    .update-btn:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .update-btn:disabled:hover {
+        background-color: #6c757d;
+    }
+
+    /* Disabled select styling */
+    select:disabled {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+        opacity: 0.6;
     }
 
     .map-btn {
@@ -169,7 +185,7 @@
                 <th>Customer</th>
                 <th>Customer Number</th>
                 <th>Location</th>
-                <th>Total Amount</th> <!-- New Total Amount Column -->
+                <th>Total Amount</th>
                 <th>Status</th>
                 <th>Orders</th>
                 <th>Created At</th>
@@ -177,16 +193,15 @@
             </tr>
         </thead>
         <tbody>   
-            
             {% for order in orders %}
-                <tr class="order-row">
+                <tr class="order-row" data-order-id="{{ order.id }}">
                     <td>{{ order.id }}</td>
                     <td>{{ order.customer_name }}</td>
                     <td>{{ order.phone_number }}</td>
                     <td>
                         <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
                     </td>
-                    <td>{{ order.total_price|floatformat:2|intcomma }}</td> <!-- Display Total Amount -->
+                    <td>{{ order.total_price|floatformat:2|intcomma }}</td>
                     
                     <td>
                         <select id="status-{{ order.id }}" onchange="updateRowColor()">
@@ -202,14 +217,16 @@
                     </td>
                     <td>{{ order.created_at }}</td>
                     <td>
-                        <button class="update-btn" onclick="updateOrderStatus({{ order.id }})">Update</button>
+                        <button class="update-btn" onclick="updateOrderStatus({{ order.id }})">
+                            Update
+                        </button>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
-        
     </table>
 </div>
+
 <script>
     // Function to update the background color based on order status
     function updateRowColor() {
@@ -218,37 +235,59 @@
         rows.forEach(row => {
             const status = row.querySelector('select').value;
             
+            // Remove any existing status-based background color first
+            row.style.backgroundColor = '';
+            
             switch (status) {
                 case 'Pending':
-                    row.style.backgroundColor = 'White'; // Red (Pending)
+                    row.style.backgroundColor = '#ffffff';
                     break;
                 case 'Declined':
-                    row.style.backgroundColor = 'Orange'; // Yellow (Preparing)
+                    row.style.backgroundColor = '#ffa500';
                     break;
                 case 'Preparing':
-                    row.style.backgroundColor = 'lightYellow'; // Yellow (Preparing)
+                    row.style.backgroundColor = '#ffffe0';
                     break;
                 case 'On the Way':
-                    row.style.backgroundColor = 'Aqua'; // Blue (On the Way)
+                    row.style.backgroundColor = '#00ffff';
                     break;
                 case 'Delivered':
-                    row.style.backgroundColor = 'lightgreen'; // Green (Delivered)
+                    row.style.backgroundColor = '#90ee90';
                     break;
                 default:
-                    row.style.backgroundColor = ''; // Default background (if status is empty or unknown)
+                    row.style.backgroundColor = '';
             }
         });
     }
 
-    // Initial row color update when the page loads
+    // Function to check and disable controls based on status on page load
+    function checkAndDisableControls() {
+        const rows = document.querySelectorAll('.order-row');
+        rows.forEach(row => {
+            const orderId = row.getAttribute('data-order-id');
+            const statusSelect = document.getElementById('status-' + orderId);
+            const updateButton = row.querySelector('.update-btn');
+            const currentStatus = statusSelect.value;
+            
+            // Disable controls for final statuses
+            if (currentStatus === 'Declined' || currentStatus === 'Delivered') {
+                statusSelect.disabled = true;
+                updateButton.disabled = true;
+            }
+        });
+    }
+
+    // Initial setup when the page loads
     window.onload = function() {
         updateRowColor();
+        checkAndDisableControls(); // Check and disable controls on page load
     };
 
     // Call the function again when the status is updated
     function updateOrderStatus(orderId) {
         var status = document.getElementById('status-' + orderId).value;
         var button = document.querySelector(`button[onclick="updateOrderStatus(${orderId})"]`);
+        
         button.textContent = "Updating...";
         button.disabled = true;
 
@@ -260,12 +299,22 @@
         xhr.onload = function() {
             if (xhr.status == 200) {
                 alert("Order ID " + orderId + " status updated to " + status);
-                updateRowColor();  // Update the row color after the status update
+                updateRowColor();
+                
+                // Disable button and status dropdown permanently if status is Declined or Delivered
+                if (status === 'Declined' || status === 'Delivered') {
+                    button.disabled = true;
+                    button.textContent = "Update";
+                    document.getElementById('status-' + orderId).disabled = true;
+                } else {
+                    button.disabled = false;
+                    button.textContent = "Update";
+                }
             } else {
                 alert("Failed to update status. Please try again.");
+                button.textContent = "Update";
+                button.disabled = false;
             }
-            button.textContent = "Update";
-            button.disabled = false;
         };
 
         xhr.onerror = function() {
@@ -302,11 +351,6 @@
             alert("Geolocation is not supported by your browser.");
         }
     }
-
-    {% comment %} // Refresh the page every 10 seconds (10000 milliseconds)
-    setInterval(function() {
-        location.reload();
-    }, 10000);  {% endcomment %}
 </script>
 
 <audio id="newOrderSound">
@@ -314,7 +358,7 @@
 </audio>
 
 <script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length; // Store order count when page loads
+    var initialOrderCount = document.querySelectorAll('.order-row').length;
 
     function checkForNewOrders() {
         var xhr = new XMLHttpRequest();
@@ -323,7 +367,6 @@
             if (xhr.status == 200) {
                 var response = JSON.parse(xhr.responseText);
 
-                // Stop checking if no active orders exist
                 if (!response.active) {
                     console.log("No new orders. Stopping order check.");
                     return;
@@ -332,35 +375,28 @@
                 var currentOrderCount = response.current_order_count;
                 console.log(initialOrderCount, currentOrderCount);
 
-                // Play sound if the initial order count is less than the current order count
                 if (initialOrderCount < currentOrderCount) {
                     var audio = document.getElementById('newOrderSound');
 
-                    // Ensure audio is loaded and then try to play it
                     try {
                         var playPromise = audio.play();
 
-                        // If play() is successful, add an event listener for 'ended'
                         if (playPromise !== undefined) {
                             playPromise.then(function() {
                                 audio.onended = function () {
                                     alert("New order received!");
                                     location.reload(); 
-                                    // Reload after the sound finishes playing
                                 };
                             }).catch(function(error) {
-                                // If an error occurs (e.g., blocked audio), just alert and reload
                                 alert("New order received!");
                                 location.reload(); 
                             });
                         }
                     } catch (error) {
-                        // If there's an error with play, trigger the alert and reload immediately
                         alert("New order received!");
                         location.reload(); 
                     }
 
-                    // Update initial order count to match the current order count to prevent repeated alerts
                     initialOrderCount = currentOrderCount;
                 }
             }
@@ -368,15 +404,11 @@
         xhr.send();
     }
 
-    // Check for new orders only if there are existing orders
     if (initialOrderCount > 0) {
-        setInterval(checkForNewOrders, 10000); // Check every 10 seconds
+        setInterval(checkForNewOrders, 10000);
     } else {
         console.log("No orders in table. Order checking is disabled.");
     }
 </script>
-
-
-
 
 {% endblock %}
