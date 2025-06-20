@@ -391,7 +391,7 @@
                     </td>
                     <td>
                         <select id="driver-{{ order.id }}" class="driver-select">
-                            <option value="">-</option>
+                            <option value="">Select Rider</option>
                             {% for driver in available_drivers %}
                                 <option value="{{ driver.id }}" 
                                     {% if order.assigned_to.id == driver.id %}selected{% endif %}>

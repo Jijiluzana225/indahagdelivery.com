@@ -64,7 +64,7 @@ urlpatterns = [
     path('driver/dashboard/', views.driver_dashboard, name='driver_dashboard'),
     path('driver/profile/update/', views.driver_profile_update, name='driver_profile_update'),
     path('driver/toggle-availability/', views.toggle_availability, name='toggle_availability'),
-    path('driver//', views.home, name='home_driver'),
+    
 ]
 
 

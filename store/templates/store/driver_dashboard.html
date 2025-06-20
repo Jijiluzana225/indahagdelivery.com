@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            --info-gradient: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --bg-light: #f8f9fa;
+            --border-radius: 15px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+           
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .user-details h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .user-details p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-verified {
+            background: rgba(40, 167, 69, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-suspended {
+            background: rgba(220, 53, 69, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        /* Main Content */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            background: var(--bg-light);
+        }
+
+        .card-header h3 {
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Orders Section */
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item:hover {
+            background: var(--bg-light);
+            margin: 0 -25px;
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .order-details {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .order-status {
+            margin-left: auto;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-delivering {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+        }
+
+        .btn-info {
+            background: var(--info-gradient);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Vehicle Info */
+        .vehicle-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+
+        .vehicle-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .vehicle-details h4 {
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .vehicle-details p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Activity */
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+
+            .dashboard-header {
+                padding: 20px;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                align-items: start;
+                gap: 15px;
+            }
+
+            .user-details h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-gradient);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div class="welcome-section">
+                    <div class="user-info">
+                    
+                        <div class="user-details">
+                            <h1>Welcome back, {{ driver.name|default:user.username }}!</h1>
+                            <p>{{ driver.vehicle_type|default:"Driver" }} • License: {{ driver.license_number|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                    <div class="status-badge {% if driver.is_verified %}status-verified{% elif driver.status == 'suspended' %}status-suspended{% else %}status-pending{% endif %}">
+                        {% if driver.is_verified %}
+                            ✅ Verified
+                        {% elif driver.status == 'suspended' %}
+                            ⚠️ Suspended
+                        {% else %}
+                            ⏳ Pending Verification
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--success-gradient);">📦</div>
+                </div>
+                <div class="stat-value">{{ total_deliveries|default:0 }}</div>
+                <div class="stat-label">Total Deliveries</div>
+                <div class="stat-change positive">
+                    <span>↗️</span> +{{ this_week_deliveries|default:0 }} this week
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--info-gradient);">💰</div>
+                </div>
+                <div class="stat-value">₱{{ total_earnings|default:0|floatformat:2 }}</div>
+                <div class="stat-label">Total Earnings</div>
+                <div class="stat-change positive">
+                    <span>↗️</span> +₱{{ this_week_earnings|default:0|floatformat:2 }} this week
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--warning-gradient);">⭐</div>
+                </div>
+                <div class="stat-value">{{ average_rating|default:0|floatformat:1 }}</div>
+                <div class="stat-label">Average Rating</div>
+                <div class="stat-change positive">
+                    <span>↗️</span> Based on {{ total_ratings|default:0 }} ratings
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--danger-gradient);">🚚</div>
+                </div>
+                <div class="stat-value">{{ pending_orders|default:0 }}</div>
+                <div class="stat-label">Pending Orders</div>
+                <div class="stat-change">
+                    <span>📋</span> Ready for pickup
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🚀 Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="action-buttons">
+
+                       <input type="checkbox" name="is_available" {{driver.is_available}}>
+                           ON-DUTY
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📋 Current Orders</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if current_orders %}
+                            {% for order in current_orders %}
+                                <div class="order-item">
+                                    <div>
+                                        <div class="order-id">Order #{{ order.id }}</div>
+                                        <div class="order-details">
+                                            📍 {{ order.delivery_address|truncatechars:50 }}<br>
+                                            💰 ₱{{ order.total_amount|floatformat:2 }} • 🕐 {{ order.created_at|timesince }} ago
+                                        </div>
+                                    </div>
+                                    <div class="order-status status-{{ order.status|lower }}">
+                                        {{ order.get_status_display }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📦</div>
+                                <p>No current orders</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📈 Recent Activity</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_activities %}
+                            {% for activity in recent_activities %}
+                                <div class="activity-item">
+                                    <div class="activity-icon" style="background: var(--success-gradient);">
+                                        {% if activity.type == 'delivery' %}📦
+                                        {% elif activity.type == 'rating' %}⭐
+                                        {% elif activity.type == 'payment' %}💰
+                                        {% else %}📝{% endif %}
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-text">{{ activity.description }}</div>
+                                        <div class="activity-time">{{ activity.created_at|timesince }} ago</div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📈</div>
+                                <p>No recent activity</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Vehicle Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🏍️ Vehicle Info</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="vehicle-info">
+                            <div class="vehicle-icon">
+                                {% if driver.vehicle_type == 'Motorcycle' %}🏍️
+                                {% elif driver.vehicle_type == 'Bicycle' %}🚲
+                                {% elif driver.vehicle_type == 'Car' %}🚗
+                                {% elif driver.vehicle_type == 'Tricycle' %}🛺
+                                {% else %}🚚{% endif %}
+                            </div>
+                            <div class="vehicle-details">
+                                <h4>{{ driver.vehicle_type|default:"Not Set" }}</h4>
+                                <p>Plate: {{ driver.vehicle_plate_number|default:"N/A" }}</p>
+                                <p>License: {{ driver.license_number|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                        <a href="#" class="action-btn btn-primary" style="width: 100%;">
+                            ✏️ Edit Vehicle Info
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Profile Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>👤 Profile Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Status:</strong> 
+                                <span class="status-badge {% if driver.is_verified %}status-verified{% else %}status-pending{% endif %}" style="margin-left: 10px;">
+                                    {% if driver.is_verified %}✅ Verified{% else %}⏳ Pending{% endif %}
+                                </span>
+                            </p>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Location:</strong> {{ driver.current_location|default:"Not Set" }}</p>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Joined:</strong> {{ driver.created_at|date:"M d, Y" }}</p>
+                        </div>
+
+                        <a href="#" class="action-btn btn-info" style="width: 100%;">
+                            ✏️ Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📊 This Week</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Deliveries</span>
+                                <strong>{{ this_week_deliveries|default:0 }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Earnings</span>
+                                <strong>₱{{ this_week_earnings|default:0|floatformat:2 }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Hours Online</span>
+                                <strong>{{ this_week_hours|default:0 }}h</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-refresh dashboard data every 30 seconds
+        setInterval(function() {
+            // You can add AJAX calls here to refresh specific sections
+            console.log('Auto-refreshing dashboard data...');
+        }, 30000);
+
+        // Online/Offline toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const goOnlineBtn = document.querySelector('.action-btn.btn-primary');
+            if (goOnlineBtn) {
+                goOnlineBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Add your online/offline toggle logic here
+                    const isOnline = this.textContent.includes('Go Online');
+                    if (isOnline) {
+                        this.innerHTML = '📴 Go Offline';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-danger');
+                    } else {
+                        this.innerHTML = '📱 Go Online';
+                        this.classList.remove('btn-danger');
+                        this.classList.add('btn-primary');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -121,7 +121,7 @@ class Order(models.Model):
     instructions=models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
-    assigned_to = models.OneToOneField(DeliveryDriver, on_delete=models.CASCADE, null=True )
+    assigned_to = models.OneToOneField(DeliveryDriver, on_delete=models.CASCADE, related_name='delivery_driver')
     
     def __str__(self):
         return f"Order {self.id} - {self.customer.username} - {self.status}"

@@ -65,6 +65,8 @@ class CustomerProfile(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+
+
 class DeliveryDriver(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='delivery_driver')
     name = models.CharField(max_length=100)
@@ -97,7 +99,6 @@ class DeliveryDriver(models.Model):
     
 
 
-
 from django.db import models
 from django.contrib.auth.models import User  # assuming you're using Django's User model for customers
 
@@ -121,7 +122,7 @@ class Order(models.Model):
     instructions=models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
-    assigned_to = models.OneToOneField(DeliveryDriver, on_delete=models.CASCADE, null=True )
+    assigned_to = models.OneToOneField(DeliveryDriver, on_delete=models.CASCADE, related_name='delivery_driver')
     
     def __str__(self):
         return f"Order {self.id} - {self.customer.username} - {self.status}"

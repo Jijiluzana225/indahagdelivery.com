@@ -265,7 +265,7 @@ def customer_dashboard(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
-from .models import Order, CustomerProfile, DeliveryDriver
+from .models import Order, CustomerProfile
 
 from django.db.models import Sum, F
 from django.contrib.auth.decorators import login_required
@@ -282,13 +282,6 @@ def store_dashboard(request):
         total_amount=Sum(F('items__product_price') * F('items__quantity'))
     ).order_by('-created_at')
 
-    available_drivers = DeliveryDriver.objects.filter(is_available=True)
-    
-    context = {
-        'orders': orders,  # your existing orders
-        'available_drivers': available_drivers,
-        # ... other context variables
-    }
     # Add customer location directly to each order
     orders_with_location = []
     for order in orders:
@@ -298,55 +291,71 @@ def store_dashboard(request):
         order.phone_number = customer_profile.phone_number
         orders_with_location.append(order)
 
-    return render(request, 'store/store_dashboard.html', context)
+    return render(request, 'store/store_dashboard.html', {
+        'orders': orders_with_location,
+    })
 
 
 
-import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from .models import Order, CustomerProfile
+import json
+import logging
+
+# Set up a logger
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
-@require_http_methods(["POST"])
 def update_order_status(request):
-    """
-    Update order status and/or assign driver
-    """
-    try:
-        data = json.loads(request.body)
-        order_id = data.get('order_id')
-        status = data.get('status')
-        driver_id = data.get('driver_id')
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            order_id = data['order_id']
+            new_status = data['status']
+            
+            # Try to retrieve and update the order
+            order = Order.objects.get(id=order_id)
+            order.status = new_status
+            order.save()
+
+            # Retrieve the customer's location and name based on the order
+            customer_profile = CustomerProfile.objects.get(username=order.customer)
+            customer_location = customer_profile.location
+            customer_name = customer_profile.name            
+
+            # Return the success response along with the customer's location and name
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Order status updated successfully.',
+                'customer_location': customer_location,  # Include location
+                'customer_namex': customer_name  # Include name
+                
+            })
+           
         
-        # Get the order
-        order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            logger.error(f"Order with ID {order_id} not found.")
+            return JsonResponse({'status': 'error', 'message': 'Order not found.'}, status=404)
         
-        # Update status if provided
-        if status:
-            order.status = status
+        except CustomerProfile.DoesNotExist:
+            logger.error(f"Customer profile for Order ID {order_id} not found.")
+            return JsonResponse({'status': 'error', 'message': 'Customer profile not found.'}, status=404)
         
-        # Update driver assignment if provided
-        if driver_id:
-            try:
-                driver = DeliveryDriver.objects.get(id=driver_id, is_available=True)
-                order.assigned_to = driver
-            except DeliveryDriver.DoesNotExist:
-                return JsonResponse({'error': 'Driver not found or not available'}, status=400)
+        except KeyError as e:
+            logger.error(f"Missing key: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': f'Missing key: {str(e)}'}, status=400)
         
-        order.save()
+        except json.JSONDecodeError:
+            logger.error("Invalid JSON format received.")
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON format.'}, status=400)
         
-        return JsonResponse({
-            'success': True,
-            'message': 'Order updated successfully'
-        })
-        
-    except Order.DoesNotExist:
-        return JsonResponse({'error': 'Order not found'}, status=404)
-    except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON data'}, status=400)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=400)
+
 
 
 
@@ -676,7 +685,7 @@ from .forms import DeliveryDriverRegistrationForm
 
 def home(request):
     """Home page view"""
-    return render(request, 'store/home.html')
+    return render(request, 'home.html')
 
 @login_required
 def driver_register(request):
@@ -708,7 +717,7 @@ def driver_register(request):
     else:
         form = DeliveryDriverRegistrationForm()
     
-    return render(request, 'store/driver_register.html', {'form': form})
+    return render(request, 'driver_register.html', {'form': form})
 
 @login_required
 def driver_dashboard(request):
@@ -723,7 +732,7 @@ def driver_dashboard(request):
         'driver': driver,
         'recent_deliveries': [],  # Add logic to get recent deliveries
     }
-    return render(request, 'store/driver_dashboard.html', context)
+    return render(request, 'driver_dashboard.html', context)
 
 @login_required
 def driver_profile_update(request):
@@ -745,7 +754,7 @@ def driver_profile_update(request):
     else:
         form = DeliveryDriverRegistrationForm(instance=driver)
     
-    return render(request, 'store/driver_profile_update.html', {'form': form, 'driver': driver})
+    return render(request, 'driver_profile_update.html', {'form': form, 'driver': driver})
 
 @login_required
 @require_http_methods(["POST"])

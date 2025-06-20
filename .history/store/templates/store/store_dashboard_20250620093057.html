@@ -23,100 +23,32 @@
     }
 
     .orders-table-container {
-        width: 98%;
-        max-width: 1400px;
+        width: 95%;
+        max-width: 1200px;
         margin: 0 auto;
         background-color: #fff;
-        padding: 15px;
+        padding: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        overflow-x: auto;
     }
 
     .orders-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 1200px;
     }
 
     .orders-table th, 
     .orders-table td {
-        padding: 8px 6px;
+        padding: 12px 15px;
         text-align: center;
-        font-size: 0.85rem;
+        font-size: 1rem;
         border-bottom: 1px solid #ddd;
-        vertical-align: middle;
     }
 
     .orders-table th {
         background-color: #f1f1f1;
         color: #333;
         font-weight: bold;
-        white-space: nowrap;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-
-    /* Column-specific widths for better arrangement */
-    .orders-table th:nth-child(1),
-    .orders-table td:nth-child(1) { /* Order ID */
-        width: 70px;
-        min-width: 70px;
-    }
-
-    .orders-table th:nth-child(2),
-    .orders-table td:nth-child(2) { /* Customer */
-        width: 120px;
-        min-width: 120px;
-    }
-
-    .orders-table th:nth-child(3),
-    .orders-table td:nth-child(3) { /* Phone */
-        width: 110px;
-        min-width: 110px;
-    }
-
-    .orders-table th:nth-child(4),
-    .orders-table td:nth-child(4) { /* Location */
-        width: 80px;
-        min-width: 80px;
-    }
-
-    .orders-table th:nth-child(5),
-    .orders-table td:nth-child(5) { /* Total */
-        width: 90px;
-        min-width: 90px;
-    }
-
-    .orders-table th:nth-child(6),
-    .orders-table td:nth-child(6) { /* Status */
-        width: 130px;
-        min-width: 130px;
-    }
-
-    .orders-table th:nth-child(7),
-    .orders-table td:nth-child(7) { /* Orders */
-        width: 80px;
-        min-width: 80px;
-    }
-
-    .orders-table th:nth-child(8),
-    .orders-table td:nth-child(8) { /* Created At */
-        width: 140px;
-        min-width: 140px;
-    }
-
-    .orders-table th:nth-child(9),
-    .orders-table td:nth-child(9) { /* Assign to Rider */
-        width: 180px;
-        min-width: 180px;
-    }
-
-    .orders-table th:nth-child(10),
-    .orders-table td:nth-child(10) { /* Actions */
-        width: 90px;
-        min-width: 90px;
     }
 
     .orders-table tr:nth-child(even) {
@@ -134,18 +66,16 @@
 
     .update-btn, 
     .map-btn {
-        padding: 5px 8px;
-        font-size: 0.75rem;
+        padding: 8px 15px;
+        font-size: 0.9rem;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         color: #fff;
-        white-space: nowrap;
     }
 
     .update-btn {
         background-color: #007bff;
-        width: 70px;
     }
 
     .update-btn:hover {
@@ -170,87 +100,24 @@
         opacity: 0.6;
     }
 
-    /* Status select styling */
-    .status-select {
-        width: 100%;
-        max-width: 120px;
-        padding: 4px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 0.75rem;
-    }
-
     /* Driver select styling */
     .driver-select {
         width: 100%;
-        max-width: 170px;
-        padding: 4px;
+        padding: 5px;
         border: 1px solid #ddd;
         border-radius: 4px;
-        font-size: 0.75rem;
+        font-size: 0.9rem;
     }
 
     .map-btn {
         background-color: #28a745;
-        width: 50px;
     }
 
     .map-btn:hover {
         background-color: #1e7e34;
     }
 
-    /* Orders link styling */
-    .orders-link {
-        background-color: #17a2b8;
-        color: white;
-        padding: 4px 8px;
-        text-decoration: none;
-        border-radius: 3px;
-        font-size: 0.75rem;
-        display: inline-block;
-    }
-
-    .orders-link:hover {
-        background-color: #138496;
-        color: white;
-        text-decoration: none;
-    }
-
-    /* Text wrapping and overflow handling */
-    .customer-name {
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .phone-number {
-        font-size: 0.75rem;
-    }
-
-    .created-date {
-        font-size: 0.7rem;
-        line-height: 1.2;
-    }
-
     /* Responsive Design for Tablets */
-    @media (max-width: 1024px) {
-        .orders-table-container {
-            padding: 10px;
-        }
-        
-        .orders-table th, 
-        .orders-table td {
-            padding: 6px 4px;
-            font-size: 0.8rem;
-        }
-
-        .orders-title {
-            font-size: 2rem;
-        }
-    }
-
-    /* Responsive Design for smaller tablets */
     @media (max-width: 768px) {
         .orders-title {
             font-size: 1.8rem;
@@ -258,20 +125,14 @@
 
         .orders-table th, 
         .orders-table td {
-            padding: 5px 3px;
-            font-size: 0.75rem;
+            padding: 8px;
+            font-size: 0.9rem;
         }
 
         .update-btn, 
         .map-btn {
-            padding: 4px 6px;
-            font-size: 0.7rem;
-        }
-
-        .driver-select,
-        .status-select {
-            font-size: 0.7rem;
-            padding: 3px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
         }
     }
 
@@ -282,62 +143,45 @@
         }
 
         .orders-table-container {
-            padding: 5px;
-            width: 100%;
-        }
-
-        .orders-table {
-            min-width: 800px;
-            font-size: 0.7rem;
+            padding: 10px;
         }
 
         .orders-table th, 
         .orders-table td {
-            padding: 4px 2px;
-            font-size: 0.65rem;
+            padding: 6px;
+            font-size: 0.75rem;
         }
 
         .update-btn, 
         .map-btn {
-            padding: 3px 5px;
-            font-size: 0.6rem;
-            width: auto;
+            padding: 5px 10px;
+            font-size: 0.7rem;
         }
 
-        .driver-select,
-        .status-select {
-            font-size: 0.65rem;
-            padding: 2px;
+        .orders-table {
+            font-size: 0.9rem;
         }
 
-        .orders-link {
-            padding: 2px 4px;
-            font-size: 0.65rem;
+        /* Make table scrollable for small screens */
+        .orders-table-container {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            display: block;
+            width: 100%;
+            overflow-x: scroll;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            white-space: nowrap;
         }
     }
 
     /* Transition for background color */
     .order-row {
         transition: background-color 0.3s ease;
-    }
-
-    /* Scrollbar styling for better UX */
-    .orders-table-container::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .orders-table-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    .orders-table-container::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-
-    .orders-table-container::-webkit-scrollbar-thumb:hover {
-        background: #555;
     }
 </style>
 
@@ -346,35 +190,32 @@
     <table class="orders-table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Order ID</th>
                 <th>Customer</th>
-                <th>Phone</th>
-                <th>Map</th>
-                <th>Total</th>
+                <th>Customer Number</th>
+                <th>Location</th>
+                <th>Total Amount</th>
                 <th>Status</th>
-                <th>Items</th>
-                <th>Created</th>
-                <th>Assign Rider</th>
-                <th>Action</th>
+                <th>Orders</th>
+                <th>Created At</th>
+                <th>Assign to Rider</th>
+                <th>Actions</th>
+               
             </tr>
         </thead>
         <tbody>   
             {% for order in orders %}
                 <tr class="order-row" data-order-id="{{ order.id }}">
                     <td>{{ order.id }}</td>
-                    <td>
-                        <div class="customer-name" title="{{ order.customer_name }}">
-                            {{ order.customer_name }}
-                        </div>
-                    </td>
-                    <td class="phone-number">{{ order.phone_number }}</td>
+                    <td>{{ order.customer_name }}</td>
+                    <td>{{ order.phone_number }}</td>
                     <td>
                         <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
                     </td>
-                    <td>₱{{ order.total_price|floatformat:2|intcomma }}</td>
+                    <td>{{ order.total_price|floatformat:2|intcomma }}</td>
                     
                     <td>
-                        <select id="status-{{ order.id }}" class="status-select" onchange="updateRowColor()">
+                        <select id="status-{{ order.id }}" onchange="updateRowColor()">
                             <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
                             <option value="Declined" {% if order.status == 'Declined' %}selected{% endif %}>Declined</option>
                             <option value="Preparing" {% if order.status == 'Preparing' %}selected{% endif %}>Preparing</option>
@@ -383,15 +224,12 @@
                         </select>
                     </td>
                     <td>
-                        <a href="/order/{{ order.id }}/items" class="orders-link">View</a>
+                        <a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a>
                     </td>
-                    <td class="created-date">
-                        {{ order.created_at|date:"M d, Y" }}<br>
-                        <small>{{ order.created_at|time:"H:i" }}</small>
-                    </td>
+                    <td>{{ order.created_at }}</td>
                     <td>
                         <select id="driver-{{ order.id }}" class="driver-select">
-                            <option value="">-</option>
+                            <option value="">Select Driver</option>
                             {% for driver in available_drivers %}
                                 <option value="{{ driver.id }}" 
                                     {% if order.assigned_to.id == driver.id %}selected{% endif %}>

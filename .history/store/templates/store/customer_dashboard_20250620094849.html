@@ -11,97 +11,42 @@
         background-color: #f9f9f9;
         margin: 0;
         padding: 0;
-        color: #333;
     }
 
     .dashboard-title {
         font-size: 2.5rem;
         color: #333;
         text-align: center;
-        margin: 20px 0;
+        margin-bottom: 20px;
     }
 
     .orders-table-container {
-        width: 98%;
-        max-width: 1400px;
+        width: 95%;
+        max-width: 1000px;
         margin: 0 auto;
+        padding: 20px;
         background-color: #fff;
-        padding: 15px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        overflow-x: auto;
     }
 
     .orders-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 1000px;
     }
 
     .orders-table th, 
     .orders-table td {
-        padding: 8px 6px;
+        padding: 15px;
         text-align: center;
-        font-size: 0.85rem;
+        font-size: 1rem;
         border-bottom: 1px solid #ddd;
-        vertical-align: middle;
     }
 
     .orders-table th {
         background-color: #f1f1f1;
         color: #333;
         font-weight: bold;
-        white-space: nowrap;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
-
-    /* Column-specific widths for better arrangement */
-    .orders-table th:nth-child(1),
-    .orders-table td:nth-child(1) { /* Order ID */
-        width: 70px;
-        min-width: 70px;
-    }
-
-    .orders-table th:nth-child(2),
-    .orders-table td:nth-child(2) { /* Store */
-        width: 150px;
-        min-width: 150px;
-    }
-
-    .orders-table th:nth-child(3),
-    .orders-table td:nth-child(3) { /* Total Amount */
-        width: 100px;
-        min-width: 100px;
-    }
-
-    .orders-table th:nth-child(4),
-    .orders-table td:nth-child(4) { /* Status */
-        width: 120px;
-        min-width: 120px;
-    }
-
-    .orders-table th:nth-child(5),
-    .orders-table td:nth-child(5) { /* Placed On */
-        width: 140px;
-        min-width: 140px;
-    }
-
-    .orders-table th:nth-child(6),
-    .orders-table td:nth-child(6) { /* Items */
-        width: 80px;
-        min-width: 80px;
-    }
-
-    .orders-table th:nth-child(7),
-    .orders-table td:nth-child(7) { /* Assigned Rider */
-        width: 180px;
-        min-width: 180px;
-    }
-
-    .orders-table tr:nth-child(even) {
-        background-color: #f9f9f9;
     }
 
     .order-row:hover {
@@ -111,68 +56,12 @@
 
     .status {
         font-weight: bold;
-        color: #007bff;
     }
 
     .no-orders-message {
         font-size: 1.2rem;
         color: #555;
         text-align: center;
-        padding: 40px 20px;
-    }
-
-    /* Items link styling */
-    .items-link {
-        background-color: #17a2b8;
-        color: white;
-        padding: 4px 8px;
-        text-decoration: none;
-        border-radius: 3px;
-        font-size: 0.75rem;
-        display: inline-block;
-    }
-
-    .items-link:hover {
-        background-color: #138496;
-        color: white;
-        text-decoration: none;
-    }
-
-    /* Store name styling */
-    .store-name {
-        max-width: 150px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    /* Date styling */
-    .created-date {
-        font-size: 0.7rem;
-        line-height: 1.2;
-    }
-
-    /* Assigned rider styling */
-    .assigned-rider {
-        text-align: center;
-        line-height: 1.3;
-        font-size: 0.75rem;
-    }
-
-    .assigned-rider strong {
-        color: #28a745;
-        font-size: 0.8rem;
-    }
-
-    .assigned-rider small {
-        color: #666;
-        font-size: 0.7rem;
-    }
-
-    .no-rider-assigned {
-        color: #999;
-        font-style: italic;
-        font-size: 0.75rem;
     }
 
     /* Status change notification */
@@ -197,57 +86,15 @@
         transform: translateX(0);
     }
 
-    /* Transition for background color */
-    .order-row {
-        transition: background-color 0.3s ease;
-    }
-
-    /* Scrollbar styling for better UX */
-    .orders-table-container::-webkit-scrollbar {
-        height: 8px;
-    }
-
-    .orders-table-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
-    }
-
-    .orders-table-container::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
-    }
-
-    .orders-table-container::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
-
-    /* Responsive Design for Tablets */
-    @media (max-width: 1024px) {
-        .orders-table-container {
-            padding: 10px;
-        }
-        
-        .orders-table th, 
-        .orders-table td {
-            padding: 6px 4px;
-            font-size: 0.8rem;
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .orders-table th, .orders-table td {
+            padding: 12px;
+            font-size: 0.9rem;
         }
 
         .dashboard-title {
             font-size: 2rem;
-        }
-    }
-
-    /* Responsive Design for smaller tablets */
-    @media (max-width: 768px) {
-        .orders-table th, 
-        .orders-table td {
-            padding: 5px 3px;
-            font-size: 0.75rem;
-        }
-
-        .dashboard-title {
-            font-size: 1.8rem;
         }
 
         .status-notification {
@@ -261,31 +108,34 @@
         }
     }
 
-    /* Responsive Design for Mobile */
     @media (max-width: 480px) {
         .dashboard-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
         }
 
         .orders-table-container {
-            padding: 5px;
-            width: 100%;
-        }
-
-        .orders-table {
-            min-width: 800px;
-            font-size: 0.7rem;
+            padding: 15px;
         }
 
         .orders-table th, 
         .orders-table td {
-            padding: 4px 2px;
-            font-size: 0.65rem;
+            padding: 8px;
+            font-size: 0.8rem;
         }
 
-        .items-link {
-            padding: 2px 4px;
-            font-size: 0.65rem;
+        .orders-table-container {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            display: block;
+            width: 100%;
+            overflow-x: scroll;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            white-space: nowrap;
         }
     }
 </style>
@@ -297,13 +147,13 @@
         <table class="orders-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Order ID</th>
                     <th>Store</th>
-                    <th>Total</th>
+                    <th>Total Amount</th>
                     <th>Status</th>
                     <th>Placed On</th>
                     <th>Items</th>
-                    <th>Assigned Rider</th>
+                    <th>Assigend Rider</th>
                 </tr>
             </thead>
             <tbody>
@@ -318,30 +168,14 @@
                             {% else %}#ffffff
                             {% endif %};">
                         <td>{{ order.id }}</td>
-                        <td>
-                            <div class="store-name" title="{{ order.store.name }}">
-                                {{ order.store.name }}
-                            </div>
-                        </td>
-                        <td>₱{{ order.total_price|floatformat:2|intcomma }}</td>
+                        <td>{{ order.store.name }}</td>
+                        <td>{{ order.total_price|floatformat:2|intcomma }}</td>
                         <td class="status">{{ order.status }}</td>
-                        <td class="created-date">
-                            {{ order.created_at|date:"M d, Y" }}<br>
-                            <small>{{ order.created_at|time:"H:i" }}</small>
-                        </td>
-                        <td>
-                            <a href="/order/{{ order.id }}/items" class="items-link">View</a>
-                        </td>
-                        <td>
-                            {% if order.assigned_to %}
-                                <div class="assigned-rider">
-                                    <strong>{{ order.assigned_to.name }}</strong><br>
-                                    <small>{{ order.assigned_to.phone_number }}</small>
-                                </div>
-                            {% else %}
-                                <span class="no-rider-assigned">Not assigned</span>
-                            {% endif %}
-                        </td>
+                        <td>{{ order.created_at }}</td>
+                        <td><a href="/order/{{ order.id }}/items" class="btn btn-primary">Orders</a></td>
+                        {%if {{ order.assigned_to.name }} %}
+                        <td class="status">{{ order.assigned_to.name }} | {{order.assigned_to.phone_number}}</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

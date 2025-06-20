@@ -265,7 +265,7 @@ def customer_dashboard(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Prefetch
-from .models import Order, CustomerProfile, DeliveryDriver
+from .models import Order, CustomerProfile
 
 from django.db.models import Sum, F
 from django.contrib.auth.decorators import login_required
@@ -282,13 +282,6 @@ def store_dashboard(request):
         total_amount=Sum(F('items__product_price') * F('items__quantity'))
     ).order_by('-created_at')
 
-    available_drivers = DeliveryDriver.objects.filter(is_available=True)
-    
-    context = {
-        'orders': orders,  # your existing orders
-        'available_drivers': available_drivers,
-        # ... other context variables
-    }
     # Add customer location directly to each order
     orders_with_location = []
     for order in orders:
@@ -298,7 +291,9 @@ def store_dashboard(request):
         order.phone_number = customer_profile.phone_number
         orders_with_location.append(order)
 
-    return render(request, 'store/store_dashboard.html', context)
+    return render(request, 'store/store_dashboard.html', {
+        'orders': orders_with_location,
+    })
 
 
 

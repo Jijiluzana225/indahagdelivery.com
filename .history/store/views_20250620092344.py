@@ -298,7 +298,9 @@ def store_dashboard(request):
         order.phone_number = customer_profile.phone_number
         orders_with_location.append(order)
 
-    return render(request, 'store/store_dashboard.html', context)
+    return render(request, 'store/store_dashboard.html', {
+        'orders': orders_with_location,
+    })
 
 
 
