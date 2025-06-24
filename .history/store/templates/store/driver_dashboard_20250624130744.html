@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            --warning-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --danger-gradient: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            --info-gradient: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            --purple-gradient: linear-gradient(135deg, #a855f7 0%, #8b5cf6 100%);
+            --emerald-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --card-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --border-radius: 16px;
+            --border-radius-lg: 24px;
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+   /* Base style for the button */
+.toggle-button {
+    background: linear-gradient(45deg, #4CAF50, #45a049); /* Green gradient for online */
+    border: none;
+    padding: 12px 30px; /* Adds padding for better spacing */
+    font-size: 16px;
+    color: white;
+    border-radius: 30px; /* Rounded corners */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition on hover */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Light shadow for depth */
+}
+
+.toggle-button:hover {
+    background: linear-gradient(45deg, #45a049, #4CAF50); /* Reverse gradient on hover */
+    transform: scale(1.05); /* Slight scaling effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+}
+
+.toggle-button:focus {
+    outline: none; /* Removes the focus outline */
+}
+
+/* Specific style for the "offline" button */
+.toggle-button.offline {
+    background: red; /* Red background for offline status */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Light shadow for depth */
+}
+
+.toggle-button.offline:hover {
+    background: darkred; /* Darker red when hovered */
+    transform: scale(1.05); /* Slight scaling effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+}
+
+/* Style for the status icon and text inside the button */
+.toggle-status {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adds spacing between the icon and the text */
+}
+
+.toggle-status span {
+    font-size: 20px; /* Adjust icon size */
+}
+
+.toggle-spinner {
+    display: none; /* Hidden by default */
+    /* Spinner styles if needed */
+}
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Enhanced Header */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 40px;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 32px;
+            box-shadow: var(--card-shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) opacity(0.5); }
+            50% { transform: scale(1.2) opacity(0.8); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+       .profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Makes the container circular */
+    overflow: hidden; /* Hides anything outside the circular boundary */
+    border: 2px solid #ddd; /* Optional: adds a border around the circle */
+}
+
+.profile-pic img {
+    width: 100%; /* Ensures the image fills the circle */
+    height: 100%; /* Ensures the image fills the circle */
+    object-fit: cover; /* Ensures the image is cropped and fits inside the circle */
+}
+
+        .user-details h1 {
+            font-size: 2.25rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .user-details p {
+            opacity: 0.9;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+        }
+
+        .status-badge:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .status-verified {
+            background: rgba(34, 197, 94, 0.2);
+            color: #fff;
+        }
+
+        /* Enhanced Availability Toggle */
+        .availability-toggle {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px 24px;
+            border-radius: var(--border-radius);
+            margin-top: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .availability-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 64px;
+            height: 36px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+            border-radius: 36px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 28px;
+            width: 28px;
+            left: 2px;
+            bottom: 2px;
+            background: white;
+            transition: var(--transition);
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background: var(--success-gradient);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(28px);
+        }
+
+        .toggle-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .toggle-status {
+            font-size: 1.125rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-description {
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+
+        /* Enhanced Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .stat-value {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-change {
+            font-size: 0.875rem;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: #059669;
+        }
+
+        /* Enhanced Main Content */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            box-shadow: var(--card-shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+        }
+
+        .card-header h3 {
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-body {
+            padding: 28px;
+        }
+
+        /* Enhanced Orders Section */
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+            border-radius: 8px;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item:hover {
+            background: var(--bg-secondary);
+            margin: 0 -28px;
+            padding-left: 40px;
+            padding-right: 40px;
+            transform: scale(1.01);
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .order-details {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .order-status {
+            margin-left: auto;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .status-delivering {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+
+        .status-delivered {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+
+        /* Enhanced Action Buttons */
+        .action-btn {
+            padding: 16px 28px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: var(--transition);
+        }
+
+        .action-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+        }
+
+        .btn-info {
+            background: var(--info-gradient);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Enhanced Vehicle Info */
+        .vehicle-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 24px;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-radius: var(--border-radius);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .vehicle-info:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .vehicle-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--primary-gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            transition: var(--transition);
+        }
+
+        .vehicle-info:hover .vehicle-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .vehicle-details h4 {
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .vehicle-details p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        /* Enhanced Activity Section */
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+            border-radius: 8px;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: var(--bg-secondary);
+            margin: 0 -28px;
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .activity-item:hover .activity-icon {
+            transform: scale(1.1);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Enhanced Notification */
+        .notification {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            padding: 16px 24px;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: var(--transition);
+            box-shadow: var(--hover-shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-gradient);
+        }
+
+        .notification.error {
+            background: var(--danger-gradient);
+        }
+
+        /* Loading and Empty States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-gradient);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 16px;
+            }
+
+            .dashboard-header {
+                padding: 24px;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                align-items: start;
+                gap: 16px;
+            }
+
+            .user-details h1 {
+                font-size: 1.75rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .stat-card {
+                padding: 24px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .availability-toggle {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+                padding: 20px;
+            }
+        }
+
+        /* Micro-interactions */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .dashboard-header {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+    /* Style for 3D Gradient Button */
+.status-button {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    border-radius: 16px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4ade80, #22c55e); /* Default gradient for success */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Light shadow for depth */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-button:hover {
+    background: linear-gradient(135deg, #22c55e, #4ade80); /* Hover gradient */
+    transform: translateY(-2px); /* Slight upward movement */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
+
+.status-button:active {
+    transform: translateY(1px); /* Downward movement when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow when clicked */
+}
+
+/* For different statuses */
+.status-button.pending {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b); /* Gradient for Pending status */
+}
+
+.status-button.preparing {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6); /* Gradient for Preparing status */
+}
+
+.status-button.delivered {
+    background: linear-gradient(135deg, #22d3ee, #06b6d4); /* Gradient for Delivered status */
+}
+
+.status-button.on-the-way {
+    background: linear-gradient(135deg, #f87171, #ef4444); /* Gradient for On the Way status */
+}
+
+/* Enhanced Table Styling */
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.order-table th, .order-table td {
+    padding: 16px;
+    text-align: left;
+    border: 1px solid #e5e7eb; /* Light border color */
+    font-size: 1rem;
+}
+
+.order-table th {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.order-table tr:nth-child(even) {
+    background-color: #f3f4f6; /* Stripes: light background for even rows */
+}
+
+.order-table tr:nth-child(odd) {
+    background-color: #ffffff; /* White background for odd rows */
+}
+
+.order-table tr:hover {
+    background-color: #e2e8f0; /* Highlight row on hover */
+}
+
+.order-table td {
+    color: var(--text-secondary);
+}
+
+.empty-row {
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Style for the 3D Gradient Status Button in Table */
+.status-button {
+    display: inline-block;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    border-radius: 16px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4ade80, #22c55e); /* Default gradient for success */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Light shadow for depth */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-transform: capitalize; /* Ensures the text is properly formatted */
+    font-size: 0.95rem;
+}
+
+.status-button:hover {
+    background: linear-gradient(135deg, #22c55e, #4ade80); /* Hover gradient */
+    transform: translateY(-2px); /* Slight upward movement */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
+
+.status-button:active {
+    transform: translateY(1px); /* Downward movement when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow when clicked */
+}
+
+/* For different statuses */
+.status-button.pending {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b); /* Gradient for Pending status */
+}
+
+.status-button.preparing {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6); /* Gradient for Preparing status */
+}
+
+.status-button.delivered {
+    background: linear-gradient(135deg, #22d3ee, #06b6d4); /* Gradient for Delivered status */
+}
+
+.status-button.on-the-way {
+    background: linear-gradient(135deg, #f87171, #ef4444); /* Gradient for On the Way status */
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div class="welcome-section">
+                    <div class="user-info">
+                        <div class="profile-pic">
+                            <img src="{{ driver.profile_picture.url }}" alt="Profile Picture" width="100" height="100">
+                        </div>
+                        <div class="user-details">
+                            <h1>Welcome back, {{ driver.name }}!</h1>
+                            <p>{{ driver.vehicle_type }} Driver • Plate No. {{ driver.vehicle_plate_number }}</p>
+                        </div>
+                    </div>
+                    <div class="status-badge status-verified">
+                        ✅ Verified
+                    </div>
+                </div>
+                
+                <!-- Availability Toggle -->
+                <div class="availability-toggle" id="availabilityToggle">
+                    {% if driver.is_available %}
+                        <button class="toggle-button" id="toggleButton" data-status="online">
+                            <span class="toggle-status" id="toggleStatus">
+                                🟢 <span id="statusText">ONLINE</span>
+                            </span>
+                        </button>
+                    {% else %}
+                        <button class="toggle-button offline" id="toggleButton" data-status="offline">
+                            <span class="toggle-status" id="toggleStatus">
+                                🔴 <span id="statusText">OFFLINE</span>
+                            </span>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--success-gradient);">📦</div>
+                </div>
+                <div class="stat-value">{{ total_deliveries }}</div>
+                <div class="stat-label">Total Deliveries</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--info-gradient);">💰</div>
+                </div>
+                <div class="stat-value">₱{{ total_earnings }}</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-orders">
+    <h2>Recent Orders</h2>
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Store</th>
+                <th>Customer</th>
+                <th>Total Price</th>
+                <th>Map</th>
+              
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in recent_orders %}
+                <tr>
+                    
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.created_at }}</td>    
+                    <td>{{ order.get_status_display }}</td>
+                    
+                    <td>{{ order.store.name }}</td>
+                    <td>{{ order.customer.username }}</td>
+                    <td>₱{{ order.total_price }}</td>
+                    <td>
+                        {{ order.customer_location }}
+                        <button class="status-button" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
+                    </td>
+                    
+                    
+                    
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="empty-row">No recent orders.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+    </div>
+
+    <script>
+        document.getElementById("toggleButton").addEventListener("click", function() {
+            var currentStatus = this.getAttribute("data-status");
+            var newStatus = (currentStatus === "online") ? "offline" : "online";
+
+            var statusText = document.getElementById("statusText");
+            var statusIcon = document.getElementById("toggleStatus").querySelector('span');
+            var button = document.getElementById("toggleButton");
+
+            if (newStatus === "online") {
+                statusText.innerText = "ONLINE";
+                statusIcon.innerText = "🟢 ONLINE";
+                button.classList.remove('offline');
+                button.classList.add('online');
+            } else {
+                statusText.innerText = "OFFLINE";
+                statusIcon.innerText = "🔴 OFFLINE";
+                button.classList.remove('online');
+                button.classList.add('offline');
+            }
+
+            this.setAttribute("data-status", newStatus);
+
+            fetch("{% url 'update_driver_status' %}", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'driver_id': {{ driver.id }},
+                    'is_available': newStatus === "online" ? true : false
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("Status updated successfully");
+                } else {
+                    console.error("Failed to update status");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+    function openGoogleMaps(destination) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}`;
+                    
+                    window.open(mapsUrl, '_blank');
+                },
+                function(error) {
+                    alert("Unable to retrieve your location. Please enable location services and try again.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    }
+
+    </script>
+</body>
+</html>

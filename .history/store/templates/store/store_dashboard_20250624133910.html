@@ -1,0 +1,618 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Store Orders{% endblock %}
+
+{% block content %}
+
+<style>
+    /* General Styling for Dashboard */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+
+    .orders-title {
+        font-size: 2.5rem;
+        color: #333;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .orders-table-container {
+        width: 98%;
+        max-width: 1400px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1200px;
+    }
+
+    .orders-table th, 
+    .orders-table td {
+        padding: 8px 6px;
+        text-align: center;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #ddd;
+        vertical-align: middle;
+    }
+
+    .orders-table th {
+        background-color: #f1f1f1;
+        color: #333;
+        font-weight: bold;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    /* Column-specific widths for better arrangement */
+    .orders-table th:nth-child(1),
+    .orders-table td:nth-child(1) { /* Order ID */
+        width: 70px;
+        min-width: 70px;
+    }
+
+    .orders-table th:nth-child(2),
+    .orders-table td:nth-child(2) { /* Customer */
+        width: 120px;
+        min-width: 120px;
+    }
+
+    .orders-table th:nth-child(3),
+    .orders-table td:nth-child(3) { /* Phone */
+        width: 110px;
+        min-width: 110px;
+    }
+
+    .orders-table th:nth-child(4),
+    .orders-table td:nth-child(4) { /* Location */
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .orders-table th:nth-child(5),
+    .orders-table td:nth-child(5) { /* Total */
+        width: 90px;
+        min-width: 90px;
+    }
+
+    .orders-table th:nth-child(6),
+    .orders-table td:nth-child(6) { /* Status */
+        width: 130px;
+        min-width: 130px;
+    }
+
+    .orders-table th:nth-child(7),
+    .orders-table td:nth-child(7) { /* Orders */
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .orders-table th:nth-child(8),
+    .orders-table td:nth-child(8) { /* Created At */
+        width: 140px;
+        min-width: 140px;
+    }
+
+    .orders-table th:nth-child(9),
+    .orders-table td:nth-child(9) { /* Assign to Rider */
+        width: 180px;
+        min-width: 180px;
+    }
+
+    .orders-table th:nth-child(10),
+    .orders-table td:nth-child(10) { /* Actions */
+        width: 90px;
+        min-width: 90px;
+    }
+
+    .orders-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .orders-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .status {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .update-btn, 
+    .map-btn {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        white-space: nowrap;
+    }
+
+    .update-btn {
+        background-color: #007bff;
+        width: 70px;
+    }
+
+    .update-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Disabled button styling */
+    .update-btn:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .update-btn:disabled:hover {
+        background-color: #6c757d;
+    }
+
+    /* Disabled select styling */
+    select:disabled {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    /* Status select styling */
+    .status-select {
+        width: 100%;
+        max-width: 120px;
+        padding: 4px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+
+    /* Driver select styling */
+    .driver-select {
+        width: 100%;
+        max-width: 170px;
+        padding: 4px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
+
+    .map-btn {
+        background-color: #28a745;
+        width: 50px;
+    }
+
+    .map-btn:hover {
+        background-color: #1e7e34;
+    }
+
+    /* Orders link styling */
+    .orders-link {
+        background-color: #17a2b8;
+        color: white;
+        padding: 4px 8px;
+        text-decoration: none;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        display: inline-block;
+    }
+
+    .orders-link:hover {
+        background-color: #138496;
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Text wrapping and overflow handling */
+    .customer-name {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .phone-number {
+        font-size: 0.75rem;
+    }
+
+    .created-date {
+        font-size: 0.7rem;
+        line-height: 1.2;
+    }
+
+    /* Responsive Design for Tablets */
+    @media (max-width: 1024px) {
+        .orders-table-container {
+            padding: 10px;
+        }
+        
+        .orders-table th, 
+        .orders-table td {
+            padding: 6px 4px;
+            font-size: 0.8rem;
+        }
+
+        .orders-title {
+            font-size: 2rem;
+        }
+    }
+
+    /* Responsive Design for smaller tablets */
+    @media (max-width: 768px) {
+        .orders-title {
+            font-size: 1.8rem;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            padding: 5px 3px;
+            font-size: 0.75rem;
+        }
+
+        .update-btn, 
+        .map-btn {
+            padding: 4px 6px;
+            font-size: 0.7rem;
+        }
+
+        .driver-select,
+        .status-select {
+            font-size: 0.7rem;
+            padding: 3px;
+        }
+    }
+
+    /* Responsive Design for Mobile */
+    @media (max-width: 480px) {
+        .orders-title {
+            font-size: 1.5rem;
+        }
+
+        .orders-table-container {
+            padding: 5px;
+            width: 100%;
+        }
+
+        .orders-table {
+            min-width: 800px;
+            font-size: 0.7rem;
+        }
+
+        .orders-table th, 
+        .orders-table td {
+            padding: 4px 2px;
+            font-size: 0.65rem;
+        }
+
+        .update-btn, 
+        .map-btn {
+            padding: 3px 5px;
+            font-size: 0.6rem;
+            width: auto;
+        }
+
+        .driver-select,
+        .status-select {
+            font-size: 0.65rem;
+            padding: 2px;
+        }
+
+        .orders-link {
+            padding: 2px 4px;
+            font-size: 0.65rem;
+        }
+    }
+
+    /* Transition for background color */
+    .order-row {
+        transition: background-color 0.3s ease;
+    }
+
+    /* Scrollbar styling for better UX */
+    .orders-table-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .orders-table-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .orders-table-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    .orders-table-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
+
+<h2 class="orders-title">Store Orders</h2>
+<div class="orders-table-container">
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Map</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th>Created</th>
+                <th>Assign Rider</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>   
+            {% for order in orders %}
+                <tr class="order-row" data-order-id="{{ order.id }}">
+                    <td>{{ order.id }}</td>
+                    <td>
+                        <div class="customer-name" title="{{ order.customer_name }}">
+                            {{ order.customer_name }}
+                        </div>
+                    </td>
+                    <td class="phone-number">{{ order.phone_number }}</td>
+                    <td>
+                        <button class="map-btn" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
+                    </td>
+                    <td>₱{{ order.total_price|floatformat:2|intcomma }}</td>
+                    
+                    <td>
+                        <select id="status-{{ order.id }}" class="status-select" onchange="updateRowColor()">
+                            <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                            <option value="Declined" {% if order.status == 'Declined' %}selected{% endif %}>Declined</option>
+                            <option value="Preparing" {% if order.status == 'Preparing' %}selected{% endif %}>Preparing</option>
+                            <option value="On the Way" {% if order.status == 'On the Way' %}selected{% endif %}>On the Way</option>
+                            <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                            <option value="Undelivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="/order/{{ order.id }}/items" class="orders-link">View</a>
+                    </td>
+                    <td class="created-date">
+                        {{ order.created_at|date:"M d, Y" }}<br>
+                        <small>{{ order.created_at|time:"H:i" }}</small>
+                    </td>
+                    <td>
+                        <select id="driver-{{ order.id }}" class="driver-select">
+                            <option value="">-</option>
+                            {% for driver in available_drivers %}
+                                <option value="{{ driver.id }}" 
+                                    {% if order.assigned_to.id == driver.id %}selected{% endif %}>
+                                    {{ driver.name }} 
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button class="update-btn" onclick="updateOrder({{ order.id }})">
+                            Update
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Function to update the background color based on order status
+    function updateRowColor() {
+        const rows = document.querySelectorAll('.order-row');
+        
+        rows.forEach(row => {
+            const status = row.querySelector('select').value;
+            
+            // Remove any existing status-based background color first
+            row.style.backgroundColor = '';
+            
+            switch (status) {
+                case 'Pending':
+                    row.style.backgroundColor = '#ffffff';
+                    break;
+                case 'Declined':
+                    row.style.backgroundColor = '#ffa500';
+                    break;
+                case 'Preparing':
+                    row.style.backgroundColor = '#ffffe0';
+                    break;
+                case 'On the Way':
+                    row.style.backgroundColor = '#00ffff';
+                    break;
+                case 'Delivered':
+                    row.style.backgroundColor = '#90ee90';
+                    break;
+                case 'Undelivered':
+                    row.style.backgroundColor = 'black';
+
+                    break;
+                default:
+                    row.style.backgroundColor = '';
+            }
+        });
+    }
+
+    // Function to check and disable controls based on status on page load
+    function checkAndDisableControls() {
+        const rows = document.querySelectorAll('.order-row');
+        rows.forEach(row => {
+            const orderId = row.getAttribute('data-order-id');
+            const statusSelect = document.getElementById('status-' + orderId);
+            const driverSelect = document.getElementById('driver-' + orderId);
+            const updateButton = row.querySelector('.update-btn');
+            const currentStatus = statusSelect.value;
+            
+            // Disable controls for final statuses
+            if (currentStatus === 'Declined' || currentStatus === 'Delivered') {
+                statusSelect.disabled = true;
+                driverSelect.disabled = true;
+                updateButton.disabled = true;
+            }
+        });
+    }
+
+    // Initial setup when the page loads
+    window.onload = function() {
+        updateRowColor();
+        checkAndDisableControls(); // Check and disable controls on page load
+    };
+
+    // Updated function to handle both status and driver assignment
+    function updateOrder(orderId) {
+        var status = document.getElementById('status-' + orderId).value;
+        var driverId = document.getElementById('driver-' + orderId).value;
+        var button = document.querySelector(`button[onclick="updateOrder(${orderId})"]`);
+        
+        button.textContent = "Updating...";
+        button.disabled = true;
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'update_order_status' %}", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                var message = "Order ID " + orderId + " updated successfully";
+                if (status) {
+                    message += " - Status: " + status;
+                }
+                if (driverId) {
+                    var driverSelect = document.getElementById('driver-' + orderId);
+                    var selectedDriver = driverSelect.options[driverSelect.selectedIndex].text;
+                    message += " - Assigned to: " + selectedDriver;
+                }
+                
+                alert(message);
+                updateRowColor();
+                
+                // Disable button and selects permanently if status is Declined or Delivered
+                if (status === 'Declined' || status === 'Delivered') {
+                    button.disabled = true;
+                    button.textContent = "Update";
+                    document.getElementById('status-' + orderId).disabled = true;
+                    document.getElementById('driver-' + orderId).disabled = true;
+                } else {
+                    button.disabled = false;
+                    button.textContent = "Update";
+                }
+            } else {
+                alert("Failed to update order. Please try again.");
+                button.textContent = "Update";
+                button.disabled = false;
+            }
+        };
+
+        xhr.onerror = function() {
+            alert("An error occurred. Please check your connection and try again.");
+            button.textContent = "Update";
+            button.disabled = false;
+        };
+
+        var data = JSON.stringify({
+            "order_id": orderId,
+            "status": status,
+            "driver_id": driverId
+        });
+
+        xhr.send(data);
+    }
+
+    // Function to open Google Maps with directions
+    function openGoogleMaps(destination) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+
+                    const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${encodeURIComponent(destination)}`;
+                    
+                    window.open(mapsUrl, '_blank');
+                },
+                function(error) {
+                    alert("Unable to retrieve your location. Please enable location services and try again.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    }
+</script>
+
+<audio id="newOrderSound">
+    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    var initialOrderCount = document.querySelectorAll('.order-row').length;
+
+    function checkForNewOrders() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "{% url 'check_new_orders' %}", true);
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
+
+                if (!response.active) {
+                    console.log("No new orders. Stopping order check.");
+                    return;
+                }
+
+                var currentOrderCount = response.current_order_count;
+                console.log(initialOrderCount, currentOrderCount);
+
+                if (initialOrderCount < currentOrderCount) {
+                    var audio = document.getElementById('newOrderSound');
+
+                    try {
+                        var playPromise = audio.play();
+
+                        if (playPromise !== undefined) {
+                            playPromise.then(function() {
+                                audio.onended = function () {
+                                    alert("New order received!");
+                                    location.reload(); 
+                                };
+                            }).catch(function(error) {
+                                alert("New order received!");
+                                location.reload(); 
+                            });
+                        }
+                    } catch (error) {
+                        alert("New order received!");
+                        location.reload(); 
+                    }
+
+                    initialOrderCount = currentOrderCount;
+                }
+            }
+        };
+        xhr.send();
+    }
+
+    if (initialOrderCount > 0) {
+        setInterval(checkForNewOrders, 10000);
+    } else {
+        console.log("No orders in table. Order checking is disabled.");
+    }
+</script>
+
+{% endblock %}

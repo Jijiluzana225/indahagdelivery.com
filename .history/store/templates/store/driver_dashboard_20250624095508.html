@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-gradient: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            --info-gradient: linear-gradient(135deg, #17a2b8 0%, #007bff 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --bg-light: #f8f9fa;
+            --border-radius: 15px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .user-details h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .user-details p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-verified {
+            background: rgba(40, 167, 69, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-suspended {
+            background: rgba(220, 53, 69, 0.2);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Availability Toggle Styles */
+        .availability-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .availability-toggle.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: .4s;
+            border-radius: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background: var(--success-gradient);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .toggle-status {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-description {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .status-online {
+            color: #28a745;
+        }
+
+        .status-offline {
+            color: #dc3545;
+        }
+
+        /* Loading spinner for toggle */
+        .toggle-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .loading .toggle-spinner {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        /* Main Content */
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-light);
+        }
+
+        .card-header h3 {
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        /* Orders Section */
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item:hover {
+            background: var(--bg-light);
+            margin: 0 -25px;
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .order-details {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .order-status {
+            margin-left: auto;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-delivering {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+        }
+
+        .btn-success {
+            background: var(--success-gradient);
+        }
+
+        .btn-warning {
+            background: var(--warning-gradient);
+        }
+
+        .btn-info {
+            background: var(--info-gradient);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Vehicle Info */
+        .vehicle-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+
+        .vehicle-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .vehicle-details h4 {
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .vehicle-details p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Activity */
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: var(--card-shadow);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success-gradient);
+        }
+
+        .notification.error {
+            background: var(--danger-gradient);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 15px;
+            }
+
+            .dashboard-header {
+                padding: 20px;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                align-items: start;
+                gap: 15px;
+            }
+
+            .user-details h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .availability-toggle {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-gradient);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div class="welcome-section">
+                    <div class="user-info">
+                        <div class="profile-pic">👤</div>
+                        <div class="user-details">
+                            <h1>Welcome back, John Doe!</h1>
+                            <p>Motorcycle Driver • License: ABC123456</p>
+                        </div>
+                    </div>
+                    <div class="status-badge status-verified">
+                        ✅ Verified
+                    </div>
+                </div>
+                
+                <!-- Availability Toggle -->
+                <div class="availability-toggle" id="availabilityToggle">
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="availabilityCheckbox" checked>
+                        <span class="slider"></span>
+                    </div>
+                    <div class="toggle-text">
+                        <div class="toggle-status" id="toggleStatus">
+                            🟢 <span id="statusText">ONLINE</span>
+                        </div>
+                        <div class="toggle-description" id="toggleDescription">
+                            Available for new orders
+                        </div>
+                    </div>
+                    <div class="toggle-spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--success-gradient);">📦</div>
+                </div>
+                <div class="stat-value">127</div>
+                <div class="stat-label">Total Deliveries</div>
+                <div class="stat-change positive">
+                    <span>↗️</span> +12 this week
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--info-gradient);">💰</div>
+                </div>
+                <div class="stat-value">₱15,240.50</div>
+                <div class="stat-label">Total Earnings</div>
+                <div class="stat-change positive">
+                    <span>↗️</span> +₱1,850.00 this week
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--warning-gradient);">⭐</div>
+                </div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Average Rating</div>
+                <div class="stat-change positive">
+                    <span>↗️</span> Based on 89 ratings
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon" style="background: var(--danger-gradient);">🚚</div>
+                </div>
+                <div class="stat-value">3</div>
+                <div class="stat-label">Pending Orders</div>
+                <div class="stat-change">
+                    <span>📋</span> Ready for pickup
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Current Orders -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📋 Current Orders</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="order-item">
+                            <div>
+                                <div class="order-id">Order #12345</div>
+                                <div class="order-details">
+                                    📍 123 Main Street, Brgy. Poblacion, Iligan City<br>
+                                    💰 ₱450.00 • 🕐 15 minutes ago
+                                </div>
+                            </div>
+                            <div class="order-status status-pending">
+                                Pending
+                            </div>
+                        </div>
+                        <div class="order-item">
+                            <div>
+                                <div class="order-id">Order #12346</div>
+                                <div class="order-details">
+                                    📍 456 Oak Avenue, Brgy. Tibanga, Iligan City<br>
+                                    💰 ₱320.00 • 🕐 30 minutes ago
+                                </div>
+                            </div>
+                            <div class="order-status status-delivering">
+                                Delivering
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📈 Recent Activity</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--success-gradient);">📦</div>
+                            <div class="activity-content">
+                                <div class="activity-text">Completed delivery for Order #12344</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--warning-gradient);">⭐</div>
+                            <div class="activity-content">
+                                <div class="activity-text">Received 5-star rating from customer</div>
+                                <div class="activity-time">3 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--info-gradient);">💰</div>
+                            <div class="activity-content">
+                                <div class="activity-text">Earned ₱280.00 from delivery</div>
+                                <div class="activity-time">3 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Vehicle Information -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🏍️ Vehicle Info</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="vehicle-info">
+                            <div class="vehicle-icon">🏍️</div>
+                            <div class="vehicle-details">
+                                <h4>Motorcycle</h4>
+                                <p>Plate: ABC-1234</p>
+                                <p>License: ABC123456</p>
+                            </div>
+                        </div>
+                        <a href="#" class="action-btn btn-primary" style="width: 100%;">
+                            ✏️ Edit Vehicle Info
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Profile Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>👤 Profile Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Status:</strong> 
+                                <span class="status-badge status-verified" style="margin-left: 10px;">
+                                    ✅ Verified
+                                </span>
+                            </p>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Location:</strong> Iligan City, Philippines</p>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <p><strong>Joined:</strong> Mar 15, 2024</p>
+                        </div>
+
+                        <a href="#" class="action-btn btn-info" style="width: 100%;">
+                            ✏️ Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📊 This Week</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Deliveries</span>
+                                <strong>12</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span>Earnings</span>
+                                <strong>₱1,850.00</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Hours Online</span>
+                                <strong>28h</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification container -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+       // Availability Toggle Functionality
+class AvailabilityToggle {
+    constructor() {
+        this.checkbox = document.getElementById('availabilityCheckbox');
+        this.toggleContainer = document.getElementById('availabilityToggle');
+        this.statusText = document.getElementById('statusText');
+        this.toggleDescription = document.getElementById('toggleDescription');
+        this.toggleStatus = document.getElementById('toggleStatus');
+        this.isUpdating = false;
+        
+        this.init();
+    }
+
+    init() {
+        // Set initial state
+        this.updateUI(this.checkbox.checked);
+        
+        // Add event listener
+        this.checkbox.addEventListener('change', (e) => {
+            this.handleToggle(e.target.checked);
+        });
+    }
+
+    async handleToggle(isAvailable) {
+        if (this.isUpdating) return;
+        
+        this.isUpdating = true;
+        this.showLoading(true);
+        
+        try {
+            // Simulate API call with delay
+            const success = await this.updateAvailabilityStatus(isAvailable);
+            
+            if (success) {
+                this.updateUI(isAvailable);
+                this.showNotification('Status updated successfully!', 'success');
+                
+                // Update stats to reflect new status
+                this.updateOnlineStatus(isAvailable);
+            } else {
+                // Revert checkbox state on failure
+                this.checkbox.checked = !isAvailable;
+                this.showNotification('Failed to update status. Please try again.', 'error');
+            }
+        } catch (error) {
+            console.error('Error updating availability:', error);
+            this.checkbox.checked = !isAvailable;
+            this.showNotification('An error occurred. Please try again.', 'error');
+        } finally {
+            this.showLoading(false);
+            this.isUpdating = false;
+        }
+    }
+
+    async updateAvailabilityStatus(isAvailable) {
+        // Simulate API call with realistic delay
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Simulate success most of the time (90%)
+                const success = Math.random() > 0.1;
+                resolve(success);
+            }, 800 + Math.random() * 400); // Random delay between 800-1200ms
+        });
+    }
+
+    updateUI(isAvailable) {
+        if (isAvailable) {
+            this.toggleDescription.textContent = 'Available for new orders';
+            this.toggleStatus.innerHTML = '🟢 <span id="statusText">ONLINE</span>';
+            this.toggleStatus.className = 'toggle-status status-online';
+        } else {
+            this.toggleDescription.textContent = 'Not accepting new orders';
+            this.toggleStatus.innerHTML = '🔴 <span id="statusText">OFFLINE</span>';
+            this.toggleStatus.className = 'toggle-status status-offline';
+        }
+        
+        // Re-assign the statusText reference after innerHTML update
+        this.statusText = document.getElementById('statusText');
+    }
+
+    updateOnlineStatus(isAvailable) {
+        // Update any additional UI elements based on online status
+        if (isAvailable) {
+            console.log('Driver is now ONLINE - ready to receive orders');
+            // You can add additional logic here, such as:
+            // - Starting location tracking
+            // - Enabling push notifications
+            // - Updating server-side status
+        } else {
+            console.log('Driver is now OFFLINE - not accepting new orders');
+            // You can add additional logic here, such as:
+            // - Stopping location tracking
+            // - Clearing pending notifications
+            // - Updating server-side status
+        }
+    }
+
+    showLoading(show) {
+        if (show) {
+            this.toggleContainer.classList.add('loading');
+        } else {
+            this.toggleContainer.classList.remove('loading');
+        }
+    }
+
+    showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Method to programmatically set availability (useful for external calls)
+    setAvailability(isAvailable, skipToggle = false) {
+        this.checkbox.checked = isAvailable;
+        this.updateUI(isAvailable);
+        if (!skipToggle) {
+            this.handleToggle(isAvailable);
+        }
+    }
+
+    // Method to get current availability status
+    getAvailability() {
+        return this.checkbox.checked;
+    }
+}
+
+// Initialize availability toggle when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Create global instance for external access
+    window.availabilityToggle = new AvailabilityToggle();
+    
+    // Auto-refresh dashboard data every 30 seconds
+    setInterval(function() {
+        refreshDashboardStats();
+    }, 30000);
+    
+    // Add keyboard shortcut for quick toggle (Alt + T)
+    document.addEventListener('keydown', function(e) {
+        if (e.altKey && e.key === 't') {
+            e.preventDefault();
+            const currentStatus = window.availabilityToggle.getAvailability();
+            window.availabilityToggle.checkbox.checked = !currentStatus;
+            window.availabilityToggle.handleToggle(!currentStatus);
+        }
+    });
+});
+
+// Utility function to refresh dashboard stats
+function refreshDashboardStats() {
+    // Simulate refreshing stats
+    console.log('Auto-refreshing dashboard data...');
+    
+    // In a real implementation, you would fetch new data here:
+    /*
+    fetch('/api/driver/stats/')
+        .then(response => response.json())
+        .then(data => {
+            updateStatsDisplay(data);
+        })
+        .catch(error => console.error('Error refreshing stats:', error));
+    */
+}
+
+// Function to update stats display (placeholder for real implementation)
+function updateStatsDisplay(data) {
+    // Update the stats cards with new data
+    console.log('Updating stats display with:', data);
+}
+
+// Function to mark an order as complete
+function markOrderComplete(orderId) {
+    if (!orderId) {
+        console.error('Order ID is required');
+        return;
+    }
+    
+    // Show confirmation dialog
+    if (confirm('Mark this order as complete?')) {
+        // Simulate API call
+        console.log(`Marking order ${orderId} as complete...`);
+        
+        // In a real implementation:
+        /*
+        fetch(`/api/orders/${orderId}/complete/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(),
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Order marked as complete!', 'success');
+                refreshDashboardStats();
+            } else {
+                showNotification('Failed to complete order', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error completing order:', error);
+            showNotification('Error completing order', 'error');
+        });
+        */
+        
+        // For demo purposes, show success message
+        setTimeout(() => {
+            if (window.availabilityToggle) {
+                window.availabilityToggle.showNotification('Order marked as complete!', 'success');
+            }
+        }, 500);
+    }
+}
+
+// Helper function to get CSRF token (for Django)
+function getCsrfToken() {
+    const token = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (token) {
+        return token.value;
+    }
+    
+    // Alternative: get from cookie
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrftoken') {
+            return value;
+        }
+    }
+    
+    return '';
+}
+
+// Utility function to show notifications (can be called from anywhere)
+function showNotification(message, type = 'info') {
+    if (window.availabilityToggle) {
+        window.availabilityToggle.showNotification(message, type);
+    }
+}
+
+// Export functions for external use
+window.driverDashboard = {
+    toggleAvailability: () => {
+        const currentStatus = window.availabilityToggle.getAvailability();
+        window.availabilityToggle.checkbox.checked = !currentStatus;
+        window.availabilityToggle.handleToggle(!currentStatus);
+    },
+    setAvailability: (isAvailable) => {
+        window.availabilityToggle.setAvailability(isAvailable, false);
+    },
+    getAvailability: () => window.availabilityToggle.getAvailability(),
+    refreshStats: refreshDashboardStats,
+    completeOrder: markOrderComplete,
+    showNotification: showNotification
+};
+    </script>
+</body>
+</html>
