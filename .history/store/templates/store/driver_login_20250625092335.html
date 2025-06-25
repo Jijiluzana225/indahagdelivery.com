@@ -1,0 +1,136 @@
+<!-- driver_login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px; /* Increase default font size */
+        }
+        .login-form {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .login-form h2 {
+            font-size: 32px; /* Increase heading font size */
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding: 14px;
+            font-size: 18px; /* Increase font size of inputs */
+        }
+        .form-group button {
+            font-size: 18px; /* Increase button font size */
+            padding: 14px;
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .form-group input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .form-group input {
+            transition: border-color 0.3s ease;
+        }
+        .text-center a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 18px; /* Increase link font size */
+        }
+        .text-center a:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 18px; /* Increase alert message font size */
+        }
+        .logo {
+            max-width: 250px;
+            margin-bottom: 20px;
+        }
+        /* Adjustments for mobile */
+        @media (max-width: 576px) {
+            .login-form {
+                padding: 30px;
+                margin: 40px auto;
+            }
+            .login-form h2 {
+                font-size: 28px; /* Slightly smaller heading on mobile */
+            }
+            .form-control {
+                font-size: 16px; /* Smaller font for inputs on mobile */
+            }
+            .form-group button {
+                font-size: 16px; /* Smaller button font size on mobile */
+            }
+            .text-center a {
+                font-size: 16px; /* Smaller link font size on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="login-form">
+                <h2 class="text-center mb-4">Driver Login</h2>
+                
+                {% if messages %}
+                    <div class="alert alert-info">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        {{ form.username }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        {{ form.password }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p>If you want to register as a Driver, please click the button below.</p>
+                    <a href="{% url 'driver_register' %}" class="btn btn-outline-primary btn-block">Register as Driver</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

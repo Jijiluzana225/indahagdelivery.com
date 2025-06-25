@@ -738,7 +738,7 @@ def home(request):
     """Home page view"""
     return render(request, 'store/home.html')
 
-
+@login_required
 def driver_register(request):
     """Driver registration view"""
     # Check if user already has a driver profile
@@ -909,4 +909,4 @@ def driver_login(request):
     else:
         form = DeliveryDriverLoginForm()
 
-    return render(request, 'store/driver_login.html', {'form': form})
+    return render(request, 'driver_login.html', {'form': form})

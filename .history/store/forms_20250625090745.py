@@ -128,7 +128,7 @@ class DeliveryDriverRegistrationForm(forms.ModelForm):
             }),
             'current_location': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter your current Address',
+                'placeholder': 'Enter your current location (optional)',
                 'maxlength': 255
             }),
         }

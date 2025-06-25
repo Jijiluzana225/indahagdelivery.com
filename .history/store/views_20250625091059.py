@@ -738,7 +738,7 @@ def home(request):
     """Home page view"""
     return render(request, 'store/home.html')
 
-
+@login_required
 def driver_register(request):
     """Driver registration view"""
     # Check if user already has a driver profile
@@ -880,6 +880,7 @@ def update_driver_status(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
+
 # views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -890,23 +891,20 @@ def driver_login(request):
     if request.method == "POST":
         form = DeliveryDriverLoginForm(request=request, data=request.POST)
         if form.is_valid():
+            # Check the driver credentials
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-            
-            if user is not None:
-                if hasattr(user, 'delivery_driver') and user.delivery_driver.is_verified:
-                    login(request, user)
-                    messages.success(request, "Login successful!")
-                    return redirect('driver_dashboard')  # Change 'driver_dashboard' to your actual dashboard route
-                else:
-                    messages.error(request, "You are not a verified driver. If you want to register as a driver, please click the link below.")
-                    messages.info(request, "If you want to register as a Driver, please click the button below.")
+            if user is not None and user.delivery_driver.is_verified:
+                login(request, user)
+                messages.success(request, "Login successful!")
+                return redirect('driver_dashboard')  # Change 'driver_dashboard' to your actual dashboard route
             else:
-                messages.error(request, "Invalid credentials.")
+                messages.error(request, "Invalid credentials or unverified driver.")
         else:
             messages.error(request, "Please correct the errors below.")
     else:
         form = DeliveryDriverLoginForm()
 
-    return render(request, 'store/driver_login.html', {'form': form})
+    return render(request, 'driver_login.html', {'form': form})
+

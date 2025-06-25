@@ -111,7 +111,8 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to IndahagDelivery.com</h1>        
+        <h1>Welcome to Our Website</h1>
+        <p>Your one-stop solution for amazing services</p>
     </header>
    
     
@@ -145,13 +146,14 @@
                 <a href="{% url 'driver_register' %}" class="btn btn-success">Register as Driver</a>
             {% endif %}
         {% else %}
-            <p>Please <a href="{% url 'driver_login' %}">login</a> or <a href="{% url 'driver_register' %}">Apply to be a Delivery Driver.</a></p>
+            <p>Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">create an account</a> to register as a delivery driver.</p>
         {% endif %}
     </section>
 
     <section class="hero">
         <h1>Your Journey Starts Here</h1>
-        <p>Discover a world of possibilities with our platform. Whether you're looking for services, products, or just inspiration, we've got you covered.</p>    
+        <p>Discover a world of possibilities with our platform. Whether you're looking for services, products, or just inspiration, we've got you covered.</p>
+        <button>Get Started</button>
     </section>
     <footer>
         <p>&copy; 2025 Our Website. All rights reserved.</p>
