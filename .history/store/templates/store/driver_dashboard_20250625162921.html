@@ -1085,7 +1085,7 @@
                         <th>Order Date</th>
                         <th>Status</th>
                         <th>Store</th>
-                
+                        <th>Customer</th>
                        
                         <th>Total Price</th>
                      
@@ -1098,7 +1098,7 @@
                         <td>{{ order_all.created_at }}</td>
                         <td>{{ order_all.get_status_display }}</td>
                         <td>{{ order_all.store.name }}</td>
-                                        
+                        <td>{{ order_all.customer_name }}</td>                     
                         <td>₱{{ order_all.total_price }}</td>
                       
                     </tr>

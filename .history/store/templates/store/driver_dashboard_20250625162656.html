@@ -1051,7 +1051,6 @@
                     
                     <td>{{ order.store.name }}</td>
                     <td>{{ order.customer_name }}</td>
-                    <td>{{ order.customer_phone_number }}</td>
                     <td>₱{{ order.total_price }}</td>
                     <td>                       
                         <button class="status-button" onclick="openGoogleMaps('{{ order.customer_location }}')">Map</button>
@@ -1085,7 +1084,7 @@
                         <th>Order Date</th>
                         <th>Status</th>
                         <th>Store</th>
-                
+                        <th>Customer</th>
                        
                         <th>Total Price</th>
                      
@@ -1098,7 +1097,7 @@
                         <td>{{ order_all.created_at }}</td>
                         <td>{{ order_all.get_status_display }}</td>
                         <td>{{ order_all.store.name }}</td>
-                                        
+                        <td>{{ order_all.customer.name }}</td>                     
                         <td>₱{{ order_all.total_price }}</td>
                       
                     </tr>
