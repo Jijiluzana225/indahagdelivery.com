@@ -98,9 +98,6 @@ class DeliveryDriverRegistrationForm(forms.ModelForm):
             'vehicle_type', 'vehicle_plate_number', 
             'profile_picture', 'current_location'
         ]
-        
-        profile_picture = forms.ImageField(required=True, error_messages={'required': 'Profile picture is required.'})
-        
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -129,7 +126,6 @@ class DeliveryDriverRegistrationForm(forms.ModelForm):
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
-          
             'current_location': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter your current Address',

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Driver Registration</title>
+    <style>
+        /* Your existing CSS */
+        .error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .form-group.error input,
+        .form-group.error select {
+            border-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 Delivery Driver Registration</h1>
+            <p>Join our delivery network and start earning today</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Django Messages -->
+            {% if messages %}
+                <div class="django-messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" id="registrationForm">
+                {% csrf_token %}
+                
+                <!-- Personal Information Section -->
+                <div class="section">
+                    <h2 class="section-title">👤 Personal Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group{% if form.name.errors %} error{% endif %}">
+                            <label for="{{ form.name.id_for_label }}" class="required">Full Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="error">
+                                    {{ form.name.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group{% if form.phone_number.errors %} error{% endif %}">
+                            <label for="{{ form.phone_number.id_for_label }}" class="required">Phone Number</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="error">
+                                    {{ form.phone_number.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group{% if form.profile_picture.errors %} error{% endif %}">
+                        <label for="{{ form.profile_picture.id_for_label }}">Profile Picture</label>
+                        <div class="file-input-wrapper">
+                            <button type="button" class="file-input-button" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
+                                📷 Choose Profile Picture
+                            </button>
+                            {{ form.profile_picture }}
+                        </div>
+                        {% if form.profile_picture.errors %}
+                            <div class="error">
+                                {{ form.profile_picture.errors }}
+                            </div>
+                        {% endif %}
+                        <div class="image-preview" id="imagePreview">
+                            <button type="button" class="change-picture-btn" id="changePictureBtn" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
+                                🔄 Change Picture
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Information Section -->
+                <div class="section">
+                    <h2 class="section-title">🏍️ Vehicle Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group{% if form.license_number.errors %} error{% endif %}">
+                            <label for="{{ form.license_number.id_for_label }}" class="required">License Number</label>
+                            {{ form.license_number }}
+                            {% if form.license_number.errors %}
+                                <div class="error">
+                                    {{ form.license_number.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group{% if form.vehicle_type.errors %} error{% endif %}">
+                            <label for="{{ form.vehicle_type.id_for_label }}" class="required">Vehicle Type</label>
+                            {{ form.vehicle_type }}
+                            {% if form.vehicle_type.errors %}
+                                <div class="error">
+                                    {{ form.vehicle_type.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group{% if form.vehicle_plate_number.errors %} error{% endif %}">
+                        <label for="{{ form.vehicle_plate_number.id_for_label }}">Vehicle Plate Number</label>
+                        {{ form.vehicle_plate_number }}
+                        {% if form.vehicle_plate_number.errors %}
+                            <div class="error">
+                                {{ form.vehicle_plate_number.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Location Information Section -->
+                <div class="section">
+                    <h2 class="section-title">📍 Complete Address</h2>
+                    
+                    <div class="form-group{% if form.current_location.errors %} error{% endif %}">
+                        <label for="{{ form.current_location.id_for_label }}">Current Address</label>
+                        {{ form.current_location }}
+                        {% if form.current_location.errors %}
+                            <div class="error">
+                                {{ form.current_location.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="terms">
+                    <p>
+                        <strong>📋 Terms & Conditions:</strong><br>
+                        By submitting this registration, you agree to our terms and conditions. 
+                        Your account will be reviewed and verified before activation. You will 
+                        receive a notification once your account is approved. All information 
+                        provided must be accurate and up-to-date.
+                    </p>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Submit Registration</span>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Submitting...</span>
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup message -->
+    {% if registration_success %}
+        <div class="popup-overlay" id="popupOverlay"></div>
+        <div class="popup" id="popup">
+            <h3>Application Complete!</h3>
+            <p>Just wait for IndahagDelivery.com to contact you.</p>
+            <button class="popup-button" onclick="window.location.href='{% url 'login' %}'">Close & Login</button>
+        </div>
+    {% endif %}
+
+    <script>
+        // Show popup after successful registration
+        {% if registration_success %}
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('popupOverlay').style.display = 'block';
+        {% endif %}
+
+        // Close the popup and redirect to login
+        document.querySelector('.popup-button').addEventListener('click', function() {
+            window.location.href = '{% url "login" %}';
+        });
+    </script>
+</body>
+</html>

@@ -407,24 +407,28 @@
                     </div>
 
                     <div class="form-group{% if form.profile_picture.errors %} error{% endif %}">
-                        <label for="{{ form.profile_picture.id_for_label }}">Profile Picture</label>
-                        <div class="file-input-wrapper">
-                            <button type="button" class="file-input-button" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
-                                📷 Choose Profile Picture
-                            </button>
-                            {{ form.profile_picture }}
-                        </div>
-                        {% if form.profile_picture.errors %}
-                            <div class="field-errors">
-                                {{ form.profile_picture.errors }}
-                            </div>
-                        {% endif %}
-                        <div class="image-preview" id="imagePreview">
-                            <button type="button" class="change-picture-btn" id="changePictureBtn" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
-                                🔄 Change Picture
-                            </button>
-                        </div>
-                    </div>
+    <label for="{{ form.profile_picture.id_for_label }}" class="required">Profile Picture</label>
+    <div class="file-input-wrapper">
+        <button type="button" class="file-input-button" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
+            📷 Choose Profile Picture
+        </button>
+        {{ form.profile_picture }}
+    </div>
+    
+    {% if form.profile_picture.errors %}
+        <div class="field-errors">
+            {% for error in form.profile_picture.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="image-preview" id="imagePreview">
+        <button type="button" class="change-picture-btn" id="changePictureBtn" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
+            🔄 Change Picture
+        </button>
+    </div>
+</div>
                 </div>
 
                 <!-- Vehicle Information Section -->

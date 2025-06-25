@@ -737,10 +737,9 @@ from .forms import DeliveryDriverRegistrationForm
 def home(request):
     """Home page view"""
     return render(request, 'store/home.html')
-
-from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.models import AnonymousUser
 from .forms import DeliveryDriverRegistrationForm
 from .models import DeliveryDriver
 
@@ -769,8 +768,9 @@ def driver_register(request):
                     'Your delivery driver registration has been submitted successfully! '
                     'You will be notified once your account is verified.'
                 )
-                # Pass success flag to template for showing popup
-                return render(request, 'store/driver_register.html', {'form': form, 'registration_success': True})
+                return redirect('driver_dashboard')
+            except ValidationError as e:
+                messages.error(request, f'Registration failed: {e}')
             except Exception as e:
                 messages.error(request, f'An error occurred during registration: {e}')
                 print(f"Error occurred: {e}")
@@ -779,9 +779,7 @@ def driver_register(request):
     else:
         form = DeliveryDriverRegistrationForm()
 
-    return render(request, 'store/driver_register.html', {'form': form, 'registration_success': False})
-
-
+    return render(request, 'store/driver_register.html', {'form': form})
 
 
 @login_required

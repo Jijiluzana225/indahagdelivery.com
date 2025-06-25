@@ -129,7 +129,6 @@ class DeliveryDriverRegistrationForm(forms.ModelForm):
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
-          
             'current_location': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter your current Address',

@@ -738,50 +738,38 @@ def home(request):
     """Home page view"""
     return render(request, 'store/home.html')
 
-from django.contrib.auth.models import AnonymousUser
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import DeliveryDriverRegistrationForm
-from .models import DeliveryDriver
-
 def driver_register(request):
     """Driver registration view"""
     # Check if user already has a driver profile
     if hasattr(request.user, 'delivery_driver'):
         messages.info(request, 'You are already registered as a delivery driver.')
         return redirect('driver_dashboard')
-
+    
     if request.method == 'POST':
         form = DeliveryDriverRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             try:
                 driver = form.save(commit=False)
-                
-                # If the user is logged in, assign the user to the driver
-                if not isinstance(request.user, AnonymousUser):
-                    driver.user = request.user
-                else:
-                    driver.user = None  # Or handle the case differently, e.g., create a temporary user
-                
+                driver.user = request.user
                 driver.save()
-
+                
                 messages.success(request, 
                     'Your delivery driver registration has been submitted successfully! '
                     'You will be notified once your account is verified.'
                 )
-                # Pass success flag to template for showing popup
-                return render(request, 'store/driver_register.html', {'form': form, 'registration_success': True})
+                return redirect('driver_dashboard')
+            except ValidationError as e:
+                messages.error(request, f'Registration failed: {e}')
             except Exception as e:
                 messages.error(request, f'An error occurred during registration: {e}')
-                print(f"Error occurred: {e}")
+                # Optionally log the exception details for further inspection
+                print(f"Error occurred: {e}")  # This will log the error to your console or server logs
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = DeliveryDriverRegistrationForm()
-
-    return render(request, 'store/driver_register.html', {'form': form, 'registration_success': False})
-
-
+    
+    return render(request, 'store/driver_register.html', {'form': form})
 
 
 @login_required

@@ -129,7 +129,10 @@ class DeliveryDriverRegistrationForm(forms.ModelForm):
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
-          
+            'profile_picture': forms.TextInput(attrs={
+                'class': 'form-control',                
+                'maxlength': 255
+            }),
             'current_location': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Enter your current Address',

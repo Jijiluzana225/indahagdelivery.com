@@ -576,7 +576,26 @@
             window.location.href = '{% url "login" %}';
         });
 
-        
+           document.getElementById('registrationForm').addEventListener('submit', function (e) {
+        // Check if profile picture is missing
+        const profilePictureInput = document.getElementById('{{ form.profile_picture.id_for_label }}');
+        if (!profilePictureInput.files.length) {
+            e.preventDefault();  // Prevent form submission
+            alert('Profile picture is required.');
+            return false;
+        }
+
+        // Proceed with form submission if picture is selected
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const loading = submitBtn.querySelector('.loading');
+
+        // Show loading state
+        btnText.style.display = 'none';
+        loading.style.display = 'flex';
+        submitBtn.disabled = true;
+    });
+    
     </script>
 </body>
 </html>

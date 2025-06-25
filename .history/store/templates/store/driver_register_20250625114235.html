@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Driver Registration</title>
+    <style>
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            width: 300px;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .popup-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popup-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Additional styles */
+        /* Existing styles you already have... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 Delivery Driver Registration</h1>
+            <p>Join our delivery network and start earning today</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Django Messages -->
+            {% if messages %}
+                <div class="django-messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
+                <div class="non-field-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" id="registrationForm">
+                {% csrf_token %}
+                
+                <!-- Personal Information Section -->
+                <div class="section">
+                    <h2 class="section-title">👤 Personal Information</h2>
+                    <!-- Form fields here... -->
+                </div>
+
+                <!-- Other sections here... -->
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span class="btn-text">Submit Registration</span>
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Submitting...</span>
+                    </div>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Popup message -->
+    {% if registration_success %}
+        <div class="popup-overlay" id="popupOverlay"></div>
+        <div class="popup" id="popup">
+            <h3>Application Complete!</h3>
+            <p>Just wait for IndahagDelivery.com to contact you.</p>
+            <button class="popup-button" onclick="window.location.href='{% url 'login' %}'">Close & Login</button>
+        </div>
+    {% endif %}
+
+    <script>
+        // Show popup after successful registration
+        {% if registration_success %}
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('popupOverlay').style.display = 'block';
+        {% endif %}
+
+        // Close the popup and redirect to login
+        document.querySelector('.popup-button').addEventListener('click', function() {
+            window.location.href = '{% url "login" %}';
+        });
+    </script>
+</body>
+</html>

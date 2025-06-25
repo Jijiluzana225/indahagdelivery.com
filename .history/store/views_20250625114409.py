@@ -738,7 +738,6 @@ def home(request):
     """Home page view"""
     return render(request, 'store/home.html')
 
-from django.contrib.auth.models import AnonymousUser
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import DeliveryDriverRegistrationForm
@@ -780,7 +779,6 @@ def driver_register(request):
         form = DeliveryDriverRegistrationForm()
 
     return render(request, 'store/driver_register.html', {'form': form, 'registration_success': False})
-
 
 
 

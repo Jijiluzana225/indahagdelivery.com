@@ -81,11 +81,11 @@ class DeliveryDriver(models.Model):
         ],
         default='Motorcycle'
     )
-    vehicle_plate_number = models.CharField(max_length=20)
-    profile_picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='drivers/',null=True, blank=True)
+    vehicle_plate_number = models.CharField(max_length=20, null=True, blank=True)
+    profile_picture = models.ImageField(storage=MediaCloudinaryStorage(), upload_to='drivers/')
     is_available = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
-    current_location = models.CharField(max_length=255)
+    current_location = models.CharField(max_length=255, null=True, blank=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
     total_deliveries = models.PositiveIntegerField(default=0)
     date_joined = models.DateTimeField(auto_now_add=True)
