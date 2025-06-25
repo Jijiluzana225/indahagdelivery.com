@@ -1182,69 +1182,42 @@
         }
     }
 
-     
+     // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const messaging = firebase.messaging();
+
+    // Request permission to show notifications
+    messaging.requestPermission()
+    .then(function() {
+        return messaging.getToken();
+    })
+    .then(function(token) {
+        console.log("Token: ", token);
+        // Send the token to your server for later use
+    })
+    .catch(function(err) {
+        console.error("Permission denied", err);
+    });
+
+    // Handle incoming messages
+    messaging.onMessage(function(payload) {
+        console.log('Message received: ', payload);
+        // Display push notification
+        alert("New Order Added: " + payload.notification.body);
+    });
 
     
 
     </script>
-
-    <audio id="newOrderSound">
-    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-    var initialOrderCount = document.querySelectorAll('.order-row').length;
-
-    function checkForNewOrders() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "{% url 'check_new_orders' %}", true);
-        xhr.onload = function () {
-            if (xhr.status == 200) {
-                var response = JSON.parse(xhr.responseText);
-
-                if (!response.active) {
-                    console.log("No new orders. Stopping order check.");
-                    return;
-                }
-
-                var currentOrderCount = response.current_order_count;
-                console.log(initialOrderCount, currentOrderCount);
-
-                if (initialOrderCount < currentOrderCount) {
-                    var audio = document.getElementById('newOrderSound');
-
-                    try {
-                        var playPromise = audio.play();
-
-                        if (playPromise !== undefined) {
-                            playPromise.then(function() {
-                                audio.onended = function () {
-                                    alert("New order received!");
-                                    location.reload(); 
-                                };
-                            }).catch(function(error) {
-                                alert("New order received!");
-                                location.reload(); 
-                            });
-                        }
-                    } catch (error) {
-                        alert("New order received!");
-                        location.reload(); 
-                    }
-
-                    initialOrderCount = currentOrderCount;
-                }
-            }
-        };
-        xhr.send();
-    }
-
-    if (initialOrderCount > 0) {
-        setInterval(checkForNewOrders, 10000);
-    } else {
-        console.log("No orders in table. Order checking is disabled.");
-    }
-</script>
-
 </body>
 </html>

@@ -59,14 +59,18 @@
     }
 
     .action-btn {
-        padding: 10px 20px;
+        padding: 12px 24px;
         font-size: 1rem;
         border: none;
         border-radius: 8px;
         cursor: pointer;
         color: #fff;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.3s ease;
         text-transform: capitalize;
+        display: inline-block;
+        text-align: center;
+        min-width: 180px;
+        margin: 5px;
     }
 
     .update-btn {
@@ -75,6 +79,7 @@
 
     .update-btn:hover {
         background-color: #0056b3;
+        transform: scale(1.05);
     }
 
     .delete-btn {
@@ -83,6 +88,16 @@
 
     .delete-btn:hover {
         background-color: #c82333;
+        transform: scale(1.05);
+    }
+
+    .undelivered-btn {
+        background-color: #ffc107;
+    }
+
+    .undelivered-btn:hover {
+        background-color: #e0a800;
+        transform: scale(1.05);
     }
 
     input[type="number"] {
@@ -94,23 +109,13 @@
         font-size: 1rem;
     }
 
-    /* Back to Homepage Button Styling */
-    .back-home-btn {
-        display: block;
-        margin: 30px auto;
-        padding: 12px 30px;
-        background-color: #28a745;
-        color: white;
-        font-size: 1rem;
-        text-align: center;
-        border-radius: 5px;
-        text-decoration: none;
-        max-width: 200px;
-        transition: background-color 0.3s ease;
-    }
-
-    .back-home-btn:hover {
-        background-color: #218838;
+    /* Align Buttons in a Single Row with Equal Distribution */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px; /* Adds space between buttons */
+        margin-top: 20px;
+        flex-wrap: wrap;
     }
 
     /* Responsive Design for Tablets */
@@ -221,48 +226,23 @@
         {% csrf_token %}
         <button type="submit" class="action-btn update-btn">Mark as DELIVERED</button>
     </form>
-
     {% endif %}
-    <div style="font-align:right; padding-top: 20px;">
-        <button class="action-btn update-btn" onclick="printReceipt()">
-            Print Receipt
-        </button>
+
+     {% if order.status != 'Undelivered' %}
+     <form action="{% url 'update_order_status_undelivered' order.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="action-btn undelivered-btn">Mark as UNDELIVERED</button>
+    </form>
+    {% endif %}
+
+    <div class="button-container">
+        <button class="action-btn update-btn" onclick="printReceipt()">Print Receipt</button>
+        <a href="{% url 'driver_dashboard' %}" class="action-btn update-btn">Go to Dashboard</a>
     </div>
-    <script>
-        // Handle form submission and redirect
-        document.getElementById('deliver-form-{{ order.id }}').onsubmit = function(e) {
-            e.preventDefault();  // Prevent form from submitting the usual way
-
-            // Submit the form via AJAX
-            var form = this;
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", form.action, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-
-            xhr.onload = function() {
-                if (xhr.status == 200) {
-                    // If successful, redirect to store list
-                    window.location.href = "{% url 'store_list' %}";
-                } else {
-                    alert("Failed to update order status. Please try again.");
-                }
-            };
-
-            xhr.onerror = function() {
-                alert("An error occurred. Please check your connection and try again.");
-            };
-
-            var data = new FormData(form);  // Send the form data
-            xhr.send(data);
-        };
-    </script>
+    
     {% endif %}
 
 </div>
-
-<!-- Back to Homepage Button -->
-<a href="{% url 'store_list' %}" class="back-home-btn">Back to Homepage</a>
 
 <script>
     function printReceipt() {

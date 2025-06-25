@@ -481,7 +481,7 @@
         var button = document.querySelector(`button[onclick="updateOrder(${orderId})"]`);
         
         button.textContent = "Updating...";
-        
+        button.disabled = true;
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "{% url 'update_order_status' %}", true);
@@ -651,16 +651,17 @@
 
                         if (playPromise !== undefined) {
                             playPromise.then(function() {
-                                audio.onended = function () {                                   
+                                audio.onended = function () {
+                                    alert("New order received!");
                                     location.reload(); 
                                 };
                             }).catch(function(error) {
-                                
+                                alert("New order received!");
                                 location.reload(); 
                             });
                         }
                     } catch (error) {
-                        
+                        alert("New order received!");
                         location.reload(); 
                     }
 

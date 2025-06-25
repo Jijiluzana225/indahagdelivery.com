@@ -481,7 +481,7 @@
         var button = document.querySelector(`button[onclick="updateOrder(${orderId})"]`);
         
         button.textContent = "Updating...";
-        
+        button.disabled = true;
 
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "{% url 'update_order_status' %}", true);

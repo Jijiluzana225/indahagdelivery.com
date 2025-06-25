@@ -151,6 +151,13 @@ class CustomLogoutView(LogoutView):
 
 
 
+# from django.shortcuts import render, get_object_or_404
+# from .models import Store, Item
+
+# def store_products(request, store_id):
+#     store = get_object_or_404(Store, id=store_id)
+#     items = Item.objects.filter(store=store).select_related('product')  # Fetch items for this store
+#     return render(request, 'store/store_products.html', {'store': store, 'items': items})
 
 from django.shortcuts import render, get_object_or_404
 from .models import Store, Item

@@ -375,79 +375,70 @@
 <a href="{% url 'store_list' %}" class="back-home-btn">Back to Homepage</a>
 
 <!-- Status change notification popup -->
+<div id="statusNotification" class="status-notification">
+    Order status has been updated!
+</div>
 
-...
+
+
 <audio id="newOrderSound">
     <source src="/static/sounds/notification.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-    {% if status_changes %}
-        var audio = document.getElementById('newOrderSound');
+    var initialOrderCount = document.querySelectorAll('.order-row').length;
 
-        function playAudioAndAlert(orderIds) {
-            var playPromise = audio.play();
+    function checkForNewOrders() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "{% url 'update_order_status_original_Status' %}", true);
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                var response = JSON.parse(xhr.responseText);
 
-            if (playPromise !== undefined) {
-                playPromise.then(function () {
-                    alert("Status Changed Noted!");
-                    orderIds.forEach(updateOriginalStatus);
-                }).catch(function (error) {
-                    console.error("Audio play failed:", error);
-                    alert("Status Changed Noted!");
-                    orderIds.forEach(updateOriginalStatus);
-                });
-            } else {
-                alert("Status Changed Noted!");
-                orderIds.forEach(updateOriginalStatus);
-            }
-        }
+                if (!response.active) {
+                    console.log("No new orders. Stopping order check.");
+                    return;
+                }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const orderIds = [
-                {% for order_id in status_changes %}{{ order_id }},{% endfor %}
-            ];
-            playAudioAndAlert(orderIds);
-        });
-    {% else %}
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission();
-        }
-    {% endif %}
+                var currentOrderCount = response.current_order_count;
+                console.log(initialOrderCount, currentOrderCount);
 
-    setInterval(function () {
-        location.reload();
-    }, 10000);
+                if (initialOrderCount < currentOrderCount) {
+                    var audio = document.getElementById('newOrderSound');
 
-    function updateOriginalStatus(orderId) {
-        fetch('/update-order-status/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken()
-            },
-            body: JSON.stringify({ order_id: orderId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) console.error('Failed to update original status');
-        })
-        .catch(error => console.error('Error:', error));
-    }
+                    try {
+                        var playPromise = audio.play();
 
-    function getCsrfToken() {
-        var cookieValue = null;
-        if (document.cookie && document.cookie.indexOf('csrftoken') >= 0) {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = cookies[i].trim();
-                if (cookie.substring(0, 9) === 'csrftoken=') {
-                    cookieValue = decodeURIComponent(cookie.substring(9));
-                    break;
+                        if (playPromise !== undefined) {
+                            playPromise.then(function() {
+                                audio.onended = function () {                                   
+                                    location.reload(); 
+                                };
+                            }).catch(function(error) {
+                                
+                                location.reload(); 
+                            });
+                        }
+                    } catch (error) {
+                        
+                        location.reload(); 
+                    }
+
+                    initialOrderCount = currentOrderCount;
                 }
             }
-        }
-        return cookieValue;
+        };
+        xhr.send();
+    }
+
+    if (initialOrderCount > 0) {
+        setInterval(checkForNewOrders, 10000);
+    } else {
+        console.log("No orders in table. Order checking is disabled.");
     }
 </script>
+
+
+
+
 {% endblock %}
