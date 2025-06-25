@@ -96,7 +96,6 @@
                <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo" style="width: 50%;">
             </a>
             
-            
             <!-- Open/Close Button -->
             {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
                 <a href="{% url 'update_store_open' %}" class="open-close-btn">Open/Close</a>

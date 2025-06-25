@@ -334,19 +334,4 @@
             // Manual pinning feature
             map.addListener('click', function(event) {
                 if (marker) {
-                    marker.setMap(null); // Remove previous marker
-                }
-
-                const clickedLocation = event.latLng;
-                marker = new google.maps.Marker({
-                    position: clickedLocation,
-                    map: map,
-                    title: "Pinned Location"
-                });
-
-                locationInput.value = `${clickedLocation.lat()}, ${clickedLocation.lng()}`; // Update location input
-            });
-        }
-    </script>
-</body>
-</html>
+                    marker.setMap(n
