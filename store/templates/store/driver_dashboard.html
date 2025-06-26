@@ -6,6 +6,35 @@
     <title>Driver Dashboard</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        /* Style for the 3D Logout Button */
+.logout-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    margin: 0 auto;
+    display: block; /* Centers the button */
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    transform: translateY(-4px); /* Slight upward movement */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+}
+
+.logout-btn:active {
+    transform: translateY(2px); /* Downward movement when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 
         * {
             margin: 0;
@@ -961,7 +990,40 @@
     background: linear-gradient(135deg, #f87171, #ef4444); /* Gradient for On the Way status */
 }
 
+.logout-form {
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    align-items: center;      /* Center vertically */
+    
+           /* Fix the form in place */
+   
+}
 
+/* Optional: Style for button */
+.logout-btn {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #f87171, #ef4444);
+    border-radius: 50px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    transform: translateY(-4px); /* Slight upward movement */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+}
+
+.logout-btn:active {
+    transform: translateY(2px); /* Downward movement when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
     </style>
 </head>
@@ -1072,6 +1134,9 @@
             
         </tbody>
     </table>
+
+    
+    
 </div>
 
     
@@ -1110,8 +1175,13 @@
                 </tbody>
             </table>
         </div>
-    </div>
+     <form action="{% url 'logout' %}" method="POST" class="logout-form">
+    {% csrf_token %}
+    <button type="submit" class="logout-btn">Logout</button>
+</form>
 
+ 
+</form>
 
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-messaging.js"></script>

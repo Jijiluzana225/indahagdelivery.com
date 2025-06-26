@@ -207,7 +207,7 @@
                             <a href="{% url 'store_location' id=store.id %}">{{ store.name }}</a>
                         {% else %}
                             <a href="#" class="disabled">
-                                {{ store.name }} (Opens Soon!)
+                                {{ store.name }} (Opens {{store.time_open}}!)
                             </a>
                         {% endif %}
                     </li>

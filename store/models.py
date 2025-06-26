@@ -39,7 +39,8 @@ class Store(models.Model):
     owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='stores', null=True, blank=True)  # link to User
     open = models.BooleanField(default=False)
     delivery_fee =  models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-     
+    time_open= models.CharField(max_length=25, null=True)
+    time_close= models.CharField(max_length=25, null=True)    
     def __str__(self):
         return self.name
 
