@@ -952,7 +952,6 @@ def special_request(request):
         })
 
     return render(request, 'store/special_request.html', {
-        'form': form,
-        'customer_location': customer_profile.location,
+        'form': form,        
         'flat_rate_fee': flat_rate.flat_rate_fee
     })

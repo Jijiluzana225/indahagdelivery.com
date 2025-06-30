@@ -1,137 +1,289 @@
-{% extends "store/base.html" %}
-
-{% block content %}
-<div class="container mt-4">
-  <h2>Special Request</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    
-    <div class="row mt-4">
-      <div class="col-md-6">
-        <p><strong>Your location:</strong> {{ customer_location }}</p>
-        <p><strong>Flat Rate Fee (applied automatically):</strong> ₱{{ flat_rate_fee }}</p>
-      </div>
-      <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">
-            <h5>Your Location on Map</h5>
-          </div>
-          <div class="card-body p-0">
-            <div id="map" style="height: 300px; width: 100%;"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="mt-3">
-      <button class="btn btn-primary" type="submit">Submit Request</button>
-    </div>
-  </form>
-</div>
-
-<script>
-let map;
-let geocoder;
-let marker;
-
-function initMap() {
-    // Initialize the map centered on Manila
-    map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 13,
-        center: { lat: 14.5995, lng: 120.9842 }, // Manila coordinates
-    });
-    
-    geocoder = new google.maps.Geocoder();
-    
-    // Get customer location from Django template
-    const customerLocation = "{{ customer_location|escapejs }}";
-    
-    if (customerLocation && customerLocation.trim() !== '') {
-        geocodeAddress(customerLocation);
-    } else {
-        // If no specific location, try to get user's current location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-                    
-                    map.setCenter(pos);
-                    addMarker(pos, "Your Current Location");
-                },
-                () => {
-                    console.log("Geolocation failed, using default Manila location");
-                }
-            );
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Request Form</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
         }
-    }
-}
 
-function geocodeAddress(address) {
-    // Add "Philippines" to the address for better geocoding results
-    const fullAddress = address.includes("Philippines") ? address : address + ", Philippines";
-    
-    geocoder.geocode({ address: fullAddress }, (results, status) => {
-        if (status === "OK") {
-            const location = results[0].geometry.location;
-            map.setCenter(location);
-            addMarker(location, address);
-        } else {
-            console.log("Geocoding failed: " + status);
-            // Fallback: try without "Philippines" suffix
-            if (fullAddress !== address) {
-                geocoder.geocode({ address: address }, (results, status) => {
-                    if (status === "OK") {
-                        const location = results[0].geometry.location;
-                        map.setCenter(location);
-                        addMarker(location, address);
-                    } else {
-                        console.log("Geocoding failed again: " + status);
-                    }
-                });
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--success-color));
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-header h2 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .form-header .subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            background-color: white;
+            transform: translateY(-1px);
+        }
+
+        .form-control::placeholder {
+            color: #adb5bd;
+            font-style: italic;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .fee-display {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .fee-display::before {
+            content: '\f4d3';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: var(--success-color);
+            font-size: 1.5rem;
+            padding: 0 10px;
+        }
+
+        .fee-display strong {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .fee-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--success-color);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+            border: none;
+            border-radius: 8px;
+            padding: 0.875rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .form-icon {
+            color: var(--secondary-color);
+            margin-right: 0.5rem;
+        }
+
+        .required {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            .form-header h2 {
+                font-size: 1.8rem;
             }
         }
-    });
-}
 
-function addMarker(position, title) {
-    // Remove existing marker if any
-    if (marker) {
-        marker.setMap(null);
-    }
-    
-    // Add new marker
-    marker = new google.maps.Marker({
-        position: position,
-        map: map,
-        title: title,
-        icon: {
-            url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-            scaledSize: new google.maps.Size(40, 40)
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
         }
-    });
-    
-    // Add info window
-    const infoWindow = new google.maps.InfoWindow({
-        content: `<div style="padding: 5px;"><strong>${title}</strong></div>`
-    });
-    
-    marker.addListener("click", () => {
-        infoWindow.open(map, marker);
-    });
-}
 
-// Initialize map when page loads
-window.onload = function() {
-    initMap();
-};
-</script>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-<!-- Google Maps API Script -->
-<script async defer 
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
-</script>
-{% endblock %}
+        .input-group-text {
+            background: var(--light-bg);
+            border: 2px solid #e9ecef;
+            border-right: none;
+            color: var(--secondary-color);
+        }
+
+        .input-group .form-control {
+            border-left: none;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--secondary-color);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container fade-in">
+            <div class="form-header">
+                <h2><i class="fas fa-star form-icon"></i>Special Request</h2>
+                <p class="subtitle">Submit your custom requirements and we'll handle the rest</p>
+            </div>
+
+            <form method="post" id="specialRequestForm">
+                {% csrf_token %}
+                {{ form.as_p }}    
+                
+                <!-- Fee Display -->
+                <div class="fee-display">
+                    <strong>Flat Rate Fee (applied automatically)</strong>
+                    <div class="fee-amount">₱{{ flat_rate_fee }}</div>
+                    <small class="text-muted">This fee covers processing and handling of your special request</small>
+                </div>
+
+                <button class="btn btn-submit" type="submit">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add smooth form interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('specialRequestForm');
+            const inputs = form.querySelectorAll('.form-control, .form-select');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+
+            // Form submission animation
+            form.addEventListener('submit', function(e) {
+                const button = this.querySelector('.btn-submit');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                button.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>
