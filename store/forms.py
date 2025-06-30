@@ -149,8 +149,29 @@ class DeliveryDriverRegistrationForm(forms.ModelForm):
         return phone_number
     
 from django import forms
+from .models import *
 from django.contrib.auth.forms import AuthenticationForm
 
 class DeliveryDriverLoginForm(AuthenticationForm):
     username = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Username', 'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-control'}))
+
+from django import forms
+from .models import SpecialRequest
+from django.utils import timezone
+from zoneinfo import ZoneInfo
+
+class SpecialRequestForm(forms.ModelForm):
+    class Meta:
+        model = SpecialRequest
+        fields = [
+            'request_text',         
+            'estimated_budget',
+            'special_remarks',
+            'tip',
+        ]
+     
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+     

@@ -131,10 +131,8 @@ LANGUAGE_CODE = 'en-us'
 USE_I18N = True
 
 
-
-TIME_ZONE = 'Asia/Manila'
 USE_TZ = True
-
+TIME_ZONE = "Asia/Manila"  
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

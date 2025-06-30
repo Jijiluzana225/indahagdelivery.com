@@ -925,3 +925,34 @@ from django.shortcuts import render
 
 def system_update(request):
     return render(request, 'store/system_update.html')
+
+
+
+from .models import *
+from django.utils import timezone
+from .forms import *
+
+@login_required
+def special_request(request):
+    customer_profile = CustomerProfile.objects.get(username=request.user)
+    flat_rate = FlatRate.objects.first()  # get latest FlatRate
+    
+    if request.method == 'POST':
+        form = SpecialRequestForm(request.POST)
+        if form.is_valid():
+            special_request = form.save(commit=False)
+            special_request.customer = request.user
+            special_request.flat_rate_fee = flat_rate.flat_rate_fee  # dynamically apply the current fee
+            special_request.save()
+            return redirect('customer_dashboard')
+    else:
+        form = SpecialRequestForm(initial={
+            'date_requested': timezone.now().date(),
+            'time_requested': timezone.now().time(),
+        })
+
+    return render(request, 'store/special_request.html', {
+        'form': form,
+        'customer_location': customer_profile.location,
+        'flat_rate_fee': flat_rate.flat_rate_fee
+    })
