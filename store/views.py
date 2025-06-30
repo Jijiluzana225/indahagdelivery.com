@@ -919,3 +919,9 @@ def driver_login(request):
         form = DeliveryDriverLoginForm()
 
     return render(request, 'store/driver_login.html', {'form': form})
+
+
+from django.shortcuts import render
+
+def system_update(request):
+    return render(request, 'store/system_update.html')
