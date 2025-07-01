@@ -160,6 +160,7 @@ from django.conf import settings
 class SpecialRequest(models.Model):
     customer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     driver = models.ForeignKey('DeliveryDriver', null=True, blank=True, on_delete=models.SET_NULL)
+    store = models.CharField(max_length=255,null=True)
     request_text = models.TextField()
     date_requested = models.DateField(default=default_local_date)
     time_requested = models.TimeField(default=default_local_time)
@@ -171,6 +172,17 @@ class SpecialRequest(models.Model):
     tip = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    status = models.CharField(
+        max_length=20, null=True,
+        choices=[
+            ('Pending', 'Pending'),
+            ('Accepted', 'Accepted'),
+            ('On the Way', 'On the Way'),
+            ('Delivered', 'Delivered')
+        ],
+        default='Pending'
+    )
 
     def __str__(self):
         return f"{self.customer.username} - {self.date_requested} {self.time_requested}"

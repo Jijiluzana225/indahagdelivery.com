@@ -793,6 +793,8 @@ def driver_dashboard(request):
     total_earnings = Order.objects.filter(assigned_to=driver, status='Delivered').aggregate(
         total=Sum('total_price'))['total'] or 0
 
+    special_requests = SpecialRequest.objects.all().order_by('-created_at')  # or any relevant filter   
+
     # Add location info for each order
     for order in orders:
         # Get the customer profile for each order's customer
@@ -803,6 +805,15 @@ def driver_dashboard(request):
             order.customer_phone_number = customer_profile.phone_number
         else:
             order.customer_location = "Location not available"
+
+    for special in special_requests:
+        customer_profile1 = CustomerProfile.objects.filter(username=special.customer).first()
+        if customer_profile1:
+            special.customer_location = customer_profile1.location
+            special.customer_name = customer_profile1.name
+            special.customer_phone_number = customer_profile1.phone_number
+        else:
+            special.customer_location = "Location not available"    
     
     context = {
         'driver': driver,
@@ -810,10 +821,14 @@ def driver_dashboard(request):
         'total_deliveries': total_deliveries,
         'total_earnings': total_earnings,
         'orders_all':orders_all,
+        'special_requests': special_requests,
     }
 
     return render(request, 'store/driver_dashboard.html', context)
 
+
+
+    
 
 @login_required
 def driver_profile_update(request):
@@ -926,32 +941,74 @@ from django.shortcuts import render
 def system_update(request):
     return render(request, 'store/system_update.html')
 
+from django.shortcuts import render
+from .forms import SpecialRequestForm
+from .models import FlatRate
 
-
-from .models import *
-from django.utils import timezone
-from .forms import *
-
-@login_required
 def special_request(request):
-    customer_profile = CustomerProfile.objects.get(username=request.user)
-    flat_rate = FlatRate.objects.first()  # get latest FlatRate
-    
+    # Get the latest flat rate
+    latest_rate = FlatRate.objects.order_by('-updated_at').first()
+    flat_rate_fee = latest_rate.flat_rate_fee if latest_rate else 0.00
+
     if request.method == 'POST':
         form = SpecialRequestForm(request.POST)
         if form.is_valid():
-            special_request = form.save(commit=False)
-            special_request.customer = request.user
-            special_request.flat_rate_fee = flat_rate.flat_rate_fee  # dynamically apply the current fee
-            special_request.save()
-            return redirect('customer_dashboard')
+            special = form.save(commit=False)
+            special.customer = request.user
+            special.flat_rate_fee = flat_rate_fee  # Set dynamic fee
+            special.save()
+            return render(request, 'store/thank_you.html')
     else:
-        form = SpecialRequestForm(initial={
-            'date_requested': timezone.now().date(),
-            'time_requested': timezone.now().time(),
-        })
+        form = SpecialRequestForm()
 
     return render(request, 'store/special_request.html', {
-        'form': form,        
-        'flat_rate_fee': flat_rate.flat_rate_fee
+        'form': form,
+        'flat_rate_fee': flat_rate_fee,  # Pass to template
     })
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import SpecialRequest
+
+@login_required
+def special_requests_dashboard(request):
+    special_requests = SpecialRequest.objects.filter(customer=request.user).order_by('-created_at')
+    return render(request, 'store/special_requests_dashboard.html', {
+        'special_requests': special_requests
+    })
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import SpecialRequest
+from .forms import SpecialRequestForm  # We'll create this next
+
+@login_required
+def edit_special_request(request, pk):
+    special_request = get_object_or_404(SpecialRequest, pk=pk, customer=request.user)
+
+    # Prevent editing if already assigned to a driver
+    if special_request.driver:
+        return redirect('special_requests_dashboard')
+
+    if request.method == 'POST':
+        form = SpecialRequestForm(request.POST, instance=special_request)
+        if form.is_valid():
+            form.save()
+            return redirect('special_requests_dashboard')
+    else:
+        form = SpecialRequestForm(instance=special_request)
+
+    return render(request, 'store/edit_special_request.html', {
+        'form': form,
+        'special_request': special_request
+    })
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import SpecialRequest
+
+def special_request_detail(request, pk):
+    request_obj = get_object_or_404(SpecialRequest, pk=pk)
+    return render(request, 'store/special_request_detail.html', {'request_obj': request_obj})

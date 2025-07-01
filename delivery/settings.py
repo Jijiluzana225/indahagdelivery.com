@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',      
     'cloudinary',
     'django.contrib.humanize',
+    'widget_tweaks',
    
 ]
 

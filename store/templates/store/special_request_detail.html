@@ -1,0 +1,33 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5 p-4 rounded shadow bg-light">
+    <h2 class="mb-4">Special Request Details</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Request ID:</strong> {{ request_obj.id }}</p>
+            <p><strong>Date Requested:</strong> {{ request_obj.date_requested }}</p>
+            <p><strong>Time Requested:</strong> {{ request_obj.time_requested }}</p>
+            <p><strong>Status:</strong> {{ request_obj.status }}</p>
+            <p><strong>Customer:</strong> {{ request_obj.customerprofile.name }}</p>
+            <p><strong>Contact No.:</strong> {{ request_obj.customer.phone_number }}</p>
+            <p><strong>Location:</strong> {{ request_obj.customer.location }}</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Store:</strong> {{ request_obj.store }}</p>
+            <p><strong>Request Text:</strong> {{ request_obj.request_text }}</p>
+            <p><strong>Estimated Budget:</strong> ₱{{ request_obj.estimated_budget }}</p>
+            <p><strong>Special Remarks:</strong> {{ request_obj.special_remarks|default:"—" }}</p>
+            <p><strong>Driver Comment:</strong> {{ request_obj.driver_comment|default:"—" }}</p>
+            <p><strong>Flat Rate Fee:</strong> ₱{{ request_obj.flat_rate_fee }}</p>
+            <p><strong>Tip:</strong> ₱{{ request_obj.tip }}</p>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="javascript:history.back()" class="btn btn-secondary">⬅ Back</a>
+    </div>
+</div>
+{% endblock %}

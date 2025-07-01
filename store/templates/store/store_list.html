@@ -63,6 +63,11 @@
             background: linear-gradient(145deg, #6c63ff, #00b3b3); /* Soft purple to teal */
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Softer shadow */
         }
+
+         .btn.pasugo-btn {
+            background: linear-gradient(145deg,rgb(5, 248, 78),rgba(89, 0, 255, 0.87)); /* Soft purple to teal */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Softer shadow */
+        }
         
         .btn.store-btn {
              background: linear-gradient(145deg,rgb(17, 0, 255),rgb(252, 120, 4)); /* Warm amber tones */
@@ -167,8 +172,13 @@
     <div class="container">
         <div class="btn-container">
             {% if request.user.is_authenticated and 'Store' not in request.user.groups.all|join:" " %}
-                <a href="{% url 'customer_dashboard' %}" class="btn order-btn">My Orders</a>
+                <a href="{% url 'customer_dashboard' %}" class="btn order-btn">🧺 My Orders</a>
             {% endif %}
+
+             {% if request.user.is_authenticated and 'Store' not in request.user.groups.all|join:" " %}
+                <a href="{% url 'special_requests_dashboard' %}" class="btn order-btn">🧺 My PASUGO</a>
+            {% endif %}
+
 
             {% if request.user.is_authenticated and 'Store' in request.user.groups.all|join:" " %}
                 <a href="{% url 'store_dashboard' %}" class="btn store-btn">My Store</a>
@@ -197,7 +207,11 @@
         <div class="search-box">
             <input type="text" id="storeSearch" placeholder="Search for a store..." onkeyup="filterStores()">
         </div>
-
+         <div class="btn-container">
+            {% if request.user.is_authenticated and 'Store' not in request.user.groups.all|join:" " %}
+                <a href="{% url 'special_request' %}" class="btn pasugo-btn">🛒 PASUGO</a>
+            {% endif %}
+            </div>
         <!-- Store List -->
         <ul class="store-list" id="storeList">
             {% if stores %}
@@ -220,8 +234,9 @@
         {% endif %}   
         
     </div>
+   
+            <!-- Footer -->
 
-    <!-- Footer -->
     <footer>
         <p>Register your Store: <h3>0994 6415467</h3></p>
 

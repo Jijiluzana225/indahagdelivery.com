@@ -1025,6 +1025,45 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+
+ .table-special-requests {
+        background-color: #fff3cd; /* Light Yellow */
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 30px;
+    }
+
+    .table-recent-orders {
+        background-color: #d1ecf1; /* Light Blue */
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 30px;
+    }
+
+    .table-all-orders {
+        background-color: #f8d7da; /* Light Pink */
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 30px;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .order-table th,
+    .order-table td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .order-table th {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+
     </style>
 </head>
 <body>
@@ -1085,8 +1124,50 @@
             </div>
         </div>
 
+        <!-- Special Requests Table -->
+<div class="recent-orders table-special-requests">
+    <h2>Special Requests</h2>
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Customer</th>
+                <th>Contact</th>
+               <th>Map</th>
+                <th>Status</th>                
+                <th>Tip</th>
+                <th>View</th>
+         
+              
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in special_requests %}
+            <tr>
+                <td>{{ request.id }}</td>
+                <td>{{ request.customer_name }}</td>
+                <td>{{ request.customer_phone_number }}</td>
+                <td>                    
+                <button class="status-button" onclick="openGoogleMaps('{{ request.customer_location }}')">Map</button>
+                </td> 
+                <td>{{ request.status }}</td>                
+                <td>₱{{ request.tip }}</td>
+                <td>
+                        <a href="{% url 'special_request_detail' request.id %}" class="status-button">View</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="empty-row">No special requests.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
         <!-- Recent Orders -->
-        <div class="recent-orders">
+<div class="recent-orders table-recent-orders">
     <h2>Recent Orders</h2>
     <table class="order-table">
         <thead>
@@ -1141,7 +1222,7 @@
 
     
 
-     <div class="recent-orders">
+<div class="recent-orders table-all-orders">
             <h2>All Orders</h2>
             <table class="order-table">
                 <thead>

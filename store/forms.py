@@ -156,22 +156,69 @@ class DeliveryDriverLoginForm(AuthenticationForm):
     username = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'placeholder': 'Username', 'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'form-control'}))
 
+# from django import forms
+# from .models import SpecialRequest
+# from django.utils import timezone
+# from zoneinfo import ZoneInfo
+
+# class SpecialRequestForm(forms.ModelForm):
+#     class Meta:
+#         model = SpecialRequest
+#         fields = [
+#             'request_text',         
+#             'estimated_budget',
+#             'special_remarks',
+#             'tip',
+#         ]
+     
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+
 from django import forms
 from .models import SpecialRequest
-from django.utils import timezone
-from zoneinfo import ZoneInfo
 
 class SpecialRequestForm(forms.ModelForm):
     class Meta:
         model = SpecialRequest
-        fields = [
-            'request_text',         
-            'estimated_budget',
-            'special_remarks',
-            'tip',
-        ]
-     
+        fields = ['store','request_text',  'estimated_budget',  'tip']
+        widgets ={
+            'store': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Name of Store / Person',
+                'rows': 1,
+            }),    
+            
+            'request_text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'List of items to buy / Details',
+                'rows': 4,
+            }),
+            'date_requested': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'time_requested': forms.TimeInput(attrs={
+                'class': 'form-control',
+                'type': 'time'
+            }),
+            'estimated_budget': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. 150.00'
+            }),          
+            'tip': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Optional tip'
+            }),
+        }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-     
+
+from django import forms
+from .models import SpecialRequest
+
+class SpecialRequestForm(forms.ModelForm):
+    class Meta:
+        model = SpecialRequest
+        fields = ['store', 'request_text', 
+                  'estimated_budget', 'tip']
+    

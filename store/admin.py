@@ -10,6 +10,7 @@ admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(DeliveryDriver)
 admin.site.register(FlatRate)
+admin.site.register(SpecialRequest)
 
 
 
