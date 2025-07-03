@@ -6,23 +6,51 @@
     <h2 class="mb-4">Special Request Details</h2>
 
     <div class="row">
+        <!-- Column 1: Details -->
         <div class="col-md-6">
-            <p><strong>Request ID:</strong> {{ request_obj.id }}</p>
-            <p><strong>Date Requested:</strong> {{ request_obj.date_requested }}</p>
-            <p><strong>Time Requested:</strong> {{ request_obj.time_requested }}</p>
-            <p><strong>Status:</strong> {{ request_obj.status }}</p>
-            <p><strong>Customer:</strong> {{ request_obj.customerprofile.name }}</p>
-            <p><strong>Contact No.:</strong> {{ request_obj.customer.phone_number }}</p>
-            <p><strong>Location:</strong> {{ request_obj.customer.location }}</p>
+            <!-- Customer Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Customer Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Request ID:</strong> {{ request_obj.id }}</p>
+                    <p><strong>Date Requested:</strong> {{ request_obj.date_requested }}</p>
+                    <p><strong>Time Requested:</strong> {{ request_obj.time_requested }}</p>
+                    <p><strong>Status:</strong> {{ request_obj.status }}</p>
+                    <p><strong>Customer:</strong> {{ request_obj.customer.customer.name }}</p>
+                    <p><strong>Contact No.:</strong> {{ request_obj.customer.customer.phone_number }}</p>
+                    <p class="mb-0"><strong>Location:</strong> {{ request_obj.customer.customer.location }}</p>
+                </div>
+            </div>
+
+            <!-- Request Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Request Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Store:</strong> {{ request_obj.store }}</p>
+                    <p><strong>Request Text:</strong> {{ request_obj.request_text }}</p>
+                    <p><strong>Estimated Budget:</strong> ₱{{ request_obj.estimated_budget }}</p>
+                    <p><strong>Special Remarks:</strong> {{ request_obj.special_remarks|default:"—" }}</p>
+                    <p><strong>Driver Comment:</strong> {{ request_obj.driver_comment|default:"—" }}</p>
+                    <p><strong>Flat Rate Fee:</strong> ₱{{ request_obj.flat_rate_fee }}</p>
+                    <p class="mb-0"><strong>Tip:</strong> ₱{{ request_obj.tip }}</p>
+                </div>
+            </div>
         </div>
+
+        <!-- Column 2: Google Map -->
         <div class="col-md-6">
-            <p><strong>Store:</strong> {{ request_obj.store }}</p>
-            <p><strong>Request Text:</strong> {{ request_obj.request_text }}</p>
-            <p><strong>Estimated Budget:</strong> ₱{{ request_obj.estimated_budget }}</p>
-            <p><strong>Special Remarks:</strong> {{ request_obj.special_remarks|default:"—" }}</p>
-            <p><strong>Driver Comment:</strong> {{ request_obj.driver_comment|default:"—" }}</p>
-            <p><strong>Flat Rate Fee:</strong> ₱{{ request_obj.flat_rate_fee }}</p>
-            <p><strong>Tip:</strong> ₱{{ request_obj.tip }}</p>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Customer Location</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -30,4 +58,90 @@
         <a href="javascript:history.back()" class="btn btn-secondary">⬅ Back</a>
     </div>
 </div>
+
+<!-- Google Maps JavaScript -->
+<script>
+let map;
+let geocoder;
+
+function initMap() {
+    console.log("Initializing map...");
+    
+    // Default coordinates (Iligan City)
+    const defaultLocation = { lat: 8.2280, lng: 124.2452 };
+    
+    // Get customer location from template
+    const customerLocation = "{{ request_obj.customer.customer.location|escapejs }}";
+    
+    // Initialize map
+    map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: defaultLocation,
+        mapTypeId: 'roadmap'
+    });
+    
+    // Initialize geocoder
+    geocoder = new google.maps.Geocoder();
+    
+    // Add default marker first
+    const defaultMarker = new google.maps.Marker({
+        position: defaultLocation,
+        map: map,
+        title: "Default Location - Iligan City",
+        icon: {
+            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        }
+    });
+    
+    console.log("Customer location:", customerLocation);
+    
+    // If customer location exists, try to geocode it
+    if (customerLocation && customerLocation.trim() !== "") {
+        console.log("Geocoding customer location...");
+        
+        geocoder.geocode({ 
+            address: customerLocation + ", Philippines" 
+        }, (results, status) => {
+            console.log("Geocoding status:", status);
+            
+            if (status === "OK" && results[0]) {
+                const location = results[0].geometry.location;
+                map.setCenter(location);
+                
+                // Remove default marker and add customer marker
+                defaultMarker.setMap(null);
+                
+                new google.maps.Marker({
+                    position: location,
+                    map: map,
+                    title: "Customer Location: " + customerLocation,
+                    icon: {
+                        url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                    }
+                });
+                
+                console.log("Customer marker added successfully");
+            } else {
+                console.log("Geocoding failed:", status);
+                // Keep the default marker if geocoding fails
+            }
+        });
+    }
+}
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded, waiting for Google Maps API...");
+    
+    // If Google Maps API is already loaded, initialize immediately
+    if (typeof google !== 'undefined' && google.maps) {
+        initMap();
+    }
+});
+</script>
+
+<!-- Google Maps API with callback -->
+<script async defer 
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap&libraries=geometry">
+</script>
 {% endblock %}
