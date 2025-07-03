@@ -859,17 +859,17 @@
 
     /* Style for 3D Gradient Button */
 .status-button {
-    display: inline-block;
-    padding: 8px 16px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: white;
-    text-align: center;
-    border-radius: 16px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #4ade80, #22c55e); /* Default gradient for success */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Light shadow for depth */
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  border: none;
+  box-shadow: none;
+  background-color: #007bff; /* example: blue */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.status-button:focus {
+  outline: blue;
 }
 
 .status-button:hover {
@@ -1136,6 +1136,7 @@
                <th>Map</th>
                 <th>Status</th>                
                 <th>Tip</th>
+                <th>Acceptedby</th>
                 <th>View</th>
          
               
@@ -1152,8 +1153,9 @@
                 </td> 
                 <td>{{ request.status }}</td>                
                 <td>₱{{ request.tip }}</td>
+                <td>{{ request.driver.name }}</td>
                 <td>
-                        <a href="{% url 'special_request_detail' request.id %}" class="status-button">View</a>
+           <a href="{% url 'special_request_detail' request.id %}" class="status-button" style="text-decoration: none;">View</a>
                 </td>
             </tr>
             {% empty %}
@@ -1336,9 +1338,6 @@
         }
     }
 
-     
-
-    
 
     </script>
 
