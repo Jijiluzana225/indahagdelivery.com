@@ -181,36 +181,32 @@ from .models import SpecialRequest
 class SpecialRequestForm(forms.ModelForm):
     class Meta:
         model = SpecialRequest
-        fields = ['store','request_text',  'estimated_budget',  'tip']
-        widgets ={
+        fields = ['store', 'request_text', 'estimated_budget', 'tip']
+        widgets = {
             'store': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Name of Store / Person',
-                'rows': 1,
-            }),    
-            
+                'rows': 2,
+                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
+            }),
             'request_text': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'List of items to buy / Details',
                 'rows': 4,
-            }),
-            'date_requested': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
-            'time_requested': forms.TimeInput(attrs={
-                'class': 'form-control',
-                'type': 'time'
+                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
             }),
             'estimated_budget': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g. 150.00'
-            }),          
+                'placeholder': 'e.g. 150.00',
+                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
+            }),
             'tip': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Optional tip'
+                'placeholder': 'Optional tip',
+                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
             }),
         }
+
 
 
 from django import forms
