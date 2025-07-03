@@ -193,7 +193,7 @@ class SpecialRequestForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'List of items to buy / Details',
                 'rows': 4,
-                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
+                'style': 'font-size: 1rem; width: 80%; max-width: 80%; box-sizing: border-box;'
             }),
             'estimated_budget': forms.NumberInput(attrs={
                 'class': 'form-control',
