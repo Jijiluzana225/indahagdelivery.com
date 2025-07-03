@@ -1012,3 +1012,24 @@ from .models import SpecialRequest
 def special_request_detail(request, pk):
     request_obj = get_object_or_404(SpecialRequest, pk=pk)
     return render(request, 'store/special_request_detail.html', {'request_obj': request_obj})
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import SpecialRequest, DeliveryDriver
+
+@login_required
+def assign_driver(request, pk):
+    special_request = get_object_or_404(SpecialRequest, pk=pk)
+    
+    try:
+        delivery_driver = request.user.delivery_driver  # Access related DeliveryDriver
+    except DeliveryDriver.DoesNotExist:
+        # Optional: handle error if user is not a driver
+        return redirect('special_request_detail', pk=pk)  # or return an error page
+
+    special_request.driver = delivery_driver
+    special_request.status = 'Accepted'
+    special_request.save()
+
+    return redirect('driver_dashboard')
