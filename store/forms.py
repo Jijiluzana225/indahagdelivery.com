@@ -175,6 +175,7 @@ class DeliveryDriverLoginForm(AuthenticationForm):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
 
+
 from django import forms
 from .models import SpecialRequest
 
@@ -184,37 +185,21 @@ class SpecialRequestForm(forms.ModelForm):
         fields = ['store', 'request_text', 'estimated_budget', 'tip']
         widgets = {
             'store': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-control modern-textarea',
                 'placeholder': 'Name of Store / Person',
-                'rows': 2,
-                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
+                'rows': 2
             }),
             'request_text': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-control modern-textarea narrow-textarea',
                 'placeholder': 'List of items to buy / Details',
-                'rows': 4,
-                'style': 'font-size: 1rem; width: 80%; max-width: 80%; box-sizing: border-box;'
+                'rows': 4
             }),
             'estimated_budget': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'e.g. 150.00',
-                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
+                'class': 'form-control modern-input',
+                'placeholder': 'e.g. 150.00'
             }),
             'tip': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Optional tip',
-                'style': 'font-size: 1rem; width: 100%; max-width: 100%; box-sizing: border-box;'
+                'class': 'form-control modern-input',
+                'placeholder': 'Optional tip'
             }),
         }
-
-
-
-from django import forms
-from .models import SpecialRequest
-
-class SpecialRequestForm(forms.ModelForm):
-    class Meta:
-        model = SpecialRequest
-        fields = ['store', 'request_text', 
-                  'estimated_budget', 'tip']
-    
