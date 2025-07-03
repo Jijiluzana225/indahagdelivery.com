@@ -1013,9 +1013,10 @@ def special_request_detail(request, pk):
     request_obj = get_object_or_404(SpecialRequest, pk=pk)
     return render(request, 'store/special_request_detail.html', {'request_obj': request_obj})
 
-
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import HttpResponseForbidden
 from .models import SpecialRequest, DeliveryDriver
 
 @login_required
@@ -1033,3 +1034,38 @@ def assign_driver(request, pk):
     special_request.save()
 
     return redirect('driver_dashboard')
+
+@login_required
+def update_delivery_status(request, pk):
+    special_request = get_object_or_404(SpecialRequest, pk=pk)
+    
+    try:
+        delivery_driver = request.user.delivery_driver  # Access related DeliveryDriver
+    except DeliveryDriver.DoesNotExist:
+        messages.error(request, "You are not registered as a delivery driver.")
+        return redirect('special_request_detail', pk=pk)
+    
+    # Check if the logged-in driver is the assigned driver
+    if special_request.driver != delivery_driver:
+        messages.error(request, "You can only update delivery status for requests assigned to you.")
+        return HttpResponseForbidden("You are not authorized to update this request.")
+    
+    # Only allow POST requests
+    if request.method != 'POST':
+        messages.error(request, "Invalid request method.")
+        return redirect('driver_dashboard')
+    
+    new_status = request.POST.get('status')
+    
+    if new_status in ['Delivered', 'Undelivered']:
+        special_request.status = new_status
+        special_request.save()
+        
+        if new_status == 'Delivered':
+            messages.success(request, "Request marked as delivered successfully!")
+        else:
+            messages.warning(request, "Request marked as undelivered.")
+    else:
+        messages.error(request, "Invalid status update.")
+    
+    return redirect('special_request_detail', pk=pk)
