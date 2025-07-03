@@ -1,6 +1,7 @@
-{% extends "store/base.html" %}
+{% extends 'store/base.html' %}
 {% load static %}
 {% block content %}
+
   <style>
     :root {
       --primary-color: #2c3e50;
@@ -14,36 +15,38 @@
     }
 
     body {
-      background: linear-gradient(145deg, #e0e0e0, #ffffff);
-      min-height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+  background: linear-gradient(145deg, #e0e0e0, #ffffff);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  /* leave padding alone so base.html works */
+}
 
     .container {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 1rem;
     }
 
     .form-container {
       background: #ffffff;
       border-radius: var(--border-radius);
       box-shadow: var(--card-shadow);
-      padding: 2.5rem;
-      max-width: 700px;
+      padding: 1.5rem;
+      max-width: 100%;
       width: 100%;
       position: relative;
       transition: transform 0.3s;
       /* Ensure container contains all content */
       overflow: hidden;
+      /* Mobile-first approach */
+      margin: 0 auto;
     }
 
     .form-container:hover {
-      transform: translateY(-5px);
+      transform: translateY(-2px);
     }
 
     .form-container::before {
@@ -66,7 +69,7 @@
     .form-header h2 {
       font-weight: 700;
       color: var(--primary-color);
-      font-size: 2.2rem;
+      font-size: 1.8rem;
     }
 
     .subtitle {
@@ -78,12 +81,28 @@
       margin-bottom: 1.5rem;
     }
 
+    /* Mobile-first: Stack labels and inputs vertically by default */
+    .form-group.row {
+      display: flex;
+      flex-direction: column;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .col-sm-4, .col-sm-8 {
+      width: 100%;
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
     .form-label {
       font-weight: 600;
       color: var(--primary-color);
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
     }
 
     .form-control {
@@ -112,17 +131,13 @@
       resize: vertical;
       min-height: 100px;
       max-height: 200px;
+      overflow-y: auto;
     }
 
     /* Ensure Bootstrap grid doesn't cause overflow */
     .row {
       margin-left: 0;
       margin-right: 0;
-    }
-
-    .col-sm-4, .col-sm-8 {
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
     }
 
     .fee-display {
@@ -186,33 +201,79 @@
       font-weight: bold;
     }
 
-    @media (max-width: 768px) {
+    /* Desktop styles - applied only on larger screens */
+    @media (min-width: 768px) {
       .container {
-        padding: 1rem;
+        padding: 2rem;
       }
 
       .form-container {
-        padding: 1.5rem;
+        padding: 2.5rem;
+        max-width: 700px;
+      }
+
+      .form-container:hover {
+        transform: translateY(-5px);
+      }
+
+      .form-header h2 {
+        font-size: 2.2rem;
+      }
+
+      /* Horizontal layout for desktop */
+      .form-group.row {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      .col-sm-4 {
+        width: 33.333333%;
+        max-width: 33.333333%;
+        padding-right: 0.5rem;
+      }
+
+      .col-sm-8 {
+        width: 66.666667%;
+        max-width: 66.666667%;
+        padding-left: 0.5rem;
+      }
+
+      .form-label {
+        margin-bottom: 0;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .container {
+        padding: 0.5rem;
+      }
+
+      .form-container {
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 0.5rem;
       }
 
       .form-header h2 {
         font-size: 1.6rem;
       }
 
-      /* Stack form labels and inputs on mobile */
-      .form-group.row {
-        flex-direction: column;
+      .subtitle {
+        font-size: 0.9rem;
       }
 
-      .col-sm-4, .col-sm-8 {
-        width: 100%;
-        max-width: 100%;
-        padding-left: 0;
-        padding-right: 0;
+      .btn-submit {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
       }
 
-      .form-label {
-        margin-bottom: 0.5rem;
+      .fee-display {
+        margin: 1.5rem 0;
+        padding: 1rem;
+      }
+
+      .fee-amount {
+        font-size: 1.5rem;
       }
     }
   </style>
@@ -294,4 +355,6 @@
       });
     });
   </script>
+</body>
+
 {% endblock content %}
