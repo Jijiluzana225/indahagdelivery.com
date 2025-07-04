@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     # Add URLs for different views
     path('', views.system_update, name='system_update'),  # List of all stores
