@@ -4,8 +4,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Add URLs for different views
-    # path('', views.system_update, name='system_update'),  # List of all stores
-    path('', views.store_list, name='store_list'),  # List of all stores 
+    path('', views.system_update, name='system_update'),  # List of all stores
+    # path('', views.store_list, name='store_list'),  # List of all stores 
     path('product/<int:id>/', views.product_detail, name='product_detail'),  # Product detail page
     # path('store/<int:id>/', views.store_detail, name='store_detail'),  # Store detail page
     
@@ -80,6 +80,7 @@ urlpatterns = [
     
     path('special-request/<int:pk>/assign/', views.assign_driver, name='assign_driver'),
     path('update-delivery-status/<int:pk>/', views.update_delivery_status, name='update_delivery_status'),
+    path('cancel-special-request/<int:request_id>/', views.cancel_special_request, name='cancel_special_request'),
     
 ]
 

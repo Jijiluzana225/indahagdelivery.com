@@ -62,7 +62,6 @@
     }
 
     .budget, .tip {
-        
         color:rgb(41, 5, 243);
     }
 
@@ -70,6 +69,7 @@
     .status-accepted { background-color: #ffffcc; }
     .status-ontheway { background-color: #e0f7fa; }
     .status-delivered { background-color: #d4edda; }
+    .status-cancelled { background-color: #f8d7da; }
 
      /* Button Styling for Back to Homepage */
     .back-home-btn {
@@ -90,7 +90,41 @@
         background-color: #0056b3;
     }
 
-    
+    /* Cancel button styling */
+    .btn-cancel {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        margin-left: 5px;
+    }
+
+    .btn-cancel:hover {
+        background-color: #c82333;
+    }
+
+    /* Disabled button styling */
+    .btn-disabled {
+        background-color: #6c757d;
+        color: #fff;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-disabled:hover {
+        background-color: #6c757d;
+    }
+
+    /* Action buttons container */
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        align-items: center;
+    }
 </style>
 
 <h1 class="dashboard-title">Your Special Requests</h1>
@@ -111,7 +145,6 @@
                 <th>Tip</th>
                 <th>Total</th>
                 <th>Status</th>
-                
                 <th>Driver</th>
                 <th>Driver Number</th>
             </tr>
@@ -120,12 +153,22 @@
             {% for request in special_requests %}
             <tr class="status-{{ request.status|lower|slugify }}">
                 <td>
-    {% if not request.driver %}
-        <a href="{% url 'edit_special_request' request.id %}" class="btn btn-sm btn-warning">Edit</a>
-    {% else %}
-        <span class="text-muted">N/A</span>
-    {% endif %}
-</td>
+                    <div class="action-buttons">
+                        {% if request.status|lower != 'cancelled' %}
+                            {% if not request.driver %}
+                                <a href="{% url 'edit_special_request' request.id %}" class="btn btn-sm btn-warning">Edit</a>
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                            
+                            {% if user == request.customer and request.status|lower == 'pending' %}
+                                <button type="button" class="btn-cancel" onclick="cancelRequest({{ request.id }})">Cancel</button>
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted btn-disabled">Cancelled</span>
+                        {% endif %}
+                    </div>
+                </td>
                 <td>{{ request.id }}</td>
                 <td>{{ request.store }}</td>
                 <td>{{ request.request_text|truncatechars:40 }}</td>
@@ -134,11 +177,10 @@
                 <td class="budget">₱{{ request.estimated_budget|floatformat:2|intcomma }}</td>
                 <td class="tip">₱{{ request.flat_rate_fee|floatformat:2|intcomma }}</td>
                 <td class="tip">₱{{ request.tip|floatformat:2|intcomma }}</td>
-    <td class="tip">
-    ₱{{ request.flat_rate_fee|add:request.tip|floatformat:2|intcomma }}
-</td>
+                <td class="tip">
+                    ₱{{ request.flat_rate_fee|add:request.tip|floatformat:2|intcomma }}
+                </td>
                 <td class="status">{{ request.status }}</td>
-                
                 <td>
                     {% if request.driver %}
                         {{ request.driver.name }}
@@ -146,7 +188,7 @@
                         <em>Not Assigned</em>
                     {% endif %}
                 </td>
-                <td> {{ request.driver.phone_number }}</td>
+                <td>{{ request.driver.phone_number }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -159,5 +201,43 @@
 <!-- Back to Homepage Button -->
 <a href="{% url 'store_list' %}" class="back-home-btn">Back to Homepage</a>
 
+<script>
+function cancelRequest(requestId) {
+    if (confirm('Are you sure you want to cancel this request? This action cannot be undone.')) {
+        // Create a form to submit the cancellation
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "cancel_special_request" 0 %}'.replace('0', requestId);
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
+        form.appendChild(csrfToken);
+        
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Disable all buttons except back to homepage for cancelled requests
+document.addEventListener('DOMContentLoaded', function() {
+    const cancelledRows = document.querySelectorAll('.status-cancelled');
+    
+    cancelledRows.forEach(function(row) {
+        // Disable all buttons in the action column except back to homepage
+        const actionButtons = row.querySelectorAll('.action-buttons button, .action-buttons a');
+        actionButtons.forEach(function(button) {
+            if (!button.classList.contains('back-home-btn')) {
+                button.disabled = true;
+                button.classList.add('btn-disabled');
+                button.style.pointerEvents = 'none';
+            }
+        });
+    });
+});
+</script>
 
 {% endblock %}

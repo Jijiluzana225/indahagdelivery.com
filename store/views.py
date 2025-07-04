@@ -1013,6 +1013,7 @@ def special_request_detail(request, pk):
     request_obj = get_object_or_404(SpecialRequest, pk=pk)
     return render(request, 'store/special_request_detail.html', {'request_obj': request_obj})
 
+
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -1069,3 +1070,21 @@ def update_delivery_status(request, pk):
         messages.error(request, "Invalid status update.")
     
     return redirect('special_request_detail', pk=pk)
+
+
+@login_required
+def cancel_special_request(request, request_id):
+    special_request = get_object_or_404(SpecialRequest, id=request_id)
+        
+    # Check if the logged-in user is the owner of the request
+    if request.user == special_request.customer:
+        special_request.status = 'Cancelled'
+        special_request.save()
+        messages.success(request, 'Request cancelled successfully.')
+    else:
+        messages.error(request, 'You can only cancel your own requests.')
+    
+    return redirect('special_requests_dashboard')  # Replace with your dashboard URL name   
+
+
+
