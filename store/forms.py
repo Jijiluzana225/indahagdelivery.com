@@ -175,50 +175,31 @@ class DeliveryDriverLoginForm(AuthenticationForm):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
 
+
 from django import forms
 from .models import SpecialRequest
 
 class SpecialRequestForm(forms.ModelForm):
     class Meta:
         model = SpecialRequest
-        fields = ['store','request_text',  'estimated_budget',  'tip']
-        widgets ={
+        fields = ['store', 'request_text', 'estimated_budget', 'tip']
+        widgets = {
             'store': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-control modern-textarea',
                 'placeholder': 'Name of Store / Person',
-                'rows': 1,
-            }),    
-            
+                'rows': 2
+            }),
             'request_text': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-control modern-textarea narrow-textarea',
                 'placeholder': 'List of items to buy / Details',
-                'rows': 4,
-            }),
-            'date_requested': forms.DateInput(attrs={
-                'class': 'form-control',
-                'type': 'date'
-            }),
-            'time_requested': forms.TimeInput(attrs={
-                'class': 'form-control',
-                'type': 'time'
+                'rows': 4
             }),
             'estimated_budget': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'form-control modern-input',
                 'placeholder': 'e.g. 150.00'
-            }),          
+            }),
             'tip': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'form-control modern-input',
                 'placeholder': 'Optional tip'
             }),
         }
-
-
-from django import forms
-from .models import SpecialRequest
-
-class SpecialRequestForm(forms.ModelForm):
-    class Meta:
-        model = SpecialRequest
-        fields = ['store', 'request_text', 
-                  'estimated_budget', 'tip']
-    

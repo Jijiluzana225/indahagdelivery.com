@@ -70,6 +70,27 @@
     .status-accepted { background-color: #ffffcc; }
     .status-ontheway { background-color: #e0f7fa; }
     .status-delivered { background-color: #d4edda; }
+
+     /* Button Styling for Back to Homepage */
+    .back-home-btn {
+        display: block;
+        margin: 30px auto;
+        padding: 12px 30px;
+        background-color: #007bff;
+        color: white;
+        font-size: 1rem;
+        text-align: center;
+        border-radius: 5px;
+        text-decoration: none;
+        max-width: 200px;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-home-btn:hover {
+        background-color: #0056b3;
+    }
+
+    
 </style>
 
 <h1 class="dashboard-title">Your Special Requests</h1>
@@ -92,7 +113,7 @@
                 <th>Status</th>
                 
                 <th>Driver</th>
-                <th>Driver Comment</th>
+                <th>Driver Number</th>
             </tr>
         </thead>
         <tbody>
@@ -125,7 +146,7 @@
                         <em>Not Assigned</em>
                     {% endif %}
                 </td>
-                <td class="comment" title="{{ request.driver_comment }}">{{ request.driver_comment|default:"—" }}</td>
+                <td> {{ request.driver.phone_number }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -135,5 +156,8 @@
     <p class="no-data">You have no special requests yet.</p>
 {% endif %}
 
+<!-- Back to Homepage Button -->
 <a href="{% url 'store_list' %}" class="back-home-btn">Back to Homepage</a>
+
+
 {% endblock %}
