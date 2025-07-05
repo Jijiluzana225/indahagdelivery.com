@@ -75,8 +75,11 @@ urlpatterns = [
     
     path('login/', views.driver_login, name='driver_login'),
     
+    path('special-request-dashboard/', views.special_requests_dashboard, name='special_requests_dashboard'),    
     path('special-request-detail/<int:pk>/', views.special_request_detail, name='special_request_detail'),    
     path('special-request/', views.special_request, name='special_request'),
+
+    path('special-request-edit/<int:pk>/', views.edit_special_request, name='edit_special_request'),
 
     path('special-request/<int:pk>/assign/', views.assign_driver, name='assign_driver'),
     path('update-delivery-status/<int:pk>/', views.update_delivery_status, name='update_delivery_status'),
