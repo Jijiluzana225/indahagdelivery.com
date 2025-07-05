@@ -793,6 +793,8 @@ def driver_dashboard(request):
     total_earnings = Order.objects.filter(assigned_to=driver, status='Delivered').aggregate(
         total=Sum('total_price'))['total'] or 0
 
+    special_requests = SpecialRequest.objects.all().order_by('-created_at')  # or any relevant filter   
+
     # Add location info for each order
     for order in orders:
         # Get the customer profile for each order's customer
@@ -803,6 +805,15 @@ def driver_dashboard(request):
             order.customer_phone_number = customer_profile.phone_number
         else:
             order.customer_location = "Location not available"
+
+    for special in special_requests:
+        customer_profile1 = CustomerProfile.objects.filter(username=special.customer).first()
+        if customer_profile1:
+            special.customer_location = customer_profile1.location
+            special.customer_name = customer_profile1.name
+            special.customer_phone_number = customer_profile1.phone_number
+        else:
+            special.customer_location = "Location not available"    
     
     context = {
         'driver': driver,
@@ -810,10 +821,14 @@ def driver_dashboard(request):
         'total_deliveries': total_deliveries,
         'total_earnings': total_earnings,
         'orders_all':orders_all,
+        'special_requests': special_requests,
     }
 
     return render(request, 'store/driver_dashboard.html', context)
 
+
+
+    
 
 @login_required
 def driver_profile_update(request):
@@ -925,3 +940,151 @@ from django.shortcuts import render
 
 def system_update(request):
     return render(request, 'store/system_update.html')
+
+from django.shortcuts import render
+from .forms import SpecialRequestForm
+from .models import FlatRate
+
+def special_request(request):
+    # Get the latest flat rate
+    latest_rate = FlatRate.objects.order_by('-updated_at').first()
+    flat_rate_fee = latest_rate.flat_rate_fee if latest_rate else 0.00
+
+    if request.method == 'POST':
+        form = SpecialRequestForm(request.POST)
+        if form.is_valid():
+            special = form.save(commit=False)
+            special.customer = request.user
+            special.flat_rate_fee = flat_rate_fee  # Set dynamic fee
+            special.save()
+            return render(request, 'store/thank_you.html')
+    else:
+        form = SpecialRequestForm()
+
+    return render(request, 'store/special_request.html', {
+        'form': form,
+        'flat_rate_fee': flat_rate_fee,  # Pass to template
+    })
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import SpecialRequest
+
+@login_required
+def special_requests_dashboard(request):
+    special_requests = SpecialRequest.objects.filter(customer=request.user).order_by('-created_at')
+    return render(request, 'store/special_requests_dashboard.html', {
+        'special_requests': special_requests
+    })
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import SpecialRequest
+from .forms import SpecialRequestForm  # We'll create this next
+
+@login_required
+def edit_special_request(request, pk):
+    special_request = get_object_or_404(SpecialRequest, pk=pk, customer=request.user)
+
+    # Prevent editing if already assigned to a driver
+    if special_request.driver:
+        return redirect('special_requests_dashboard')
+
+    if request.method == 'POST':
+        form = SpecialRequestForm(request.POST, instance=special_request)
+        if form.is_valid():
+            form.save()
+            return redirect('special_requests_dashboard')
+    else:
+        form = SpecialRequestForm(instance=special_request)
+
+    return render(request, 'store/edit_special_request.html', {
+        'form': form,
+        'special_request': special_request
+    })
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import SpecialRequest
+
+def special_request_detail(request, pk):
+    request_obj = get_object_or_404(SpecialRequest, pk=pk)
+    return render(request, 'store/special_request_detail.html', {'request_obj': request_obj})
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import HttpResponseForbidden
+from .models import SpecialRequest, DeliveryDriver
+
+@login_required
+def assign_driver(request, pk):
+    special_request = get_object_or_404(SpecialRequest, pk=pk)
+    
+    try:
+        delivery_driver = request.user.delivery_driver  # Access related DeliveryDriver
+    except DeliveryDriver.DoesNotExist:
+        # Optional: handle error if user is not a driver
+        return redirect('special_request_detail', pk=pk)  # or return an error page
+
+    special_request.driver = delivery_driver
+    special_request.status = 'Accepted'
+    special_request.save()
+
+    return redirect('driver_dashboard')
+
+@login_required
+def update_delivery_status(request, pk):
+    special_request = get_object_or_404(SpecialRequest, pk=pk)
+    
+    try:
+        delivery_driver = request.user.delivery_driver  # Access related DeliveryDriver
+    except DeliveryDriver.DoesNotExist:
+        messages.error(request, "You are not registered as a delivery driver.")
+        return redirect('special_request_detail', pk=pk)
+    
+    # Check if the logged-in driver is the assigned driver
+    if special_request.driver != delivery_driver:
+        messages.error(request, "You can only update delivery status for requests assigned to you.")
+        return HttpResponseForbidden("You are not authorized to update this request.")
+    
+    # Only allow POST requests
+    if request.method != 'POST':
+        messages.error(request, "Invalid request method.")
+        return redirect('driver_dashboard')
+    
+    new_status = request.POST.get('status')
+    
+    if new_status in ['Delivered', 'Undelivered']:
+        special_request.status = new_status
+        special_request.save()
+        
+        if new_status == 'Delivered':
+            messages.success(request, "Request marked as delivered successfully!")
+        else:
+            messages.warning(request, "Request marked as undelivered.")
+    else:
+        messages.error(request, "Invalid status update.")
+    
+    return redirect('special_request_detail', pk=pk)
+
+
+@login_required
+def cancel_special_request(request, request_id):
+    special_request = get_object_or_404(SpecialRequest, id=request_id)
+        
+    # Check if the logged-in user is the owner of the request
+    if request.user == special_request.customer:
+        special_request.status = 'Cancelled'
+        special_request.save()
+        messages.success(request, 'Request cancelled successfully.')
+    else:
+        messages.error(request, 'You can only cancel your own requests.')
+    
+    return redirect('special_requests_dashboard')  # Replace with your dashboard URL name   
+
+
+

@@ -2,12 +2,13 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     # Add URLs for different views
     path('', views.system_update, name='system_update'),  # List of all stores
-    # - original path('', views.store_list, name='store_list'),  # List of all stores 
+    # path('', views.store_list, name='store_list'),  # List of all stores 
     path('product/<int:id>/', views.product_detail, name='product_detail'),  # Product detail page
-    path('store/<int:id>/', views.store_detail, name='store_detail'),  # Store detail page
+    # path('store/<int:id>/', views.store_detail, name='store_detail'),  # Store detail page
     
     
     path('store/<int:id>/location/', views.store_location, name='store_location'),
@@ -73,8 +74,18 @@ urlpatterns = [
     
     
     path('login/', views.driver_login, name='driver_login'),
+<<<<<<< HEAD
     
+=======
+    path('special-request/', views.special_request, name='special_request'),
+    path('special-requests-dashboard/', views.special_requests_dashboard, name='special_requests_dashboard'),
+    path('special-request/edit/<int:pk>/', views.edit_special_request, name='edit_special_request'),
+    path('special-request/<int:pk>/', views.special_request_detail, name='special_request_detail'),
+>>>>>>> bc528b472936886eb7ff026a0f4b2ec24546f805
     
+    path('special-request/<int:pk>/assign/', views.assign_driver, name='assign_driver'),
+    path('update-delivery-status/<int:pk>/', views.update_delivery_status, name='update_delivery_status'),
+    path('cancel-special-request/<int:request_id>/', views.cancel_special_request, name='cancel_special_request'),
     
 ]
 
