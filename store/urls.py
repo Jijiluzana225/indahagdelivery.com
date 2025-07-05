@@ -72,7 +72,7 @@ urlpatterns = [
     path('update_driver_status/', views.update_driver_status, name='update_driver_status'),
     
     
-     path('login/', views.driver_login, name='driver_login'),
+    path('login/', views.driver_login, name='driver_login'),
     
     
     
