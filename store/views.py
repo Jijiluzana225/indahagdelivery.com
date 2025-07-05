@@ -940,6 +940,9 @@ from django.shortcuts import render
 
 def system_update(request):
     return render(request, 'store/system_update.html')
+def system_update_close(request):
+
+    return render(request, 'store/system_update_close.html')
 
 from django.shortcuts import render
 from .forms import SpecialRequestForm
