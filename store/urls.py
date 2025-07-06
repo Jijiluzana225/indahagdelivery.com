@@ -88,7 +88,7 @@ urlpatterns = [
 
         
     path('api/driver-updates/<int:driver_id>/', views.fetch_driver_updates, name='driver_updates')
-
+    
 
 ]
 

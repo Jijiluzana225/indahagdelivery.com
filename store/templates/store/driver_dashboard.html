@@ -93,6 +93,13 @@
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
       overflow-x: auto;
       margin-bottom: 30px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .tables-container:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
     }
 
     table {
@@ -149,6 +156,79 @@
       background-color: #ffc107;
       color: white;
     }
+
+    .new-record {
+      animation: highlightNew 3s ease-in-out;
+    }
+
+    @keyframes highlightNew {
+      0% { background-color: #ffeb3b; }
+      100% { background-color: transparent; }
+    }
+
+    /* Loading shimmer effect */
+    .loading-shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    /* New records highlighting */
+    .new-special-request {
+      animation: newRecordPulse 2s infinite;
+      background-color: rgba(40, 167, 69, 0.1) !important;
+    }
+
+    .new-order {
+      animation: newRecordPulse 2s infinite;
+      background-color: rgba(0, 123, 255, 0.1) !important;
+    }
+
+    @keyframes newRecordPulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+    }
+
+    /* Count change notification */
+    .count-changed {
+      animation: countChangePulse 3s ease-in-out;
+      border: 2px solid #ff6b6b;
+    }
+
+    @keyframes countChangePulse {
+      0% { border-color: #ff6b6b; background-color: rgba(255, 107, 107, 0.1); }
+      50% { border-color: #ff6b6b; background-color: rgba(255, 107, 107, 0.2); }
+      100% { border-color: transparent; background-color: transparent; }
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #ff4444;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
   </style>
 </head>
 
@@ -189,7 +269,7 @@
     </div>
 
     <!-- Special Requests Table -->
-    <div class="tables-container">
+    <div class="tables-container" id="specialRequestsContainer">
       <h2 class="h5 mb-3 border-bottom pb-2">📋 Special Requests</h2>
       <div class="table-responsive">
         <table class="table table-bordered align-middle text-center">
@@ -207,9 +287,9 @@
               <th>View</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="specialRequestsTable">
             {% for request in special_requests %}
-            <tr>
+            <tr class="{% if request.id in new_special_requests %}new-special-request{% endif %}">
               <td>{{ request.id }}</td>
               <td>{{ request.date_requested }}</td>
               <td>{{ request.time_requested }}</td>
@@ -236,7 +316,7 @@
     </div>
 
     <!-- Recent Orders Table -->
-    <div class="tables-container">
+    <div class="tables-container" id="recentOrdersContainer">
       <h2 class="h5 mb-3 border-bottom pb-2">🛒 Recent Orders</h2>
       <div class="table-responsive">
         <table class="table table-bordered align-middle text-center">
@@ -253,9 +333,9 @@
               <th>Orders</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="recentOrdersTable">
             {% for order in recent_orders %}
-            <tr>
+            <tr class="{% if order.id in new_orders %}new-order{% endif %}">
               <td>{{ order.id }}</td>
               <td>{{ order.created_at }}</td>
               <td>{{ order.get_status_display }}</td>
@@ -275,7 +355,7 @@
     </div>
 
     <!-- All Orders Table -->
-    <div class="tables-container">
+    <div class="tables-container" id="allOrdersContainer">
       <h2 class="h5 mb-3 border-bottom pb-2">📦 All Orders</h2>
       <div class="table-responsive">
         <table class="table table-bordered align-middle text-center">
@@ -288,9 +368,9 @@
               <th>Total Price</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="allOrdersTable">
             {% for order_all in orders_all %}
-            <tr>
+            <tr class="{% if order_all.id in updated_orders %}new-order{% endif %}">
               <td>{{ order_all.id }}</td>
               <td>{{ order_all.created_at }}</td>
               <td>{{ order_all.get_status_display }}</td>
@@ -311,11 +391,117 @@
       <button type="submit" class="logout-btn">Logout</button>
     </form>
   </div>
-  
-  <audio id="notificationSound" src="/static/sounds/notification.mp3" type="audio/mpeg" type="audio/mpeg" preload="auto"></audio>
 
-  
+  <!-- Audio notification only -->
+  <audio id="notificationSound" preload="auto">
+    <source src="/static/sounds/notification.mp3" type="audio/mpeg">
+    <source src="/static/sounds/notification.ogg" type="audio/ogg">
+    <source src="/static/sounds/notification.wav" type="audio/wav">
+    Your browser does not support the audio element.
+  </audio>
+
   <script>
+    // Record count tracking
+    let recordCounts = {
+      specialRequests: 0,
+      recentOrders: 0,
+      allOrders: 0
+    };
+
+    // Initialize record counts on page load
+    function initializeRecordCounts() {
+      const specialRequestsRows = document.querySelectorAll('#specialRequestsTable tr');
+      const recentOrdersRows = document.querySelectorAll('#recentOrdersTable tr');
+      const allOrdersRows = document.querySelectorAll('#allOrdersTable tr');
+
+      // Count actual data rows (excluding "No data" rows)
+      recordCounts.specialRequests = [...specialRequestsRows].filter(row => 
+        !row.textContent.includes('No special requests')).length;
+      recordCounts.recentOrders = [...recentOrdersRows].filter(row => 
+        !row.textContent.includes('No recent orders')).length;
+      recordCounts.allOrders = [...allOrdersRows].filter(row => 
+        !row.textContent.includes('No orders available')).length;
+
+      // Store counts in localStorage
+      localStorage.setItem('driverDashboardCounts', JSON.stringify(recordCounts));
+    }
+
+    // Check for count changes
+    function checkCountChanges() {
+      const storedCounts = JSON.parse(localStorage.getItem('driverDashboardCounts') || '{}');
+      
+      if (Object.keys(storedCounts).length === 0) {
+        // First time loading, just store current counts
+        initializeRecordCounts();
+        return;
+      }
+
+      const specialRequestsRows = document.querySelectorAll('#specialRequestsTable tr');
+      const recentOrdersRows = document.querySelectorAll('#recentOrdersTable tr');
+      const allOrdersRows = document.querySelectorAll('#allOrdersTable tr');
+
+      const currentCounts = {
+        specialRequests: [...specialRequestsRows].filter(row => 
+          !row.textContent.includes('No special requests')).length,
+        recentOrders: [...recentOrdersRows].filter(row => 
+          !row.textContent.includes('No recent orders')).length,
+        allOrders: [...allOrdersRows].filter(row => 
+          !row.textContent.includes('No orders available')).length
+      };
+
+      let hasChanges = false;
+
+      // Check each table for changes
+      if (currentCounts.specialRequests !== storedCounts.specialRequests) {
+        hasChanges = true;
+        showCountChangeNotification('specialRequestsContainer', 'Special Requests', 
+          storedCounts.specialRequests, currentCounts.specialRequests);
+      }
+
+      if (currentCounts.recentOrders !== storedCounts.recentOrders) {
+        hasChanges = true;
+        showCountChangeNotification('recentOrdersContainer', 'Recent Orders', 
+          storedCounts.recentOrders, currentCounts.recentOrders);
+      }
+
+      if (currentCounts.allOrders !== storedCounts.allOrders) {
+        hasChanges = true;
+        showCountChangeNotification('allOrdersContainer', 'All Orders', 
+          storedCounts.allOrders, currentCounts.allOrders);
+      }
+
+      if (hasChanges) {
+        playAudioNotification();
+        // Update stored counts
+        localStorage.setItem('driverDashboardCounts', JSON.stringify(currentCounts));
+      }
+    }
+
+    // Show visual notification for count changes
+    function showCountChangeNotification(containerId, tableName, oldCount, newCount) {
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.classList.add('count-changed');
+        
+        // Create notification badge
+        const badge = document.createElement('div');
+        badge.className = 'notification-badge';
+        badge.textContent = newCount > oldCount ? '+' + (newCount - oldCount) : (newCount - oldCount);
+        container.appendChild(badge);
+        
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+          container.classList.remove('count-changed');
+          if (badge.parentNode) {
+            badge.parentNode.removeChild(badge);
+          }
+        }, 5000);
+        
+        console.log(`${tableName}: ${oldCount} → ${newCount}`);
+      }
+    }
+
+    // Toggle Status Button
     document.getElementById("toggleButton").addEventListener("click", function () {
       var currentStatus = this.getAttribute("data-status");
       var newStatus = currentStatus === "online" ? "offline" : "online";
@@ -346,6 +532,7 @@
       });
     });
 
+    // Google Maps Function
     function openGoogleMaps(destination) {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
@@ -358,60 +545,112 @@
         alert("Geolocation is not supported by your browser.");
       }
     }
-  </script>
 
-  <script>
-  let lastDataHash = '';
-
-  function hashData(data) {
-    return JSON.stringify(data); // Simple hash (can improve with hash libs)
-  }
-
-  function refreshTablesIfNeeded(newData) {
-    const newHash = hashData(newData);
-    if (newHash !== lastDataHash) {
-      lastDataHash = newHash;
-
-      // Play sound
-      const sound = document.getElementById("notificationSound");
-      if (sound) {
-        sound.play().catch(err => console.error("Audio play error:", err));
+    // Audio notification function
+    function playAudioNotification() {
+      const audio = document.getElementById('notificationSound');
+      if (audio) {
+        audio.play().catch(error => {
+          console.log('Audio play failed:', error);
+          // Fallback: try to play with user interaction
+          document.addEventListener('click', function() {
+            audio.play();
+          }, { once: true });
+        });
       }
-
-      // Show alert popup
-      // alert("Alert!");
-
-      // Optional: Visual notification
-    showNotification("🔔Checking...");
-
-      // Reload page or update content
-      location.reload(); // You can replace this with more granular update logic if needed
     }
-  }
 
-  function showNotification(message) {
-    const notif = document.createElement("div");
-    notif.className = "position-fixed top-0 start-50 translate-middle-x bg-warning text-dark p-3 rounded shadow";
-    notif.style.zIndex = 1050;
-    notif.textContent = message;
-
-    document.body.appendChild(notif);
-    setTimeout(() => notif.remove(), 4000);
-  }
-
-  function fetchUpdates() {
-    fetch("{% url 'driver_updates' driver.id %}")
+    function updateOriginalStatus(recordIds) {
+      fetch('/update-driver-records-status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify({ record_ids: recordIds })
+      })
       .then(response => response.json())
       .then(data => {
-        refreshTablesIfNeeded(data);
+        if (!data.success) {
+          console.error('Failed to update original status');
+        }
       })
-      .catch(err => console.error('Update check failed:', err));
-  }
+      .catch(error => console.error('Error:', error));
+    }
 
-  setInterval(fetchUpdates, 5000); // check every 15 seconds
-</script>
+    function getCsrfToken() {
+      var cookieValue = null;
+      if (document.cookie && document.cookie.indexOf('csrftoken') >= 0) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          if (cookie.substring(0, 9) === 'csrftoken=') {
+            cookieValue = decodeURIComponent(cookie.substring(9));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
 
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      // Enable audio autoplay by requesting user interaction
+      document.addEventListener('click', function() {
+        const audio = document.getElementById('notificationSound');
+        if (audio) {
+          audio.load(); // Preload the audio
+        }
+      }, { once: true });
 
+      // Check for count changes
+      checkCountChanges();
 
+      // Handle existing new records
+      {% if new_special_requests or new_orders or updated_orders %}
+        const allChangedIds = [
+          {% for req_id in new_special_requests %}{{ req_id }},{% endfor %}
+          {% for order_id in new_orders %}{{ order_id }},{% endfor %}
+          {% for order_id in updated_orders %}{{ order_id }},{% endfor %}
+        ];
+        
+        if (allChangedIds.length > 0) {
+          // Small delay to ensure page is fully loaded
+          setTimeout(() => {
+            playAudioNotification();
+            updateOriginalStatus(allChangedIds);
+          }, 500);
+        }
+      {% endif %}
+    });
+
+    // Enhanced refresh with loading animation and count checking
+    setInterval(function() {
+      const containers = document.querySelectorAll('.tables-container');
+      containers.forEach(container => {
+        container.classList.add('loading-shimmer');
+      });
+      
+      setTimeout(() => {
+        location.reload();
+      }, 500);
+    }, 15000); // Refresh every 15 seconds
+
+    // Enhanced hover effects
+    document.addEventListener('DOMContentLoaded', function() {
+      const tableRows = document.querySelectorAll('tbody tr');
+      
+      tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+          this.style.transform = 'scale(1.01)';
+          this.style.transition = 'all 0.2s ease';
+        });
+        
+        row.addEventListener('mouseleave', function() {
+          this.style.transform = 'scale(1)';
+        });
+      });
+    });
+  </script>
 </body>
 </html>
