@@ -47,7 +47,7 @@ class CustomerProfileForm(forms.ModelForm):
     class Meta:
         model = CustomerProfile
         fields = [
-            'name', 'facebook_page', 'phone_number', 
+            'name', 'phone_number', 
             'barangay', 'address_line', 'location', 'profile_picture'
         ]
 
@@ -201,5 +201,85 @@ class SpecialRequestForm(forms.ModelForm):
             'tip': forms.NumberInput(attrs={
                 'class': 'form-control modern-input',
                 'placeholder': 'Optional tip'
+            }),
+        }
+
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from .models import CustomerProfile
+
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control modern-input',
+            'placeholder': 'Enter your email'
+        })
+    )
+
+    password1 = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control modern-input',
+            'placeholder': 'Enter a password'
+        }),
+    )
+    password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control modern-input',
+            'placeholder': 'Confirm your password'
+        }),
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control modern-input',
+                'placeholder': 'Choose a username'
+            }),
+        }
+
+
+
+class CustomerProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomerProfile
+        fields = [
+            'name', 'phone_number', 'barangay', 
+            'address_line', 'location', 'profile_picture'
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control modern-input',
+                'placeholder': 'Full Name'
+            }),
+            'facebook_page': forms.URLInput(attrs={
+                'class': 'form-control modern-input',
+                'placeholder': 'Facebook page link'
+            }),
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-control modern-input',
+                'placeholder': 'Phone Number'
+            }),
+            'barangay': forms.TextInput(attrs={
+                'class': 'form-control modern-input',
+                'placeholder': 'Barangay'
+            }),
+            'address_line': forms.Textarea(attrs={
+                'class': 'form-control modern-textarea',
+                'rows': 2,
+                'placeholder': 'Detailed Address'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control modern-input',
+                'readonly': 'readonly',
+                'placeholder': 'Detected or pinned location'
+            }),
+            'profile_picture': forms.ClearableFileInput(attrs={
+                'class': 'form-control modern-input'
             }),
         }

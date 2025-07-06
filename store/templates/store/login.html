@@ -4,171 +4,838 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Sign In - Indahag</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #f4f6f9;
-            font-family: 'Arial', sans-serif;
-            font-size: 18px; /* Increase default font size */
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 50%, #e67e22 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            font-size: 16px;
+            line-height: 1.5;
         }
-        .login-form {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 40px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .login-form h2 {
-            font-size: 32px; /* Increase heading font size */
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            padding: 14px;
-            font-size: 18px; /* Increase font size of inputs */
-        }
-        .form-group button {
-            font-size: 18px; /* Increase button font size */
-            padding: 14px;
-            background-color: #007bff;
-            border-color: #007bff;
-            color: white;
-            border-radius: 8px;
+
+        /* Ecommerce-themed animated background */
+        .ecommerce-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 24px;
+            color: white;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-icon:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { left: 20%; animation-delay: 2s; }
+        .floating-icon:nth-child(3) { left: 30%; animation-delay: 4s; }
+        .floating-icon:nth-child(4) { left: 40%; animation-delay: 6s; }
+        .floating-icon:nth-child(5) { left: 50%; animation-delay: 8s; }
+        .floating-icon:nth-child(6) { left: 60%; animation-delay: 10s; }
+        .floating-icon:nth-child(7) { left: 70%; animation-delay: 12s; }
+        .floating-icon:nth-child(8) { left: 80%; animation-delay: 14s; }
+        .floating-icon:nth-child(9) { left: 90%; animation-delay: 16s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile-first container */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Mobile-first ecommerce card */
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 360px;
+            border: 1px solid rgba(241, 196, 15, 0.2);
+            box-shadow: 0 8px 32px rgba(241, 196, 15, 0.15);
+            transform: translateY(0);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Mobile-first header */
+        .header-section {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease-out 0.2s both;
+        }
+
+        .logo {
+            max-width: 100px;
+            height: auto;
+            filter: drop-shadow(0 4px 12px rgba(241, 196, 15, 0.3));
+            transition: transform 0.3s ease;
+            margin-bottom: 12px;
+        }
+
+        .welcome-badge {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(241, 196, 15, 0.3);
+        }
+
+        .form-title {
+            color: #333;
+            font-size: 20px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 6px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+            line-height: 1.2;
+        }
+
+        .form-subtitle {
+            color: #666;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeIn 0.8s ease-out 0.5s both;
+            font-weight: 500;
+        }
+
+        /* Form groups with ecommerce styling */
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .form-group:nth-child(2) { animation-delay: 0.5s; }
+        .form-group:nth-child(3) { animation-delay: 0.6s; }
+        .form-group:nth-child(4) { animation-delay: 0.7s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ecommerce-styled inputs */
+        .form-control {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            color: #333;
+            font-size: 16px;
+            padding: 14px 16px;
+            padding-left: 48px;
             transition: all 0.3s ease;
         }
-        .form-group button:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+
+        .form-control::placeholder {
+            color: #999;
         }
-        .form-group input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+
+        .form-control:focus {
+            background: #fff;
+            border-color: #f39c12;
+            box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1);
+            outline: none;
+            transform: translateY(-2px);
         }
-        .form-group input {
-            transition: border-color 0.3s ease;
+
+        /* Input icons with ecommerce theme */
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #f39c12;
+            font-size: 16px;
+            z-index: 10;
         }
-        .text-center a {
-            color: #007bff;
+
+        .form-label {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Mobile-first CTA button */
+        .btn-login {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            padding: 14px 20px;
+            width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(241, 196, 15, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-height: 48px;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(241, 196, 15, 0.4);
+        }
+
+        /* Shopping cart icon in button */
+        .cart-icon {
+            margin-right: 8px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-3px);
+            }
+            60% {
+                transform: translateY(-2px);
+            }
+        }
+
+        /* Mobile-first links */
+        .auth-links {
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 0.8s ease-out 0.8s both;
+        }
+
+        .auth-links a {
+            color: #f39c12;
             text-decoration: none;
-            font-size: 18px; /* Increase link font size */
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 2px;
+            border: 1px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
-        .text-center a:hover {
-            text-decoration: underline;
+
+        .auth-links a:hover {
+            background: rgba(241, 196, 15, 0.1);
+            border-color: rgba(241, 196, 15, 0.2);
+            transform: translateY(-1px);
         }
+
+        .auth-links p {
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Mobile-first delivery driver section */
+        .driver-section {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 16px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out 1s both;
+        }
+
+        .driver-section h5 {
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .driver-section p {
+            font-size: 11px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .driver-section a {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 2px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .driver-section a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Alert styling */
         .alert {
+            background: rgba(241, 196, 15, 0.1);
+            border: 1px solid rgba(241, 196, 15, 0.2);
+            border-radius: 12px;
+            color: #f39c12;
+            font-size: 14px;
+            margin-bottom: 20px;
+            padding: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-text {
+            color: #999;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* Trust badges */
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+            animation: fadeIn 0.8s ease-out 1.2s both;
+        }
+
+        .trust-badge {
+            background: rgba(241, 196, 15, 0.1);
+            color: #f39c12;
+            padding: 8px 12px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 18px; /* Increase alert message font size */
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
-        .logo {
-            max-width: 250px;
-            margin-bottom: 20px;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
-        /* Adjustments for mobile */
-        @media (max-width: 576px) {
-            .login-form {
-                padding: 30px;
-                margin: 40px auto;
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
-            .login-form h2 {
-                font-size: 28px; /* Slightly smaller heading on mobile */
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
+
+        /* Tablet optimizations - 768px and up */
+        @media (min-width: 768px) {
+            .login-container {
+                padding: 24px;
+            }
+
+            .login-card {
+                padding: 32px;
+                max-width: 400px;
+                border-radius: 20px;
+            }
+
+            .login-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 16px 48px rgba(241, 196, 15, 0.25);
+            }
+
+            .logo {
+                max-width: 140px;
+            }
+
+            .welcome-badge {
+                font-size: 12px;
+                padding: 8px 18px;
+            }
+
+            .form-title {
+                font-size: 24px;
+                margin-bottom: 8px;
+            }
+
+            .form-subtitle {
+                font-size: 14px;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
             .form-control {
-                font-size: 16px; /* Smaller font for inputs on mobile */
+                font-size: 16px;
+                padding: 14px 16px;
+                padding-left: 46px;
             }
-            .form-group button {
-                font-size: 16px; /* Smaller button font size on mobile */
+
+            .input-icon {
+                left: 16px;
+                font-size: 16px;
             }
-            .text-center a {
-                font-size: 16px; /* Smaller link font size on mobile */
+
+            .form-label {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+
+            .btn-login {
+                font-size: 16px;
+                padding: 16px 24px;
+                min-height: 52px;
+            }
+
+            .auth-links a {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+
+            .auth-links p {
+                font-size: 14px;
+            }
+
+            .driver-section {
+                padding: 16px;
+                margin-top: 20px;
+            }
+
+            .driver-section h5 {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .driver-section p {
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+
+            .driver-section a {
+                font-size: 12px;
+                padding: 8px 14px;
+                margin: 3px;
+            }
+
+            .trust-badges {
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .trust-badge {
+                font-size: 11px;
+                padding: 8px 12px;
+                gap: 4px;
+            }
+
+            .floating-icon {
+                font-size: 28px;
+            }
+        }
+
+        /* Desktop optimizations - 1024px and up */
+        @media (min-width: 1024px) {
+            .login-container {
+                padding: 32px;
+            }
+
+            .login-card {
+                padding: 40px;
+                max-width: 420px;
+                border-radius: 24px;
+            }
+
+            .login-card:hover {
+                transform: perspective(1000px) rotateX(2deg) translateY(-5px);
+                box-shadow: 0 25px 60px rgba(241, 196, 15, 0.3);
+            }
+
+            .logo {
+                max-width: 160px;
+            }
+
+            .welcome-badge {
+                font-size: 13px;
+                padding: 10px 22px;
+            }
+
+            .form-title {
+                font-size: 28px;
+                margin-bottom: 10px;
+            }
+
+            .form-subtitle {
+                font-size: 15px;
+                margin-bottom: 28px;
+            }
+
+            .form-group {
+                margin-bottom: 24px;
+            }
+
+            .form-control {
+                font-size: 17px;
+                padding: 16px 18px;
+                padding-left: 50px;
+            }
+
+            .input-icon {
+                left: 18px;
+                font-size: 18px;
+            }
+
+            .form-label {
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+
+            .btn-login {
+                font-size: 17px;
+                padding: 18px 28px;
+                min-height: 56px;
+            }
+
+            .auth-links {
+                margin-top: 28px;
+            }
+
+            .auth-links a {
+                font-size: 15px;
+                padding: 12px 18px;
+            }
+
+            .auth-links p {
+                font-size: 15px;
+            }
+
+            .driver-section {
+                padding: 18px;
+                margin-top: 24px;
+            }
+
+            .driver-section h5 {
+                font-size: 17px;
+                margin-bottom: 10px;
+            }
+
+            .driver-section p {
+                font-size: 13px;
+                margin-bottom: 14px;
+            }
+
+            .driver-section a {
+                font-size: 13px;
+                padding: 10px 16px;
+                margin: 4px;
+            }
+
+            .trust-badges {
+                gap: 16px;
+                margin-top: 24px;
+            }
+
+            .trust-badge {
+                font-size: 12px;
+                padding: 10px 14px;
+                gap: 5px;
+            }
+
+            .floating-icon {
+                font-size: 32px;
+            }
+        }
+
+        /* Reduce animations on mobile for better performance */
+        @media (max-width: 767px) {
+            .login-card:hover {
+                transform: translateY(-2px);
+            }
+
+            .cart-icon {
+                animation: none;
             }
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="login-form">
-        <!-- Logo -->
-        <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo" class="logo">
-      
-        
-        <!-- Display success or error messages if any -->
-        {% if messages %}
-        <div class="alert alert-info" role="alert">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        <!-- Login Form -->
-        <form method="POST">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label for="id_username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="id_username" name="username" required>
-                <small id="usernameHelp" class="form-text text-muted">Please enter your username to log in.</small>
-            </div>
-            
-            <div class="mb-3">
-                <label for="id_password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="id_password" name="password" required>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-        </form>
-
-        <p class="mt-3 text-center">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
-        <p class="mt-3 text-center">Be a Delivery Driver? <a href="{% url 'home_driver' %}">More Information</a></p>
-        <p class="mt-3 text-center"><a href="{% url 'driver_login' %}">Login as Delivery Driver</a></p>
+    <!-- Ecommerce-themed animated background -->
+    <div class="ecommerce-bg" id="ecommerce-bg">
+        <div class="floating-icon"><i class="fas fa-shopping-cart"></i></div>
+        <div class="floating-icon"><i class="fas fa-shopping-bag"></i></div>
+        <div class="floating-icon"><i class="fas fa-truck"></i></div>
+        <div class="floating-icon"><i class="fas fa-credit-card"></i></div>
+        <div class="floating-icon"><i class="fas fa-gift"></i></div>
+        <div class="floating-icon"><i class="fas fa-star"></i></div>
+        <div class="floating-icon"><i class="fas fa-heart"></i></div>
+        <div class="floating-icon"><i class="fas fa-tag"></i></div>
+        <div class="floating-icon"><i class="fas fa-percentage"></i></div>
     </div>
-</div>
 
-<!-- Bootstrap 5 JS and dependencies -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<!-- Bootstrap Modal for Data Privacy Notice -->
-<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center">
-            <div class="modal-header border-0">
-                <h5 class="modal-title w-100" id="privacyModalLabel">Data Privacy Notice</h5>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header Section -->
+            <div class="header-section">
+                <img src="{% static 'admin/img/Indahag.png' %}" alt="Indahag Logo" class="logo">
+                <div class="welcome-badge">
+                    <i class="fas fa-store"></i> Welcome to www.indahagdelivery.com
+                </div>
+                <h2 class="form-title">Sign In to Your Account</h2>
+                <p class="form-subtitle">Continue shopping and manage your orders</p>
             </div>
-            <div class="modal-body">
-                <!-- Logo at the top center -->
-                <img src="{% static 'admin/img/Indahag.png' %}" alt="Logo" style="max-width: 150px; display: block; margin: 0 auto 20px;">
+
+            <!-- Display messages -->
+            {% if messages %}
+            <div class="alert" role="alert">
+                {% for message in messages %}
+                    <p class="mb-0"><i class="fas fa-info-circle me-2"></i>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username" class="form-label">
+                        <i class="fas fa-user me-2"></i>Username
+                    </label>
+                    <div class="position-relative">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-control" id="id_username" name="username" 
+                               placeholder="Enter your username" required>
+                    </div>
+                    <small class="form-text">Use your registered username</small>
+                </div>
                 
-                <p>At Indahag Delivery, we prioritize your privacy. This notice explains how we collect, use, and protect your data when using our platform (<a href="https://www.indahagdelivery.com">www.indahagdelivery.com</a>).</p> <p>We collect personal details like name, contact info, address, payment, and location to process orders, manage accounts, and provide support. Your data is stored securely and shared only with relevant partners, law enforcement, and service providers as needed.</p> <p>You have the right to access, update, delete, or restrict your data. We comply with legal and security measures and will update this policy as necessary. For inquiries, contact us at 09946415467.</p> <p><strong>Your privacy is our priority!</strong></p>
+                <div class="form-group">
+                    <label for="id_password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Password
+                    </label>
+                    <div class="position-relative">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-control" id="id_password" name="password" 
+                               placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-login">
+                        <i class="fas fa-shopping-cart cart-icon"></i>
+                        Sign In & Start Ordering
+                    </button>
+                </div>
+            </form>
+
+            <!-- Trust Badges -->
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secure</span>
+                </div>
+                <div class="trust-badge">
+                    <i class="fas fa-truck"></i>
+                    <span>Fast Delivery</span>
+                </div>
+                <div class="trust-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Quality</span>
+                </div>
             </div>
-            <div class="modal-footer border-0">
-                <button style="text-align:center" type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it</button>
+
+            <!-- Auth Links -->
+            <div class="auth-links">
+                <p>New to Indahag? <a href="{% url 'register' %}">
+                    <i class="fas fa-user-plus me-1"></i>Create Account
+                </a></p>
+            </div>
+
+            <!-- Delivery Driver Section -->
+            <div class="driver-section">
+                <h5>
+                    <i class="fas fa-motorcycle"></i>
+                    Become a Delivery Partner
+                </h5>
+                <p>Earn money by delivering orders in your area</p>
+                <a href="{% url 'home_driver' %}">
+                    <i class="fas fa-info-circle me-1"></i>Learn More
+                </a>
+                <a href="{% url 'driver_login' %}">
+                    <i class="fas fa-sign-in-alt me-1"></i>Driver Login
+                </a>
             </div>
         </div>
     </div>
-</div>
 
-<!-- JavaScript to Show Modal on Page Load -->
-<script>
-    window.onload = function() {
-        var privacyModal = new bootstrap.Modal(document.getElementById('privacyModal'));
-        privacyModal.show();
-    };
-    
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add input focus effects
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
 
+        // Add shopping cart animation on button click
+        document.querySelector('.btn-login').addEventListener('click', function(e) {
+            const cartIcon = this.querySelector('.cart-icon');
+            cartIcon.style.animation = 'none';
+            setTimeout(() => {
+                cartIcon.style.animation = 'bounce 0.6s ease';
+            }, 10);
 
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+
+        // Add CSS for ripple effect
+        const style = document.createElement('style');
+        style.textContent = `
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.4);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                pointer-events: none;
+            }
+            
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add ecommerce-themed hover effects
+        document.querySelectorAll('.trust-badge').forEach(badge => {
+            badge.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.boxShadow = '0 4px 12px rgba(241, 196, 15, 0.3)';
+            });
+            
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
 </body>
 </html>

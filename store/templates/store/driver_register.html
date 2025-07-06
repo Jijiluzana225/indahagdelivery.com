@@ -3,49 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Driver Registration</title>
+    <title>Indahag Driver Registration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            text-align: center;
-            width: 300px;
-        }
-
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .popup-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .popup-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -53,64 +13,146 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 50%, #d97706 100%);
             min-height: 100vh;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(255, 215, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
             overflow: hidden;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+            border-radius: 24px;
+            z-index: -1;
+            opacity: 0.3;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: white;
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: 50px 50px;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .header-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
             font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .header p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             opacity: 0.9;
+            font-weight: 500;
         }
 
         .form-container {
-            padding: 40px;
+            padding: 50px 40px;
         }
 
         .section {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
 
         .section-title {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e1e5e9;
+            font-size: 1.6rem;
+            color: #92400e;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.2);
             display: flex;
             align-items: center;
+            font-weight: 700;
         }
 
         .section-title::before {
             content: '';
-            width: 4px;
-            height: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin-right: 10px;
-            border-radius: 2px;
+            width: 6px;
+            height: 24px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            margin-right: 15px;
+            border-radius: 3px;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
         }
 
         .form-group {
@@ -129,14 +171,15 @@
         label {
             display: block;
             font-weight: 600;
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
 
         .required::after {
             content: ' *';
-            color: #e74c3c;
+            color: #dc2626;
+            font-weight: 700;
         }
 
         input[type="text"],
@@ -145,12 +188,13 @@
         select,
         textarea {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
         }
 
         input[type="text"]:focus,
@@ -159,8 +203,9 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            background: rgba(255, 255, 255, 1);
         }
 
         select {
@@ -174,22 +219,41 @@
         }
 
         .file-input-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: white;
-            padding: 15px 20px;
+            padding: 16px 24px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-block;
             font-weight: 600;
             text-align: center;
             width: 100%;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-input-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .file-input-button:hover::before {
+            left: 100%;
         }
 
         .file-input-button:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 16px rgba(245, 158, 11, 0.4);
         }
 
         input[type="file"] {
@@ -197,53 +261,72 @@
         }
 
         .image-preview {
-            margin-top: 15px;
+            margin-top: 20px;
             text-align: center;
         }
 
         .image-preview img {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 180px;
+            max-height: 180px;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border: 3px solid rgba(245, 158, 11, 0.2);
         }
 
         .change-picture-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 15px;
             display: none;
         }
 
         .change-picture-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
             color: white;
-            padding: 18px 40px;
+            padding: 20px 40px;
             border: none;
             border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.2rem;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
         }
 
         .submit-btn:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 12px 24px rgba(245, 158, 11, 0.4);
         }
 
         .submit-btn:active {
@@ -251,30 +334,32 @@
         }
 
         .terms {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 25px;
+            border-radius: 16px;
             margin-bottom: 30px;
-            border-left: 4px solid #667eea;
+            border-left: 6px solid #f59e0b;
+            backdrop-filter: blur(10px);
         }
 
         .terms p {
-            color: #666;
-            line-height: 1.6;
-            font-size: 0.95rem;
+            color: #92400e;
+            line-height: 1.7;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         .loading {
             display: none;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
@@ -285,15 +370,17 @@
         }
 
         .error {
-            color: #e74c3c;
-            font-size: 0.85rem;
-            margin-top: 5px;
+            color: #dc2626;
+            font-size: 0.9rem;
+            margin-top: 8px;
             display: none;
+            font-weight: 500;
         }
 
         .form-group.error input,
         .form-group.error select {
-            border-color: #e74c3c;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
 
         .form-group.error .error {
@@ -301,38 +388,41 @@
         }
 
         .django-messages {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .alert {
-            padding: 15px;
+            padding: 18px 24px;
             margin-bottom: 20px;
-            border: 1px solid transparent;
-            border-radius: 10px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 1rem;
         }
 
         .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
+            color: #065f46;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
         }
 
         .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
+            color: #991b1b;
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid #ef4444;
         }
 
         .alert-info {
-            color: #0c5460;
-            background-color: #d1ecf1;
-            border-color: #bee5eb;
+            color: #0c4a6e;
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
         }
 
         .field-errors {
-            color: #e74c3c;
-            font-size: 0.85rem;
-            margin-top: 5px;
+            color: #dc2626;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-weight: 500;
         }
 
         .field-errors ul {
@@ -342,20 +432,143 @@
         }
 
         .non-field-errors {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #991b1b;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .popup h3 {
+            color: #92400e;
+            font-size: 1.8rem;
             margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .popup p {
+            color: #374151;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+        }
+
+        .popup-button {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .popup-button:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+
+            .header {
+                padding: 40px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .section {
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+            }
+
+            .submit-btn {
+                font-size: 1.1rem;
+                padding: 18px 30px;
+            }
+
+            .popup {
+                margin: 20px;
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-icon {
+                font-size: 3rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚚 Delivery Driver Registration</h1>
-            <p>Join our delivery network and start earning today</p>
+            <i class="fas fa-shipping-fast header-icon"></i>
+            <h1>Driver Registration</h1>
+            <p>Join our premium delivery network and start earning today</p>
         </div>
 
         <div class="form-container">
@@ -382,7 +595,10 @@
                 
                 <!-- Personal Information Section -->
                 <div class="section">
-                    <h2 class="section-title">👤 Personal Information</h2>
+                    <h2 class="section-title">
+                        <i class="fas fa-user" style="margin-right: 10px; color: #f59e0b;"></i>
+                        Personal Information
+                    </h2>
                     
                     <div class="form-row">
                         <div class="form-group{% if form.name.errors %} error{% endif %}">
@@ -410,7 +626,8 @@
                         <label for="{{ form.profile_picture.id_for_label }}">Profile Picture</label>
                         <div class="file-input-wrapper">
                             <button type="button" class="file-input-button" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
-                                📷 Choose Profile Picture
+                                <i class="fas fa-camera" style="margin-right: 8px;"></i>
+                                Choose Profile Picture
                             </button>
                             {{ form.profile_picture }}
                         </div>
@@ -421,7 +638,8 @@
                         {% endif %}
                         <div class="image-preview" id="imagePreview">
                             <button type="button" class="change-picture-btn" id="changePictureBtn" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
-                                🔄 Change Picture
+                                <i class="fas fa-sync-alt" style="margin-right: 8px;"></i>
+                                Change Picture
                             </button>
                         </div>
                     </div>
@@ -429,7 +647,10 @@
 
                 <!-- Vehicle Information Section -->
                 <div class="section">
-                    <h2 class="section-title">🏍️ Vehicle Information</h2>
+                    <h2 class="section-title">
+                        <i class="fas fa-motorcycle" style="margin-right: 10px; color: #f59e0b;"></i>
+                        Vehicle Information
+                    </h2>
                     
                     <div class="form-row">
                         <div class="form-group{% if form.license_number.errors %} error{% endif %}">
@@ -466,7 +687,10 @@
 
                 <!-- Location Information Section -->
                 <div class="section">
-                    <h2 class="section-title">📍 Complete Address</h2>
+                    <h2 class="section-title">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 10px; color: #f59e0b;"></i>
+                        Complete Address
+                    </h2>
                     
                     <div class="form-group{% if form.current_location.errors %} error{% endif %}">
                         <label for="{{ form.current_location.id_for_label }}">Current Address</label>
@@ -482,7 +706,7 @@
                 <!-- Terms and Conditions -->
                 <div class="terms">
                     <p>
-                        <strong>📋 Terms & Conditions:</strong><br>
+                        <strong><i class="fas fa-clipboard-check" style="margin-right: 8px;"></i>Terms & Conditions:</strong><br>
                         By submitting this registration, you agree to our terms and conditions. 
                         Your account will be reviewed and verified before activation. You will 
                         receive a notification once your account is approved. All information 
@@ -491,7 +715,10 @@
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">
-                    <span class="btn-text">Submit Registration</span>
+                    <span class="btn-text">
+                        <i class="fas fa-paper-plane" style="margin-right: 10px;"></i>
+                        Submit Registration
+                    </span>
                     <div class="loading">
                         <div class="spinner"></div>
                         <span>Submitting...</span>
@@ -504,9 +731,13 @@
     {% if registration_success %}
         <div class="popup-overlay" id="popupOverlay"></div>
         <div class="popup" id="popup">
+            <i class="fas fa-check-circle" style="font-size: 3rem; color: #10b981; margin-bottom: 20px;"></i>
             <h3>Application Complete!</h3>
             <p>Just wait for IndahagDelivery.com to contact you.</p>
-            <button class="popup-button" onclick="window.location.href='{% url 'login' %}'">Close & Login</button>
+            <button class="popup-button" onclick="window.location.href='{% url 'login' %}'">
+                <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+                Close & Login
+            </button>
         </div>
     {% endif %}
 
@@ -524,19 +755,22 @@
                     preview.innerHTML = `
                         <img src="${e.target.result}" alt="Profile Preview">
                         <button type="button" class="change-picture-btn" id="changePictureBtn" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()">
-                            🔄 Change Picture
+                            <i class="fas fa-sync-alt" style="margin-right: 8px;"></i>
+                            Change Picture
                         </button>
                     `;
+                    changePictureBtn.style.display = 'inline-block';
                 };
                 reader.readAsDataURL(file);
-                button.textContent = `📷 ${file.name}`;
+                button.innerHTML = `<i class="fas fa-camera" style="margin-right: 8px;"></i>${file.name}`;
             } else {
                 preview.innerHTML = `
                     <button type="button" class="change-picture-btn" id="changePictureBtn" onclick="document.getElementById('{{ form.profile_picture.id_for_label }}').click()" style="display: none;">
-                        🔄 Change Picture
+                        <i class="fas fa-sync-alt" style="margin-right: 8px;"></i>
+                        Change Picture
                     </button>
                 `;
-                button.textContent = '📷 Choose Profile Picture';
+                button.innerHTML = '<i class="fas fa-camera" style="margin-right: 8px;"></i>Choose Profile Picture';
             }
         });
 
@@ -557,9 +791,8 @@
             field.addEventListener('input', function() {
                 const formGroup = this.closest('.form-group');
                 if (formGroup.classList.contains('error') && this.value.trim()) {
-                    // Remove error styling if field now has content
                     const errorDiv = formGroup.querySelector('.field-errors');
-                    if (!errorDiv) { // Only remove if no server-side errors
+                    if (!errorDiv) {
                         formGroup.classList.remove('error');
                     }
                 }
@@ -572,11 +805,11 @@
         {% endif %}
 
         // Close the popup and redirect to login
-        document.querySelector('.popup-button').addEventListener('click', function() {
-            window.location.href = '{% url "login" %}';
-        });
-
-        
+        if (document.querySelector('.popup-button')) {
+            document.querySelector('.popup-button').addEventListener('click', function() {
+                window.location.href = '{% url "login" %}';
+            });
+        }
     </script>
 </body>
 </html>

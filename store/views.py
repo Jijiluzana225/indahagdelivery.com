@@ -1091,3 +1091,16 @@ def cancel_special_request(request, request_id):
 
 
 
+# views.py
+from django.http import JsonResponse
+from django.core.serializers import serialize
+from .models import SpecialRequest, Order
+
+def fetch_driver_updates(request, driver_id):
+    special_requests = SpecialRequest.objects.filter(driver_id=driver_id).order_by('-id')[:10]
+    recent_orders = Order.objects.filter(assigned_to_id=driver_id).order_by('-created_at')[:10]
+
+    return JsonResponse({
+        'special_requests': list(special_requests.values()),
+        'recent_orders': list(recent_orders.values())
+    })

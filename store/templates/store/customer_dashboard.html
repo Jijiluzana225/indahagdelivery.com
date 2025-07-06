@@ -5,191 +5,333 @@
 
 {% block content %}
 <style>
-    /* General Styling for Dashboard */
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        padding: 0;
-        color: #333;
+    /* Premium Gold Theme Variables */
+    :root {
+        --primary-gold: #fbbf24;
+        --secondary-gold: #f59e0b;
+        --deep-gold: #d97706;
+        --light-gold: #fef3c7;
+        --accent-gold: #92400e;
+        --premium-dark: #1f2937;
+        --premium-light: #f9fafb;
+        --glass-bg: rgba(255, 255, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --success-green: #10b981;
+        --warning-orange: #f59e0b;
+        --info-blue: #3b82f6;
+        --danger-red: #ef4444;
     }
 
+    /* Dashboard Title */
     .dashboard-title {
         font-size: 2.5rem;
-        color: #333;
+        color: var(--accent-gold);
         text-align: center;
-        margin: 20px 0;
+        margin: 30px 0;
+        font-weight: 700;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
     }
 
+    .dashboard-title::before {
+        content: '👑';
+        font-size: 2rem;
+        animation: sparkle 2s ease-in-out infinite;
+    }
+
+    @keyframes sparkle {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.1) rotate(10deg); }
+    }
+
+    /* Premium Orders Container */
     .orders-table-container {
         width: 98%;
         max-width: 1400px;
         margin: 0 auto;
-        background-color: #fff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--glass-border);
         overflow-x: auto;
+        position: relative;
+        transition: all 0.3s ease;
     }
 
+    .orders-table-container:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Premium Table Styling */
     .orders-table {
         width: 100%;
         border-collapse: collapse;
         min-width: 1000px;
+        background: transparent;
     }
 
     .orders-table th, 
     .orders-table td {
-        padding: 8px 6px;
+        padding: 12px 10px;
         text-align: center;
-        font-size: 0.85rem;
-        border-bottom: 1px solid #ddd;
+        font-size: 0.9rem;
+        border-bottom: 1px solid var(--glass-border);
         vertical-align: middle;
+        color: var(--premium-dark);
     }
 
     .orders-table th {
-        background-color: #f1f1f1;
-        color: #333;
-        font-weight: bold;
+        background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+        color: white;
+        font-weight: 700;
         white-space: nowrap;
         position: sticky;
         top: 0;
         z-index: 10;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        border-radius: 10px 10px 0 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
-    /* Column-specific widths for better arrangement */
+    .orders-table th:first-child {
+        border-radius: 10px 0 0 0;
+    }
+
+    .orders-table th:last-child {
+        border-radius: 0 10px 0 0;
+    }
+
+    /* Column-specific widths */
     .orders-table th:nth-child(1),
-    .orders-table td:nth-child(1) { /* Order ID */
-        width: 70px;
-        min-width: 70px;
-    }
-
+    .orders-table td:nth-child(1) { width: 80px; min-width: 80px; }
     .orders-table th:nth-child(2),
-    .orders-table td:nth-child(2) { /* Store */
-        width: 150px;
-        min-width: 150px;
-    }
-
+    .orders-table td:nth-child(2) { width: 160px; min-width: 160px; }
     .orders-table th:nth-child(3),
-    .orders-table td:nth-child(3) { /* Total Amount */
-        width: 100px;
-        min-width: 100px;
-    }
-
+    .orders-table td:nth-child(3) { width: 110px; min-width: 110px; }
     .orders-table th:nth-child(4),
-    .orders-table td:nth-child(4) { /* Status */
-        width: 120px;
-        min-width: 120px;
-    }
-
+    .orders-table td:nth-child(4) { width: 130px; min-width: 130px; }
     .orders-table th:nth-child(5),
-    .orders-table td:nth-child(5) { /* Placed On */
-        width: 140px;
-        min-width: 140px;
-    }
-
+    .orders-table td:nth-child(5) { width: 150px; min-width: 150px; }
     .orders-table th:nth-child(6),
-    .orders-table td:nth-child(6) { /* Items */
-        width: 80px;
-        min-width: 80px;
-    }
-
+    .orders-table td:nth-child(6) { width: 90px; min-width: 90px; }
     .orders-table th:nth-child(7),
-    .orders-table td:nth-child(7) { /* Assigned Rider */
-        width: 180px;
-        min-width: 180px;
+    .orders-table td:nth-child(7) { width: 190px; min-width: 190px; }
+
+    /* Premium Row Styling */
+    .orders-table tr:nth-child(even) {
+        background: rgba(255, 255, 255, 0.1);
     }
 
-    .orders-table tr:nth-child(even) {
-        background-color: #f9f9f9;
+    .order-row {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border-radius: 10px;
+        margin: 2px 0;
     }
 
     .order-row:hover {
-        background-color: #f1f1f1;
-        cursor: pointer;
+        background: rgba(251, 191, 36, 0.1) !important;
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
+    /* Status Styling with Premium Colors */
     .status {
-        font-weight: bold;
-        color: #007bff;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
     }
 
-    .no-orders-message {
-        font-size: 1.2rem;
-        color: #555;
-        text-align: center;
-        padding: 40px 20px;
-    }
-
-    /* Items link styling */
-    .items-link {
-        background-color: #17a2b8;
+    .status-pending {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
         color: white;
-        padding: 4px 8px;
+    }
+
+    .status-declined {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+    }
+
+    .status-preparing {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+
+    .status-on-the-way {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+    }
+
+    .status-delivered {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    /* Premium Items Link */
+    .items-link {
+        background: linear-gradient(135deg, var(--info-blue), #2563eb);
+        color: white;
+        padding: 8px 16px;
         text-decoration: none;
-        border-radius: 3px;
-        font-size: 0.75rem;
-        display: inline-block;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .items-link:hover {
-        background-color: #138496;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
         color: white;
-        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     }
 
-    /* Store name styling */
+    /* Premium Store Name */
     .store-name {
-        max-width: 150px;
+        max-width: 160px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        font-weight: 600;
+        color: var(--accent-gold);
+        padding: 4px 8px;
+        background: rgba(251, 191, 36, 0.1);
+        border-radius: 8px;
+        margin: 0 auto;
     }
 
-    /* Date styling */
+    /* Premium Date Styling */
     .created-date {
-        font-size: 0.7rem;
-        line-height: 1.2;
+        font-size: 0.8rem;
+        line-height: 1.3;
+        color: var(--premium-dark);
+        font-weight: 500;
     }
 
-    /* Assigned rider styling */
+    .created-date small {
+        color: var(--accent-gold);
+        font-weight: 600;
+    }
+
+    /* Premium Assigned Rider */
     .assigned-rider {
         text-align: center;
-        line-height: 1.3;
-        font-size: 0.75rem;
+        line-height: 1.4;
+        font-size: 0.8rem;
+        background: rgba(16, 185, 129, 0.1);
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     .assigned-rider strong {
-        color: #28a745;
-        font-size: 0.8rem;
+        color: var(--success-green);
+        font-size: 0.9rem;
+        font-weight: 700;
     }
 
     .assigned-rider small {
-        color: #666;
-        font-size: 0.7rem;
+        color: var(--premium-dark);
+        font-size: 0.75rem;
+        font-weight: 500;
     }
 
     .no-rider-assigned {
-        color: #999;
+        color: #9ca3af;
         font-style: italic;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        padding: 8px;
+        background: rgba(156, 163, 175, 0.1);
+        border-radius: 10px;
+        border: 1px solid rgba(156, 163, 175, 0.2);
     }
 
-    /* Status change notification */
+    /* Premium No Orders Message */
+    .no-orders-message {
+        font-size: 1.5rem;
+        color: var(--accent-gold);
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid var(--glass-border);
+        margin: 40px auto;
+        max-width: 600px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .no-orders-message::before {
+        content: '🛒';
+        font-size: 3rem;
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    /* Premium Back Home Button */
+    .back-home-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 40px auto;
+        padding: 16px 40px;
+        background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-align: center;
+        border-radius: 25px;
+        text-decoration: none;
+        max-width: 250px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .back-home-btn:hover {
+        background: linear-gradient(135deg, var(--secondary-gold), var(--deep-gold));
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        color: white;
+    }
+
+    /* Premium Status Notification */
     .status-notification {
         position: fixed;
-        top: 20px;
+        top: 100px;
         right: 20px;
-        background-color: #28a745;
+        background: linear-gradient(135deg, var(--success-green), #059669);
         color: white;
-        padding: 15px 20px;
-        border-radius: 5px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 20px 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         z-index: 1000;
-        font-weight: bold;
+        font-weight: 700;
+        font-size: 1rem;
         opacity: 0;
         transform: translateX(100%);
-        transition: all 0.3s ease;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
     }
 
     .status-notification.show {
@@ -197,44 +339,60 @@
         transform: translateX(0);
     }
 
-    /* Transition for background color */
-    .order-row {
-        transition: background-color 0.3s ease;
+    .status-notification::before {
+        content: '🔔';
+        margin-right: 10px;
+        font-size: 1.2rem;
     }
 
-    /* Scrollbar styling for better UX */
+    /* Premium Scrollbar */
     .orders-table-container::-webkit-scrollbar {
-        height: 8px;
+        height: 12px;
     }
 
     .orders-table-container::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
     }
 
     .orders-table-container::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 4px;
+        background: linear-gradient(135deg, var(--primary-gold), var(--secondary-gold));
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: content-box;
     }
 
     .orders-table-container::-webkit-scrollbar-thumb:hover {
-        background: #555;
+        background: linear-gradient(135deg, var(--secondary-gold), var(--deep-gold));
+        background-clip: content-box;
+    }
+
+    /* Premium Loading Animation */
+    .loading-shimmer {
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
     }
 
     /* Responsive Design for Tablets */
     @media (max-width: 1024px) {
         .orders-table-container {
-            padding: 10px;
+            padding: 20px;
         }
         
         .orders-table th, 
         .orders-table td {
-            padding: 6px 4px;
-            font-size: 0.8rem;
+            padding: 10px 8px;
+            font-size: 0.85rem;
         }
 
         .dashboard-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
         }
     }
 
@@ -242,12 +400,14 @@
     @media (max-width: 768px) {
         .orders-table th, 
         .orders-table td {
-            padding: 5px 3px;
-            font-size: 0.75rem;
+            padding: 8px 6px;
+            font-size: 0.8rem;
         }
 
         .dashboard-title {
-            font-size: 1.8rem;
+            font-size: 2rem;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .status-notification {
@@ -264,102 +424,148 @@
     /* Responsive Design for Mobile */
     @media (max-width: 480px) {
         .dashboard-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
 
         .orders-table-container {
-            padding: 5px;
+            padding: 15px;
             width: 100%;
         }
 
         .orders-table {
             min-width: 800px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
         }
 
         .orders-table th, 
         .orders-table td {
-            padding: 4px 2px;
-            font-size: 0.65rem;
+            padding: 8px 4px;
+            font-size: 0.7rem;
         }
 
         .items-link {
-            padding: 2px 4px;
-            font-size: 0.65rem;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+        }
+
+        .back-home-btn {
+            padding: 14px 30px;
+            font-size: 1rem;
         }
     }
 
-    /* Button Styling for Back to Homepage */
-    .back-home-btn {
-        display: block;
-        margin: 30px auto;
-        padding: 12px 30px;
-        background-color: #007bff;
-        color: white;
-        font-size: 1rem;
-        text-align: center;
-        border-radius: 5px;
-        text-decoration: none;
-        max-width: 200px;
-        transition: background-color 0.3s ease;
+    /* Premium Hover Effects */
+    .order-row td {
+        position: relative;
+        overflow: hidden;
     }
 
-    .back-home-btn:hover {
-        background-color: #0056b3;
+    .order-row:hover td {
+        background: rgba(251, 191, 36, 0.05);
     }
 
+    /* Animation for new orders */
+    @keyframes newOrderPulse {
+        0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+        70% { box-shadow: 0 0 0 20px rgba(251, 191, 36, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+    }
+
+    .new-order {
+        animation: newOrderPulse 2s infinite;
+    }
+
+    /* Total Amount Styling */
+    .total-amount {
+        font-weight: 700;
+        color: var(--success-green);
+        font-size: 0.9rem;
+        background: rgba(16, 185, 129, 0.1);
+        padding: 4px 8px;
+        border-radius: 8px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    /* Order ID Styling */
+    .order-id {
+        font-weight: 700;
+        color: var(--accent-gold);
+        background: rgba(251, 191, 36, 0.1);
+        padding: 4px 8px;
+        border-radius: 8px;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+    }
 </style>
 
-<h1 class="dashboard-title">Your Orders</h1>
+<h1 class="dashboard-title">
+    <i class="fas fa-shopping-bag"></i>
+    Your Orders
+</h1>
 
 {% if orders %}
     <div class="orders-table-container">
         <table class="orders-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Store</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Placed On</th>
-                    <th>Items</th>
-                    <th>Assigned Rider</th>
+                    <th><i class="fas fa-hashtag"></i> ID</th>
+                    <th><i class="fas fa-store"></i> Store</th>
+                    <th><i class="fas fa-peso-sign"></i> Total</th>
+                    <th><i class="fas fa-info-circle"></i> Status</th>
+                    <th><i class="fas fa-calendar-alt"></i> Placed On</th>
+                    <th><i class="fas fa-list"></i> Items</th>
+                    <th><i class="fas fa-motorcycle"></i> Assigned Rider</th>
                 </tr>
             </thead>
             <tbody>
                 {% for order in orders %}
-                    <tr class="order-row" 
-                        style="background-color: 
-                            {% if order.status == 'Pending' %}White
-                            {% elif order.status == 'Declined' %}Orange
-                            {% elif order.status == 'Preparing' %}lightYellow
-                            {% elif order.status == 'On the Way' %}Aqua
-                            {% elif order.status == 'Delivered' %}lightgreen
-                            {% else %}#ffffff
-                            {% endif %};">
-                        <td>{{ order.id }}</td>
+                    <tr class="order-row">
+                        <td>
+                            <span class="order-id">{{ order.id }}</span>
+                        </td>
                         <td>
                             <div class="store-name" title="{{ order.store.name }}">
                                 {{ order.store.name }}
                             </div>
                         </td>
-                        <td>₱{{ order.total_price|floatformat:2|intcomma }}</td>
-                        <td class="status">{{ order.status }}</td>
-                        <td class="created-date">
-                            {{ order.created_at|date:"M d, Y" }}<br>
-                            <small>{{ order.created_at|time:"H:i" }}</small>
+                        <td>
+                            <span class="total-amount">₱{{ order.total_price|floatformat:2|intcomma }}</span>
                         </td>
                         <td>
-                            <a href="/order/{{ order.id }}/items" class="items-link">View</a>
+                            <span class="status 
+                                {% if order.status == 'Pending' %}status-pending
+                                {% elif order.status == 'Declined' %}status-declined
+                                {% elif order.status == 'Preparing' %}status-preparing
+                                {% elif order.status == 'On the Way' %}status-on-the-way
+                                {% elif order.status == 'Delivered' %}status-delivered
+                                {% endif %}">
+                                {% if order.status == 'Pending' %}<i class="fas fa-clock"></i>
+                                {% elif order.status == 'Declined' %}<i class="fas fa-times"></i>
+                                {% elif order.status == 'Preparing' %}<i class="fas fa-utensils"></i>
+                                {% elif order.status == 'On the Way' %}<i class="fas fa-truck"></i>
+                                {% elif order.status == 'Delivered' %}<i class="fas fa-check"></i>
+                                {% endif %}
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td class="created-date">
+                            <strong>{{ order.created_at|date:"M d, Y" }}</strong><br>
+                            <small><i class="fas fa-clock"></i> {{ order.created_at|time:"H:i" }}</small>
+                        </td>
+                        <td>
+                            <a href="/order/{{ order.id }}/items" class="items-link">
+                                <i class="fas fa-eye"></i> View
+                            </a>
                         </td>
                         <td>
                             {% if order.assigned_to %}
                                 <div class="assigned-rider">
-                                    <strong>{{ order.assigned_to.name }}</strong><br>
-                                    <small>{{ order.assigned_to.phone_number }}</small>
+                                    <strong><i class="fas fa-user"></i> {{ order.assigned_to.name }}</strong><br>
+                                    <small><i class="fas fa-phone"></i> {{ order.assigned_to.phone_number }}</small>
                                 </div>
                             {% else %}
-                                <span class="no-rider-assigned">Not assigned</span>
+                                <span class="no-rider-assigned">
+                                    <i class="fas fa-user-times"></i> Not assigned
+                                </span>
                             {% endif %}
                         </td>
                     </tr>
@@ -368,15 +574,25 @@
         </table>
     </div>
 {% else %}
-    <p class="no-orders-message">You have no orders yet.</p>
+    <div class="no-orders-message">
+        <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 20px; display: block;"></i>
+        <h3>No Orders Yet</h3>
+        <p>Start exploring our amazing stores and place your first order!</p>
+    </div>
 {% endif %}
 
-<!-- Back to Homepage Button -->
-<a href="{% url 'store_list' %}" class="back-home-btn">Back to Homepage</a>
+<!-- Premium Back to Homepage Button -->
+<a href="{% url 'store_list' %}" class="back-home-btn">
+    <i class="fas fa-home"></i>
+    <span>Back to Homepage</span>
+</a>
 
-<!-- Status change notification popup -->
+<!-- Premium Status Notification -->
+<div id="statusNotification" class="status-notification">
+    <i class="fas fa-bell"></i> Status Updated Successfully!
+</div>
 
-...
+<!-- Audio notification -->
 <audio id="newOrderSound">
     <source src="/static/sounds/notification.mp3" type="audio/mpeg">
 </audio>
@@ -385,20 +601,31 @@
     {% if status_changes %}
         var audio = document.getElementById('newOrderSound');
 
-        function playAudioAndAlert(orderIds) {
+        function playAudioAndShowNotification(orderIds) {
+            // Show premium notification
+            const notification = document.getElementById('statusNotification');
+            notification.classList.add('show');
+            
+            // Play audio
             var playPromise = audio.play();
 
             if (playPromise !== undefined) {
                 playPromise.then(function () {
-                    alert("Status Changed Noted!");
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
                     orderIds.forEach(updateOriginalStatus);
                 }).catch(function (error) {
                     console.error("Audio play failed:", error);
-                    alert("Status Changed Noted!");
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
                     orderIds.forEach(updateOriginalStatus);
                 });
             } else {
-                alert("Status Changed Noted!");
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
                 orderIds.forEach(updateOriginalStatus);
             }
         }
@@ -407,7 +634,7 @@
             const orderIds = [
                 {% for order_id in status_changes %}{{ order_id }},{% endfor %}
             ];
-            playAudioAndAlert(orderIds);
+            playAudioAndShowNotification(orderIds);
         });
     {% else %}
         if (Notification.permission !== 'granted') {
@@ -415,8 +642,17 @@
         }
     {% endif %}
 
+    // Enhanced refresh with loading animation
     setInterval(function () {
-        location.reload();
+        const container = document.querySelector('.orders-table-container');
+        if (container) {
+            container.classList.add('loading-shimmer');
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        } else {
+            location.reload();
+        }
     }, 10000);
 
     function updateOriginalStatus(orderId) {
@@ -449,5 +685,47 @@
         }
         return cookieValue;
     }
+
+    // Enhanced hover effects
+    document.addEventListener('DOMContentLoaded', function() {
+        const orderRows = document.querySelectorAll('.order-row');
+        
+        orderRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+                this.style.zIndex = '2';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.zIndex = '1';
+            });
+        });
+
+        // Add sparkle effect to buttons
+        const buttons = document.querySelectorAll('.items-link, .back-home-btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.animation = 'shimmer 0.6s ease-in-out';
+            });
+            
+            button.addEventListener('animationend', function() {
+                this.style.animation = '';
+            });
+        });
+    });
+
+    // Premium loading state for navigation
+    document.querySelector('.back-home-btn').addEventListener('click', function(e) {
+        const originalContent = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        this.style.pointerEvents = 'none';
+        
+        // Reset after navigation or timeout
+        setTimeout(() => {
+            this.innerHTML = originalContent;
+            this.style.pointerEvents = 'auto';
+        }, 2000);
+    });
 </script>
 {% endblock %}

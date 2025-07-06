@@ -54,8 +54,7 @@ class Item(models.Model):
 
 
 class CustomerProfile(models.Model):
-    name = models.CharField(max_length=100)
-    facebook_page = models.URLField(null=True, blank=True)    
+    name = models.CharField(max_length=100)    
     phone_number = models.CharField(max_length=20, null=True, blank=True)    
     barangay = models.CharField(max_length=100, null=True, blank=True)
     address_line = models.CharField(max_length=255, null=True, blank=True)
