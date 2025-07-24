@@ -185,3 +185,18 @@ class SpecialRequest(models.Model):
 
     def __str__(self):
         return f"{self.customer.username} - {self.date_requested} {self.time_requested}"
+
+
+
+class SiteStatus(models.Model):
+    status = models.CharField(
+        max_length=20, null=True,
+        choices=[
+            ('Open', 'Open'),
+            ('Closed', 'Closed'),
+            ('Weekend', 'Weekend'),            
+        ],
+        default='Closed'
+    )
+    def __str__(self):
+        return f"{self.status}"

@@ -1105,3 +1105,19 @@ def fetch_driver_updates(request, driver_id):
         'recent_orders': list(recent_orders.values())
     })
 
+
+from django.shortcuts import redirect
+from .models import SiteStatus
+
+def site_status_router(request):
+    try:
+        current_status = SiteStatus.objects.latest('id').status  # Get latest SiteStatus
+    except SiteStatus.DoesNotExist:
+        current_status = 'Closed'  # Default fallback
+
+    if current_status == 'Open':
+        return store_list(request)
+    elif current_status == 'Weekend':
+        return system_update(request)
+    else:
+        return system_update_close(request)
