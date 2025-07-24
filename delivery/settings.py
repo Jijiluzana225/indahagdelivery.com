@@ -34,7 +34,8 @@ DEBUG = False
 ALLOWED_HOSTS = ['https://*.railway.app',
                       'https://www.indahagdelivery.com',                      
                       'https://indahagdelivery.com',
-                      '127.0.0.1']
+                      '127.0.0.1',
+                      'www.indahagdelivery.com']
 
 
 
