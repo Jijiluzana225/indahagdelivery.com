@@ -171,7 +171,16 @@
     }
 </style>
 
-<h2>Products for Order #{{ order.id }}</h2>
+<h2>Products for Order #{{ order.id }} </h2>
+<h1 style="text-align: center;">
+    {% if order.customer.customer.profile_picture %}
+        <img src="{{ order.customer.customer.profile_picture.url }}"
+             alt="Customer Photo"
+             style="width: 125px; height: 125px; border-radius: 50%; object-fit: cover; border: 1px solid black;">    
+    {% endif %}
+</h1>
+<!-- Profile Picture -->
+
 
 <div class="items-table-container">
     <table class="items-table">

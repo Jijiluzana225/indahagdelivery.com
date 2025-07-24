@@ -314,14 +314,14 @@
 
         /* Mobile-first delivery driver section */
         .driver-section {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            margin-top: 16px;
-            text-align: center;
-            animation: fadeIn 0.8s ease-out 1s both;
-        }
+    background: linear-gradient(135deg, #27ae60, #2ecc71); /* Changed to light green gradient */
+    color: white;
+    padding: 14px;
+    border-radius: 10px;
+    margin-top: 16px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-out 1s both;
+}
 
         .driver-section h5 {
             font-size: 14px;
@@ -651,6 +651,19 @@
                 animation: none;
             }
         }
+
+
+        .auth-links a[href*="register"] {
+    background-color: #007bff; /* Bootstrap blue */
+    color: white;
+    border-color: #007bff;
+}
+
+.auth-links a[href*="register"]:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    border-color: #0056b3;
+}
+
     </style>
 </head>
 <body>
@@ -672,9 +685,7 @@
             <!-- Header Section -->
             <div class="header-section">
                 <img src="{% static 'admin/img/Indahag.png' %}" alt="Indahag Logo" class="logo">
-                <div class="welcome-badge">
-                    <i class="fas fa-store"></i> Welcome to www.indahagdelivery.com
-                </div>
+               
                 <h2 class="form-title">Sign In to Your Account</h2>
                 <p class="form-subtitle">Continue shopping and manage your orders</p>
             </div>
@@ -723,21 +734,7 @@
                 </div>
             </form>
 
-            <!-- Trust Badges -->
-            <div class="trust-badges">
-                <div class="trust-badge">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Secure</span>
-                </div>
-                <div class="trust-badge">
-                    <i class="fas fa-truck"></i>
-                    <span>Fast Delivery</span>
-                </div>
-                <div class="trust-badge">
-                    <i class="fas fa-star"></i>
-                    <span>Quality</span>
-                </div>
-            </div>
+            
 
             <!-- Auth Links -->
             <div class="auth-links">
