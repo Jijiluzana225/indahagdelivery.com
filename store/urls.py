@@ -5,8 +5,9 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Add URLs for different views
-    path('', views.system_update, name='system_update'),  # List of all stores
-    # path('', views.system_update_close, name='system_update_close'),  # List of all stores
+    # path('', views.system_update, name='system_update'),  # List of all stores
+    path('', views.system_update_close, name='system_update_close'),  # List of all stores
+    # path('', views.landing_page, name='landing_page'),   
     
     path('x1', views.store_list, name='store_list'),  # List of all stores 
     path('product/<int:id>/', views.product_detail, name='product_detail'),  # Product detail page
@@ -19,7 +20,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('accounts/login/', views.login_view, name='login'),  # Add this line for the login view
     
-    # path('', views.landing_page, name='landing_page'),   
+    
     
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),    
     path('logout-confirmation/', views.logout_confirmation, name='logout-confirmation'),
