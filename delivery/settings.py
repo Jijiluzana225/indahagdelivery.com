@@ -29,9 +29,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-h+fyj)z-4rqjgi+ml2l21xh@9s_^=!u12us$u-e$gthp7_8qyn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['https://*.railway.app',
+                      'https://www.indahagdelivery.com',                      
+                      'https://indahagdelivery.com',
+                      '127.0.0.1']
+
+
 
 CSRF_TRUSTED_ORIGINS = ['https://*.railway.app',
                       'https://www.indahagdelivery.com',                      
@@ -143,7 +148,7 @@ TIME_ZONE = "Asia/Manila"
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),]
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
@@ -161,4 +166,20 @@ CLOUDINARY_STORAGE  = {
 }
 
 MEDIA_URL = '/media/'
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'ERROR',
+    },
+}
 
