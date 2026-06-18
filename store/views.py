@@ -944,10 +944,63 @@ def system_update_close(request):
 
     return render(request, 'store/system_update_close.html')
 
+
+from django.shortcuts import render
+from .forms import SpecialRequestForm
+from .models import FlatRate
+from django.utils import timezone
+import requests
+
+BOT_TOKEN = "8720277303:AAErCO6K-6boOYJFwYGQ70lyLXgZisQz0bU"
+CHAT_ID = "-5297632229"
+
+
+def send_telegram_notification(special):
+    formatted_date = timezone.localtime(special.created_at).strftime("%Y-%m-%d %H:%M:%S")
+
+    message = f"""
+📦 NEW SPECIAL REQUEST
+
+Date Created: {formatted_date}
+Customer: {special.customer.username}
+
+Store: {special.store}
+Request: {special.request_text}
+
+Requested Delivery Date: {special.date_requested}
+Requested Delivery Time: {special.time_requested}
+
+Estimated Budget: ₱{special.estimated_budget}
+Flat Rate Fee: ₱{special.flat_rate_fee}
+Tip: ₱{special.tip}
+
+Remarks: {special.special_remarks or "None"}
+
+Status: {special.status}
+
+https://www.indahagdelivery.com/
+"""
+
+    try:
+        requests.post(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",
+            data={
+                "chat_id": CHAT_ID,
+                "text": message
+            },
+            timeout=10
+        )
+    except Exception as e:
+        print("Telegram Error:", e)
+
+
+
+
 from django.shortcuts import render
 from .forms import SpecialRequestForm
 from .models import FlatRate
 
+@login_required
 def special_request(request):
     # Get the latest flat rate
     latest_rate = FlatRate.objects.order_by('-updated_at').first()
@@ -960,6 +1013,11 @@ def special_request(request):
             special.customer = request.user
             special.flat_rate_fee = flat_rate_fee  # Set dynamic fee
             special.save()
+
+              # Send Telegram after saving
+            send_telegram_notification(special)
+
+
             return render(request, 'store/thank_you.html')
     else:
         form = SpecialRequestForm()
