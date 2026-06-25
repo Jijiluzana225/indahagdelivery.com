@@ -184,3 +184,6 @@ LOGGING = {
     },
 }
 
+
+
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
